@@ -150,6 +150,10 @@ public class AddCommandTests extends BaseRpcTests{
 			Hashtable<String, Object> hash = JsonRPCMarshaller.deserializeJSONObject(commandJson);
 			AddCommand cmd = new AddCommand(hash);
 			
+			JSONObject testObj = JsonFileReader.get(getCommandType(), getMessageType(), AddCommand.KEY_CMD_ICON);
+			Image testImage = new Image(JsonRPCMarshaller.deserializeJSONObject(testObj));
+			System.out.println(testImage.getValue());
+			
 			JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson, getMessageType());
 			assertNotNull("Command type doesn't match expected message type", body);
 			
