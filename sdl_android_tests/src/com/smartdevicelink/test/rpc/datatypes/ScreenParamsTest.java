@@ -37,7 +37,7 @@ public class ScreenParamsTest extends TestCase {
 		msg.setTouchEventAvailable(TOUCH_EVENT_CAPABILITIES);
 	}
 	
-	public void createCustomObjects() {
+	private void createCustomObjects() {
 		TOUCH_EVENT_CAPABILITIES.setPressAvailable(PRESS_AVAILABLE);
 		TOUCH_EVENT_CAPABILITIES.setMultiTouchAvailable(MULTI_TOUCH_AVAILABLE);
 		TOUCH_EVENT_CAPABILITIES.setDoublePressAvailable(DOUBLE_PRESS_AVAILABLE);

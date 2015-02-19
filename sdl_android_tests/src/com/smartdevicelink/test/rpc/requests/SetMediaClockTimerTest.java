@@ -35,7 +35,7 @@ public class SetMediaClockTimerTest extends BaseRpcTests {
 		return msg;
 	}
 	
-	public void createCustomObjects () {
+	private void createCustomObjects () {
 		START_TIME.setHours(0);
 		START_TIME.setMinutes(0);
 		START_TIME.setSeconds(0);

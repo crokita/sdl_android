@@ -63,7 +63,7 @@ public class SetGlobalPropertiesTest extends BaseRpcTests {
 		return msg;
 	}
 	
-	public void createCustomObjects () {
+	private void createCustomObjects () {
 		vrHelp        = new ArrayList<VrHelpItem>(2);
 		helpPrompt    = new ArrayList<TTSChunk>(2);
 		timeoutPrompt = new ArrayList<TTSChunk>(2);

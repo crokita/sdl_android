@@ -34,7 +34,7 @@ public class ReadDIDResponseTest extends BaseRpcTests {
 		return msg;
 	}
 	
-	public void createCustomObjects () {
+	private void createCustomObjects () {
 		didResults = new ArrayList<DIDResult>(2);
 
 		DIDResult item1 = new DIDResult();

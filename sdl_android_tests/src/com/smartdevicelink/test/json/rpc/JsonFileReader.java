@@ -100,7 +100,7 @@ public class JsonFileReader {
 	}
 	
 	//given a command, a message type and the parameter name it will retrieve the appropriate data. returns null if not found
-	public static JSONObject get(String command, String messageType, String paramName){
+	public static JSONObject get(String command, String messageType, String paramName) {
 	    JSONObject commandJson = jsonMap.get(command + messageType);
 	    //automatically get the parameters JSONObject
 	    JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson, messageType);

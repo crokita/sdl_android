@@ -49,7 +49,7 @@ public class AddCommandTests extends BaseRpcTests{
         return msg;
     }
     
-    public void createCustomObjects () {
+    private void createCustomObjects () {
         image = new Image();
         image.setImageType(IMG_TYPE);
         image.setValue(IMG_NAME);

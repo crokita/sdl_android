@@ -66,7 +66,7 @@ public class RegisterAppInterfaceTest extends BaseRpcTests {
 		return msg;
 	}
 	
-	public void createCustomObjects () {
+	private void createCustomObjects () {
 		TTSChunk ttsChunk = new TTSChunk();
 		ttsChunk.setText(TTS_CHUNK_TEXT_1);
 		ttsChunk.setType(TTS_CHUNK_SPEECH_1);
