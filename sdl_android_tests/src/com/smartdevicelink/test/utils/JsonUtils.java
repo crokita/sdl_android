@@ -56,11 +56,33 @@ public final class JsonUtils {
 		return result;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static <T> List<T> createListFromJsonArray(JSONArray jsonArray) {
+		if(jsonArray != null){
+			int len = jsonArray.length();
+			List<T> result = new ArrayList<T>(len);
+			for(int i=0; i<len; i++){
+				T str = (T) readObjectFromJsonArray(jsonArray, i);
+				result.add(str);
+			}
+			return result;
+		}
+		return null;
+	}
+	
 	// this method is basically to get around the annoying JSONException that is thrown when a key doesn't exist
 	// in the JSON object.  this method returns null instead of throwing an exception.
 	public static Object readObjectFromJsonObject(JSONObject json, String key){
 		try {
 			return json.get(key);
+		} catch (JSONException e) {
+			return null;
+		}
+	}
+	
+	public static Object readObjectFromJsonArray(JSONArray jsonArray, int key){
+		try {
+			return jsonArray.get(key);
 		} catch (JSONException e) {
 			return null;
 		}
@@ -193,4 +215,5 @@ public final class JsonUtils {
 			return null;
 		}
 	}
+
 }

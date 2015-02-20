@@ -98,14 +98,48 @@ public class JsonFileReader {
 	    }
 	    return name.substring(lastIndexOf);
 	}
-	
-	//given a command, a message type and the parameter name it will retrieve the appropriate data. returns null if not found
-	public static JSONObject get(String command, String messageType, String paramName) {
-	    JSONObject commandJson = jsonMap.get(command + messageType);
-	    //automatically get the parameters JSONObject
-	    JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson, messageType);
-	    JSONObject parameters = JsonUtils.readJsonObjectFromJsonObject(body, RPCMessage.KEY_PARAMETERS);
-	    return JsonUtils.readJsonObjectFromJsonObject(parameters, paramName);
+	/*
+	//given a command, a message type and the parameter name it will retrieve the appropriate data from the hashmap. returns null if not found
+	//this method is suited only for getting RPC fields inside "parameters"
+	public static Object get(String command, String messageType, String... paramNames) {
+		JSONObject commandJson = jsonMap.get(command + messageType);
+	    commandJson = JsonUtils.readJsonObjectFromJsonObject(commandJson, messageType);
+	    //go inside the parameter field of the JSON
+	    commandJson = JsonUtils.readJsonObjectFromJsonObject(commandJson, RPCMessage.KEY_PARAMETERS);
+	    //continuously move deeper into the JSONObject for every parameter name given
+	    for (String paramName: paramNames) {
+		    commandJson = JsonUtils.readJsonObjectFromJsonObject(commandJson, paramName);
+	    }
+	    return commandJson;
 	}
 
+	//same as the get() above, only it retrieves data from the JSONObject given instead of from the hashmap
+	public static Object get(JSONObject command, String... paramNames) {
+	    JSONObject commandJson = command;
+	    //continuously move deeper into the JSONObject for every parameter name given
+	    for (String paramName: paramNames) {
+		    commandJson = JsonUtils.readJsonObjectFromJsonObject(commandJson, paramName);
+	    }
+	    return commandJson;
+	}
+	*/
+	
+	//returns the whole JSONObject for a given RPC (includes name and correlationID) as a JsonExtractor
+	public static JsonExtractor get(String command, String messageType) {
+		JSONObject commandJson = jsonMap.get(command + messageType);
+	    commandJson = JsonUtils.readJsonObjectFromJsonObject(commandJson, messageType);
+	    return new JsonExtractor(commandJson);
+	}
+	
+	//returns a the "parameters" field of the given RPC's JSONObject as a JsonExtractor
+	public static JsonExtractor getParams(String command, String messageType) {
+		JSONObject commandJson = jsonMap.get(command + messageType);
+	    commandJson = JsonUtils.readJsonObjectFromJsonObject(commandJson, messageType);
+	    //go inside the parameter field of the JSON
+	    commandJson = JsonUtils.readJsonObjectFromJsonObject(commandJson, RPCMessage.KEY_PARAMETERS);
+	    return new JsonExtractor(commandJson);
+	}
+	
+	
+	
 }
