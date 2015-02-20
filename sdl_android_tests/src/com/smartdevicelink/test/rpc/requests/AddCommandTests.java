@@ -14,7 +14,6 @@ import com.smartdevicelink.proxy.rpc.AddCommand;
 import com.smartdevicelink.proxy.rpc.Image;
 import com.smartdevicelink.proxy.rpc.MenuParams;
 import com.smartdevicelink.test.BaseRpcTests;
-import com.smartdevicelink.test.json.rpc.JsonExtractor;
 import com.smartdevicelink.test.json.rpc.JsonFileReader;
 import com.smartdevicelink.test.utils.JsonUtils;
 import com.smartdevicelink.test.utils.Validator;
@@ -25,7 +24,7 @@ public class AddCommandTests extends BaseRpcTests{
     private MenuParams             menuParams;
     private List<String>         vrCommands;
 
-	private static JsonExtractor paramsJson;
+	private static JSONObject paramsJson;
 	
     @Override
     protected RPCMessage createMessage(){
@@ -33,13 +32,13 @@ public class AddCommandTests extends BaseRpcTests{
         paramsJson = JsonFileReader.getParams(getCommandType(), getMessageType());
         
 		try {			
-			JSONObject imageJson = paramsJson.getObj(AddCommand.KEY_CMD_ICON);
+			JSONObject imageJson = JsonUtils.readJsonObjectFromJsonObject(paramsJson, AddCommand.KEY_CMD_ICON);
 			image = new Image(JsonRPCMarshaller.deserializeJSONObject(imageJson));
 			msg.setCmdIcon(image);
-			JSONObject menuParamsJson = paramsJson.getObj(AddCommand.KEY_MENU_PARAMS);
+			JSONObject menuParamsJson = JsonUtils.readJsonObjectFromJsonObject(paramsJson, AddCommand.KEY_MENU_PARAMS);
 			menuParams = new MenuParams(JsonRPCMarshaller.deserializeJSONObject(menuParamsJson));
 			msg.setMenuParams(menuParams);
-			JSONArray vrCommandsArray = paramsJson.getArr(AddCommand.KEY_VR_COMMANDS);
+			JSONArray vrCommandsArray = JsonUtils.readJsonArrayFromJsonObject(paramsJson, AddCommand.KEY_VR_COMMANDS);
 			vrCommands = JsonUtils.<String>createListFromJsonArray(vrCommandsArray);
 			msg.setVrCommands(vrCommands);
 			Integer cmdIdJson = paramsJson.getInt(AddCommand.KEY_CMD_ID);
@@ -67,9 +66,9 @@ public class AddCommandTests extends BaseRpcTests{
         JSONObject result = new JSONObject();
         
         try{
-            result.put(AddCommand.KEY_CMD_ICON, paramsJson.getObj(AddCommand.KEY_CMD_ICON));
-            result.put(AddCommand.KEY_MENU_PARAMS, paramsJson.getObj(AddCommand.KEY_MENU_PARAMS));
-            result.put(AddCommand.KEY_VR_COMMANDS, paramsJson.getArr(AddCommand.KEY_VR_COMMANDS));
+            result.put(AddCommand.KEY_CMD_ICON, JsonUtils.readJsonObjectFromJsonObject(paramsJson, AddCommand.KEY_CMD_ICON));
+            result.put(AddCommand.KEY_MENU_PARAMS, JsonUtils.readJsonObjectFromJsonObject(paramsJson, AddCommand.KEY_MENU_PARAMS));
+            result.put(AddCommand.KEY_VR_COMMANDS, JsonUtils.readJsonArrayFromJsonObject(paramsJson, AddCommand.KEY_VR_COMMANDS));
             result.put(AddCommand.KEY_CMD_ID, paramsJson.getInt(AddCommand.KEY_CMD_ID));
         }catch(JSONException e){
             /* do nothing  */
@@ -80,7 +79,7 @@ public class AddCommandTests extends BaseRpcTests{
 
     public void testCommandId(){
         int cmdId = ( (AddCommand) msg ).getCmdID();
-        assertEquals("Command ID didn't match input command ID.", (int) paramsJson.getInt(AddCommand.KEY_CMD_ID), cmdId);
+        assertEquals("Command ID didn't match input command ID.", (int) JsonUtils.readIntegerFromJsonObject(paramsJson, AddCommand.KEY_CMD_ID), cmdId);
     }
 
     public void testMenuParams(){
@@ -123,32 +122,32 @@ public class AddCommandTests extends BaseRpcTests{
     }
     
     public void testJsonConstructor () {
-    	JsonExtractor commandJson = JsonFileReader.get(getCommandType(), getMessageType());
-    	assertNotNull("Command object is null", commandJson.getObj());
+    	JSONObject commandJson = JsonFileReader.get(getCommandType(), getMessageType());
+    	assertNotNull("Command object is null", commandJson);
 
     	try {
-			Hashtable<String, Object> hash = JsonRPCMarshaller.deserializeJSONObject(commandJson.getObj());
+			Hashtable<String, Object> hash = JsonRPCMarshaller.deserializeJSONObject(commandJson);
 			AddCommand cmd = new AddCommand(hash);
 			
-			JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson.getObj(), getMessageType());
+			JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson, getMessageType());
 			assertNotNull("Command type doesn't match expected message type", body);
 			
 			// test everything in the body
 			assertEquals("Command name doesn't match input name", JsonUtils.readStringFromJsonObject(body, RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
 			assertEquals("Correlation ID doesn't match input ID", JsonUtils.readIntegerFromJsonObject(body, RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
 
-			List<String> vrCommandsList = JsonUtils.readStringListFromJsonObject(paramsJson.getObj(), AddCommand.KEY_VR_COMMANDS);
+			List<String> vrCommandsList = JsonUtils.readStringListFromJsonObject(paramsJson, AddCommand.KEY_VR_COMMANDS);
 			List<String> testCommandsList = cmd.getVrCommands();
 			assertEquals("VR command list length not same as reference VR command list length", vrCommandsList.size(), testCommandsList.size());
 			assertTrue("VR command list doesn't match input command list", Validator.validateStringList(vrCommandsList, testCommandsList));
 			
-			assertEquals("Command ID doesn't match input ID", JsonUtils.readIntegerFromJsonObject(paramsJson.getObj(), AddCommand.KEY_CMD_ID), cmd.getCmdID());
+			assertEquals("Command ID doesn't match input ID", JsonUtils.readIntegerFromJsonObject(paramsJson, AddCommand.KEY_CMD_ID), cmd.getCmdID());
 			
-			JSONObject menuParams = JsonUtils.readJsonObjectFromJsonObject(paramsJson.getObj(), AddCommand.KEY_MENU_PARAMS);
+			JSONObject menuParams = JsonUtils.readJsonObjectFromJsonObject(paramsJson, AddCommand.KEY_MENU_PARAMS);
 			MenuParams referenceMenuParams = new MenuParams(JsonRPCMarshaller.deserializeJSONObject(menuParams));
 			assertTrue("Menu params doesn't match expected menu params", Validator.validateMenuParams(referenceMenuParams, cmd.getMenuParams()));
 			
-			JSONObject cmdIcon = JsonUtils.readJsonObjectFromJsonObject(paramsJson.getObj(), AddCommand.KEY_CMD_ICON);
+			JSONObject cmdIcon = JsonUtils.readJsonObjectFromJsonObject(paramsJson, AddCommand.KEY_CMD_ICON);
 			Image referenceCmdIcon = new Image(JsonRPCMarshaller.deserializeJSONObject(cmdIcon));
 			assertTrue("Image doesn't match expected image", Validator.validateImage(referenceCmdIcon, cmd.getCmdIcon()));
 			

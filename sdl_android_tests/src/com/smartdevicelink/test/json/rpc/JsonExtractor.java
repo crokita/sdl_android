@@ -1,4 +1,4 @@
-package com.smartdevicelink.test.json.rpc;
+/*package com.smartdevicelink.test.json.rpc;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -7,6 +7,7 @@ import com.smartdevicelink.test.utils.JsonUtils;
 
 //a class to help ease the pain of getting different type values from the JSONObject
 public class JsonExtractor {	
+	
 	private final JSONObject obj;
 	
 	public JsonExtractor (JSONObject obj) {
@@ -45,4 +46,6 @@ public class JsonExtractor {
 	public Double getDouble (String parameter) {
 		return JsonUtils.readDoubleFromJsonObject(obj, parameter);
 	}
+	
 }
+*/

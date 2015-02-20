@@ -127,18 +127,18 @@ public class JsonFileReader {
 	*/
 	
 	//returns the whole JSONObject for a given RPC (includes the message type) as a JsonExtractor
-	public static JsonExtractor get(String command, String messageType) {
+	public static JSONObject get(String command, String messageType) {
 		JSONObject commandJson = jsonMap.get(command + messageType);
-	    return new JsonExtractor(commandJson);
+	    return commandJson;
 	}
 	
 	//returns a the "parameters" field of the given RPC's JSONObject as a JsonExtractor
-	public static JsonExtractor getParams(String command, String messageType) {
+	public static JSONObject getParams(String command, String messageType) {
 		JSONObject commandJson = jsonMap.get(command + messageType);
 	    commandJson = JsonUtils.readJsonObjectFromJsonObject(commandJson, messageType);
 	    //go inside the parameter field of the JSON
 	    commandJson = JsonUtils.readJsonObjectFromJsonObject(commandJson, RPCMessage.KEY_PARAMETERS);
-	    return new JsonExtractor(commandJson);
+	    return commandJson;
 	}
 	
 	
