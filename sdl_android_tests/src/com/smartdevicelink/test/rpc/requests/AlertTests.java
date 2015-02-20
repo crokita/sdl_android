@@ -21,10 +21,10 @@ import com.smartdevicelink.test.utils.Validator;
 
 public class AlertTests extends BaseRpcTests{
     
-    private final List<TTSChunk> TTS_CHUNK_LIST = new ArrayList<TTSChunk>();
-    private final List<SoftButton> SOFT_BUTTON_LIST = new ArrayList<SoftButton>();
+    private List<TTSChunk> TTS_CHUNK_LIST;
+    private List<SoftButton> SOFT_BUTTON_LIST;
     
-    private static JSONObject paramsJson;
+    private JSONObject paramsJson;
     
     @Override
     protected RPCMessage createMessage(){
