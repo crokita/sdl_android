@@ -12,86 +12,55 @@ import com.smartdevicelink.marshal.JsonRPCMarshaller;
 import com.smartdevicelink.protocol.enums.FunctionID;
 import com.smartdevicelink.proxy.RPCMessage;
 import com.smartdevicelink.proxy.rpc.Alert;
-import com.smartdevicelink.proxy.rpc.Image;
 import com.smartdevicelink.proxy.rpc.SoftButton;
 import com.smartdevicelink.proxy.rpc.TTSChunk;
-import com.smartdevicelink.proxy.rpc.enums.ImageType;
-import com.smartdevicelink.proxy.rpc.enums.SoftButtonType;
-import com.smartdevicelink.proxy.rpc.enums.SpeechCapabilities;
-import com.smartdevicelink.proxy.rpc.enums.SystemAction;
 import com.smartdevicelink.test.BaseRpcTests;
+import com.smartdevicelink.test.json.rpc.JsonExtractor;
 import com.smartdevicelink.test.json.rpc.JsonFileReader;
 import com.smartdevicelink.test.utils.JsonUtils;
 import com.smartdevicelink.test.utils.Validator;
 
 public class AlertTests extends BaseRpcTests{
-    private static final int     DURATION           = 500;
-    private static final String  ALERT_TEXT_1       = "Line #1";
-    private static final String  ALERT_TEXT_2       = "Line #2";
-    private static final String  ALERT_TEXT_3       = "Line #3";
-    private static final boolean PLAY_TONE          = true;
-    private static final boolean PROGRESS_INDICATOR = true;
     
     private final List<TTSChunk> TTS_CHUNK_LIST = new ArrayList<TTSChunk>();
-	private static final String TTS_CHUNK_TEXT_1 = "Welcome to the jungle";
-	private static final SpeechCapabilities TTS_CHUNK_SPEECH_1 = SpeechCapabilities.TEXT;
-	private static final String TTS_CHUNK_TEXT_2 = "Say a command";
-	private static final SpeechCapabilities TTS_CHUNK_SPEECH_2 = SpeechCapabilities.LHPLUS_PHONEMES;
-
     private final List<SoftButton> SOFT_BUTTON_LIST = new ArrayList<SoftButton>();
-    private static final Boolean SOFT_BUTTON_HIGHLIGHTED = true;
-    private static final Integer SOFT_BUTTON_ID = 236;
-	private static final SystemAction SOFT_BUTTON_SYSTEM_ACTION = SystemAction.STEAL_FOCUS;
-    private static final String SOFT_BUTTON_TEXT = "Hello";
-    private static final SoftButtonType SOFT_BUTTON_KEY_TYPE = SoftButtonType.SBT_TEXT;
     
-    private static final Image SOFT_BUTTON_IMAGE = new Image();
-    private static final String SOFT_BUTTON_VALUE = "buttonImage.jpg";
-    private static final ImageType SOFT_BUTTON_IMAGE_TYPE = ImageType.STATIC;
-    //TODO: everytime this method is called two additional tts chunks and one additional soft button is added to the lists.
-    //this is the cause for the failing of the testJson tests. ensure that this doesn't happen (fixed if defensive copying works?)
-    //the same problem is for ScrollableMessageTest
+    private static JsonExtractor paramsJson;
+    
     @Override
     protected RPCMessage createMessage(){
         Alert msg = new Alert();
-
-        createCustomObjects();
+        paramsJson = JsonFileReader.getParams(getCommandType(), getMessageType());
         
-        msg.setDuration(DURATION);
-        msg.setAlertText1(ALERT_TEXT_1);
-        msg.setAlertText2(ALERT_TEXT_2);
-        msg.setAlertText3(ALERT_TEXT_3);
-        msg.setPlayTone(PLAY_TONE);
-        msg.setProgressIndicator(PROGRESS_INDICATOR);
-        msg.setTtsChunks(TTS_CHUNK_LIST);
-        msg.setSoftButtons(SOFT_BUTTON_LIST);
+		try {	
+	        msg.setDuration(paramsJson.getInt(Alert.KEY_DURATION));
+	        msg.setAlertText1(paramsJson.getStr(Alert.KEY_ALERT_TEXT_1));
+	        msg.setAlertText2(paramsJson.getStr(Alert.KEY_ALERT_TEXT_2));
+	        msg.setAlertText3(paramsJson.getStr(Alert.KEY_ALERT_TEXT_3));
+	        msg.setPlayTone(paramsJson.getBool(Alert.KEY_PLAY_TONE));
+	        msg.setProgressIndicator(paramsJson.getBool(Alert.KEY_PROGRESS_INDICATOR));
+	        
+			JSONArray ttsChunkArray = paramsJson.getArr(Alert.KEY_TTS_CHUNKS);
+			for (int index = 0; index < ttsChunkArray.length(); index++) {
+				TTSChunk ttsChunk = new TTSChunk(JsonRPCMarshaller.deserializeJSONObject( (JSONObject)ttsChunkArray.get(index)) );
+				TTS_CHUNK_LIST.add(ttsChunk);
+			}
+			
+			msg.setTtsChunks(TTS_CHUNK_LIST);
+			
+			JSONArray softButtonsArray = paramsJson.getArr(Alert.KEY_SOFT_BUTTONS);
+			for (int index = 0; index < softButtonsArray.length(); index++) {
+				SoftButton softButton = new SoftButton(JsonRPCMarshaller.deserializeJSONObject( (JSONObject)softButtonsArray.get(index)) );
+				SOFT_BUTTON_LIST.add(softButton);
+			}
+	        msg.setSoftButtons(SOFT_BUTTON_LIST);
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
         
         return msg;
     }
-    
-	private void createCustomObjects() {
-		TTSChunk ttsChunk = new TTSChunk();
-		ttsChunk.setText(TTS_CHUNK_TEXT_1);
-		ttsChunk.setType(TTS_CHUNK_SPEECH_1);
-		TTS_CHUNK_LIST.add(ttsChunk);
-		
-		ttsChunk = new TTSChunk();
-		ttsChunk.setText(TTS_CHUNK_TEXT_2);
-		ttsChunk.setType(TTS_CHUNK_SPEECH_2);
-		TTS_CHUNK_LIST.add(ttsChunk);
-		
-		SOFT_BUTTON_IMAGE.setValue(SOFT_BUTTON_VALUE);
-		SOFT_BUTTON_IMAGE.setImageType(SOFT_BUTTON_IMAGE_TYPE);
-		
-		SoftButton softButton = new SoftButton();
-		softButton.setIsHighlighted(SOFT_BUTTON_HIGHLIGHTED);
-		softButton.setSoftButtonID(SOFT_BUTTON_ID);
-		softButton.setSystemAction(SOFT_BUTTON_SYSTEM_ACTION);
-		softButton.setText(SOFT_BUTTON_TEXT);
-		softButton.setType(SOFT_BUTTON_KEY_TYPE);
-		softButton.setImage(SOFT_BUTTON_IMAGE);
-		SOFT_BUTTON_LIST.add(softButton);
-	}
 
     @Override
     protected String getMessageType(){
@@ -106,37 +75,16 @@ public class AlertTests extends BaseRpcTests{
     @Override
     protected JSONObject getExpectedParameters(int sdlVersion){
         JSONObject result = new JSONObject();
-        JSONArray ttsChunks = new JSONArray();
-        JSONArray softButtons = new JSONArray();
         
         try{
-        	JSONObject ttsChunk = new JSONObject();
-			ttsChunk.put(TTSChunk.KEY_TEXT, TTS_CHUNK_TEXT_1);
-			ttsChunk.put(TTSChunk.KEY_TYPE, TTS_CHUNK_SPEECH_1);
-			ttsChunks.put(ttsChunk);
-			
-			ttsChunk = new JSONObject();
-			ttsChunk.put(TTSChunk.KEY_TEXT, TTS_CHUNK_TEXT_2);
-			ttsChunk.put(TTSChunk.KEY_TYPE, TTS_CHUNK_SPEECH_2);
-			ttsChunks.put(ttsChunk);
-			
-			JSONObject softButton = new JSONObject();
-			softButton.put(SoftButton.KEY_IS_HIGHLIGHTED , SOFT_BUTTON_HIGHLIGHTED);
-			softButton.put(SoftButton.KEY_SOFT_BUTTON_ID, SOFT_BUTTON_ID);
-			softButton.put(SoftButton.KEY_SYSTEM_ACTION, SOFT_BUTTON_SYSTEM_ACTION);
-			softButton.put(SoftButton.KEY_TEXT, SOFT_BUTTON_TEXT);
-			softButton.put(SoftButton.KEY_TYPE, SOFT_BUTTON_KEY_TYPE);
-			softButton.put(SoftButton.KEY_IMAGE, SOFT_BUTTON_IMAGE.serializeJSON());
-			softButtons.put(softButton);
-        	
-            result.put(Alert.KEY_DURATION, DURATION);
-            result.put(Alert.KEY_ALERT_TEXT_1, ALERT_TEXT_1);
-            result.put(Alert.KEY_ALERT_TEXT_2, ALERT_TEXT_2);
-            result.put(Alert.KEY_ALERT_TEXT_3, ALERT_TEXT_3);
-            result.put(Alert.KEY_PLAY_TONE, PLAY_TONE);
-            result.put(Alert.KEY_PROGRESS_INDICATOR, PROGRESS_INDICATOR);
-            result.put(Alert.KEY_TTS_CHUNKS, ttsChunks);
-            result.put(Alert.KEY_SOFT_BUTTONS, softButtons);
+            result.put(Alert.KEY_DURATION, paramsJson.getInt(Alert.KEY_DURATION));
+            result.put(Alert.KEY_ALERT_TEXT_1, paramsJson.getStr(Alert.KEY_ALERT_TEXT_1));
+            result.put(Alert.KEY_ALERT_TEXT_2, paramsJson.getStr(Alert.KEY_ALERT_TEXT_2));
+            result.put(Alert.KEY_ALERT_TEXT_3, paramsJson.getStr(Alert.KEY_ALERT_TEXT_3));
+            result.put(Alert.KEY_PLAY_TONE, paramsJson.getBool(Alert.KEY_PLAY_TONE));
+            result.put(Alert.KEY_PROGRESS_INDICATOR, paramsJson.getBool(Alert.KEY_PROGRESS_INDICATOR));
+        	result.put(Alert.KEY_TTS_CHUNKS, paramsJson.getArr(Alert.KEY_TTS_CHUNKS));
+        	result.put(Alert.KEY_SOFT_BUTTONS, paramsJson.getArr(Alert.KEY_SOFT_BUTTONS));
         }catch(JSONException e){
             /* do nothing */
         }
@@ -146,32 +94,33 @@ public class AlertTests extends BaseRpcTests{
 
     public void testDuration(){
         int duration = ( (Alert) msg ).getDuration();
-        assertEquals("Duration didn't match input duration.", DURATION, duration);
+        assertEquals("Duration didn't match input duration.", (int) paramsJson.getInt(Alert.KEY_DURATION), duration);
     }
 
     public void testAlertText1(){
         String alertText1 = ( (Alert) msg ).getAlertText1();
-        assertEquals("Alert text 1 didn't match input text.", ALERT_TEXT_1, alertText1);
+        assertEquals("Alert text 1 didn't match input text.", paramsJson.getStr(Alert.KEY_ALERT_TEXT_1), alertText1);
     }
 
     public void testAlertText2(){
         String alertText2 = ( (Alert) msg ).getAlertText2();
-        assertEquals("Alert text 2 didn't match input text.", ALERT_TEXT_2, alertText2);
+        assertEquals("Alert text 2 didn't match input text.", paramsJson.getStr(Alert.KEY_ALERT_TEXT_2), alertText2);
     }
 
     public void testAlertText3(){
         String alertText3 = ( (Alert) msg ).getAlertText3();
-        assertEquals("Alert text 3 didn't match input text.", ALERT_TEXT_3, alertText3);
+        assertEquals("Alert text 3 didn't match input text.", paramsJson.getStr(Alert.KEY_ALERT_TEXT_3), alertText3);
     }
 
     public void testPlayTone(){
         boolean playTone = ( (Alert) msg ).getPlayTone();
-        assertEquals("Play tone didn't match input play tone.", PLAY_TONE, playTone);
+        assertEquals("Play tone didn't match input play tone.", (boolean) paramsJson.getBool(Alert.KEY_PLAY_TONE), playTone);
     }
 
     public void testProgressIndicator(){
         boolean progressIndicator = ( (Alert) msg ).getProgressIndicator();
-        assertEquals("Progress indicator didn't match input progress indicator.", PROGRESS_INDICATOR, progressIndicator);
+        assertEquals("Progress indicator didn't match input progress indicator.", 
+        		(boolean) paramsJson.getBool(Alert.KEY_PROGRESS_INDICATOR), progressIndicator);
     }
 
 	public void testTtsChunks () {
@@ -204,29 +153,28 @@ public class AlertTests extends BaseRpcTests{
     }
     
     public void testJsonConstructor () {
-    	JSONObject commandJson = JsonFileReader.readId(getCommandType(), getMessageType());
-    	assertNotNull("Command object is null", commandJson);
+    	JsonExtractor commandJson = JsonFileReader.get(getCommandType(), getMessageType());
+    	assertNotNull("Command object is null", commandJson.getObj());
     	
 		try {
-			Hashtable<String, Object> hash = JsonRPCMarshaller.deserializeJSONObject(commandJson);
+			Hashtable<String, Object> hash = JsonRPCMarshaller.deserializeJSONObject(commandJson.getObj());
 			Alert cmd = new Alert(hash);
-			JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson, getMessageType());
+			JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson.getObj(), getMessageType());
 			assertNotNull("Command type doesn't match expected message type", body);
 			
 			// test everything in the body
 			assertEquals("Command name doesn't match input name", JsonUtils.readStringFromJsonObject(body, RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
 			assertEquals("Correlation ID doesn't match input ID", JsonUtils.readIntegerFromJsonObject(body, RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
 
-			JSONObject parameters = JsonUtils.readJsonObjectFromJsonObject(body, RPCMessage.KEY_PARAMETERS);
-			assertEquals("Play tone doesn't match input tone", JsonUtils.readBooleanFromJsonObject(parameters, Alert.KEY_PLAY_TONE), cmd.getPlayTone());
-			assertEquals("Duration doesn't match input duration", JsonUtils.readIntegerFromJsonObject(parameters, Alert.KEY_DURATION), cmd.getDuration());
-			assertEquals("Alert text 1 doesn't match input text", JsonUtils.readStringFromJsonObject(parameters, Alert.KEY_ALERT_TEXT_1), cmd.getAlertText1());
-			assertEquals("Alert text 2 doesn't match input text", JsonUtils.readStringFromJsonObject(parameters, Alert.KEY_ALERT_TEXT_2), cmd.getAlertText2());
-			assertEquals("Alert text 3 doesn't match input text", JsonUtils.readStringFromJsonObject(parameters, Alert.KEY_ALERT_TEXT_3), cmd.getAlertText3());
+			assertEquals("Play tone doesn't match input tone", JsonUtils.readBooleanFromJsonObject(paramsJson.getObj(), Alert.KEY_PLAY_TONE), cmd.getPlayTone());
+			assertEquals("Duration doesn't match input duration", JsonUtils.readIntegerFromJsonObject(paramsJson.getObj(), Alert.KEY_DURATION), cmd.getDuration());
+			assertEquals("Alert text 1 doesn't match input text", JsonUtils.readStringFromJsonObject(paramsJson.getObj(), Alert.KEY_ALERT_TEXT_1), cmd.getAlertText1());
+			assertEquals("Alert text 2 doesn't match input text", JsonUtils.readStringFromJsonObject(paramsJson.getObj(), Alert.KEY_ALERT_TEXT_2), cmd.getAlertText2());
+			assertEquals("Alert text 3 doesn't match input text", JsonUtils.readStringFromJsonObject(paramsJson.getObj(), Alert.KEY_ALERT_TEXT_3), cmd.getAlertText3());
 			assertEquals("Progress indicator doesn't match input indicator", 
-					JsonUtils.readBooleanFromJsonObject(parameters, Alert.KEY_PROGRESS_INDICATOR), cmd.getProgressIndicator());
+					JsonUtils.readBooleanFromJsonObject(paramsJson.getObj(), Alert.KEY_PROGRESS_INDICATOR), cmd.getProgressIndicator());
 			
-			JSONArray ttsChunkArray = JsonUtils.readJsonArrayFromJsonObject(parameters, Alert.KEY_TTS_CHUNKS);
+			JSONArray ttsChunkArray = JsonUtils.readJsonArrayFromJsonObject(paramsJson.getObj(), Alert.KEY_TTS_CHUNKS);
 			List<TTSChunk> ttsChunkList = new ArrayList<TTSChunk>();
 			for (int index = 0; index < ttsChunkArray.length(); index++) {
 	        	TTSChunk chunk = new TTSChunk(JsonRPCMarshaller.deserializeJSONObject( (JSONObject)ttsChunkArray.get(index)) );
@@ -234,7 +182,7 @@ public class AlertTests extends BaseRpcTests{
 			}
 			assertTrue("TTSChunk list doesn't match input TTSChunk list",  Validator.validateTtsChunks(ttsChunkList, cmd.getTtsChunks()));
 			
-			JSONArray softButtonArray = JsonUtils.readJsonArrayFromJsonObject(parameters, Alert.KEY_SOFT_BUTTONS);
+			JSONArray softButtonArray = JsonUtils.readJsonArrayFromJsonObject(paramsJson.getObj(), Alert.KEY_SOFT_BUTTONS);
 			List<SoftButton> softButtonList = new ArrayList<SoftButton>();
 			for (int index = 0; index < softButtonArray.length(); index++) {
 				SoftButton chunk = new SoftButton(JsonRPCMarshaller.deserializeJSONObject( (JSONObject)softButtonArray.get(index)) );

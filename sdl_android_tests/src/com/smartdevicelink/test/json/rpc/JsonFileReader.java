@@ -28,11 +28,13 @@ public class JsonFileReader {
         for (File file : fileList) {
             if (file.isFile() && getFileExtension(file).equals(".json")) { 
                 //only deal with json files and remove the extension
+            	//TODO: is there a way to grab the file's name parameter instead of relying on the file name itself?
             	String id = file.getName().substring(0, file.getName().indexOf(".")); 
             	
             	//attempt to read the file's request, response and notification message types
             	//if it doesn't exist, it will return null. just ignore it
             	JSONObject requestJson = readId(id, RPCMessage.KEY_REQUEST);
+            	
             	if (requestJson != null) {
             		jsonMap.put(id + RPCMessage.KEY_REQUEST, requestJson);
             	}
@@ -124,10 +126,9 @@ public class JsonFileReader {
 	}
 	*/
 	
-	//returns the whole JSONObject for a given RPC (includes name and correlationID) as a JsonExtractor
+	//returns the whole JSONObject for a given RPC (includes the message type) as a JsonExtractor
 	public static JsonExtractor get(String command, String messageType) {
 		JSONObject commandJson = jsonMap.get(command + messageType);
-	    commandJson = JsonUtils.readJsonObjectFromJsonObject(commandJson, messageType);
 	    return new JsonExtractor(commandJson);
 	}
 	

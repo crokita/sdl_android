@@ -7,15 +7,15 @@ import com.smartdevicelink.test.utils.JsonUtils;
 
 //a class to help ease the pain of getting different type values from the JSONObject
 public class JsonExtractor {	
-	JSONObject obj;
+	private final JSONObject obj;
 	
-	JsonExtractor (JSONObject obj) {
+	public JsonExtractor (JSONObject obj) {
 		this.obj = obj;
 	}
 
 	public JsonExtractor to (String parameter) {
-		obj = JsonUtils.readJsonObjectFromJsonObject(obj, parameter);
-		return this;
+		JsonExtractor copy = new JsonExtractor(JsonUtils.readJsonObjectFromJsonObject(obj, parameter));
+		return copy; //make a new copy because the obj variable itself shouldn't change
 	}
 	
 	public JSONObject getObj () {
@@ -36,5 +36,13 @@ public class JsonExtractor {
 	
 	public Integer getInt (String parameter) {
 		return JsonUtils.readIntegerFromJsonObject(obj, parameter);
+	}
+	
+	public Boolean getBool (String parameter) {
+		return JsonUtils.readBooleanFromJsonObject(obj, parameter);
+	}
+	
+	public Double getDouble (String parameter) {
+		return JsonUtils.readDoubleFromJsonObject(obj, parameter);
 	}
 }

@@ -40,7 +40,7 @@ public class AddCommandTests extends BaseRpcTests{
 			menuParams = new MenuParams(JsonRPCMarshaller.deserializeJSONObject(menuParamsJson));
 			msg.setMenuParams(menuParams);
 			JSONArray vrCommandsArray = paramsJson.getArr(AddCommand.KEY_VR_COMMANDS);
-			vrCommands = JsonUtils.<String>createListFromJsonArray(vrCommandsArray) ;
+			vrCommands = JsonUtils.<String>createListFromJsonArray(vrCommandsArray);
 			msg.setVrCommands(vrCommands);
 			Integer cmdIdJson = paramsJson.getInt(AddCommand.KEY_CMD_ID);
 			msg.setCmdID( cmdIdJson );
@@ -65,22 +65,12 @@ public class AddCommandTests extends BaseRpcTests{
     @Override
     protected JSONObject getExpectedParameters(int sdlVersion){
         JSONObject result = new JSONObject();
-        JSONObject image = new JSONObject();
-        JSONObject menuParams = new JSONObject();
         
         try{
-            image.put(Image.KEY_IMAGE_TYPE, paramsJson.to(AddCommand.KEY_CMD_ICON).getStr(Image.KEY_IMAGE_TYPE));
-            image.put(Image.KEY_VALUE, paramsJson.to(AddCommand.KEY_CMD_ICON).getStr(Image.KEY_VALUE));
-            result.put(AddCommand.KEY_CMD_ICON, image);
-            
-            menuParams.put(MenuParams.KEY_MENU_NAME, paramsJson.to(AddCommand.KEY_MENU_PARAMS).getStr(MenuParams.KEY_MENU_NAME));
-            menuParams.put(MenuParams.KEY_PARENT_ID, paramsJson.to(AddCommand.KEY_MENU_PARAMS).getStr(MenuParams.KEY_PARENT_ID));
-            menuParams.put(MenuParams.KEY_POSITION, paramsJson.to(AddCommand.KEY_MENU_PARAMS).getStr(MenuParams.KEY_POSITION));
-            result.put(AddCommand.KEY_MENU_PARAMS, menuParams);
-            
+            result.put(AddCommand.KEY_CMD_ICON, paramsJson.getObj(AddCommand.KEY_CMD_ICON));
+            result.put(AddCommand.KEY_MENU_PARAMS, paramsJson.getObj(AddCommand.KEY_MENU_PARAMS));
             result.put(AddCommand.KEY_VR_COMMANDS, paramsJson.getArr(AddCommand.KEY_VR_COMMANDS));
             result.put(AddCommand.KEY_CMD_ID, paramsJson.getInt(AddCommand.KEY_CMD_ID));
-            System.out.println(result);
         }catch(JSONException e){
             /* do nothing  */
         }
@@ -134,9 +124,9 @@ public class AddCommandTests extends BaseRpcTests{
     
     public void testJsonConstructor () {
     	JsonExtractor commandJson = JsonFileReader.get(getCommandType(), getMessageType());
-    	assertNotNull("Command object is null", commandJson);
-    	
-		try {
+    	assertNotNull("Command object is null", commandJson.getObj());
+
+    	try {
 			Hashtable<String, Object> hash = JsonRPCMarshaller.deserializeJSONObject(commandJson.getObj());
 			AddCommand cmd = new AddCommand(hash);
 			
