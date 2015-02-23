@@ -15,12 +15,17 @@ import com.smartdevicelink.test.utils.JsonUtils;
 
 public class AlertResponseTests extends BaseRpcTests{
 
-    private static final int TRY_AGAIN_TIME = 400;
+    private int tryAgainTime;
 
+    private JSONObject paramsJson;
+    
     @Override
     protected RPCMessage createMessage(){
     	AlertResponse alert = new AlertResponse();
-    	alert.setTryAgainTime(TRY_AGAIN_TIME);
+    	paramsJson = JsonFileReader.getParams(getCommandType(), getMessageType());
+    	
+    	tryAgainTime = JsonUtils.readIntegerFromJsonObject(paramsJson, AlertResponse.KEY_TRY_AGAIN_TIME);
+    	alert.setTryAgainTime(tryAgainTime);
         return alert;
     }
 
@@ -39,7 +44,7 @@ public class AlertResponseTests extends BaseRpcTests{
         JSONObject result = new JSONObject();
 
         try{
-            result.put(AlertResponse.KEY_TRY_AGAIN_TIME, TRY_AGAIN_TIME);
+            result.put(AlertResponse.KEY_TRY_AGAIN_TIME, tryAgainTime);
         }catch(JSONException e){
             /* do nothing */
         }
@@ -49,7 +54,7 @@ public class AlertResponseTests extends BaseRpcTests{
 
     public void testTryAgainTime(){
         int tryAgainTime = ( (AlertResponse) msg ).getTryAgainTime();
-        assertEquals("Try again time didn't match expected time.", TRY_AGAIN_TIME, tryAgainTime);
+        assertEquals("Try again time didn't match expected time.", tryAgainTime, tryAgainTime);
     }
 
     public void testNull(){
@@ -62,22 +67,19 @@ public class AlertResponseTests extends BaseRpcTests{
     }
     
     public void testJsonConstructor () {
-    	JSONObject commandJson = JsonFileReader.readId(getCommandType(), getMessageType());
+    	JSONObject commandJson = JsonFileReader.get(getCommandType(), getMessageType());
     	assertNotNull("Command object is null", commandJson);
     	
 		try {
 			Hashtable<String, Object> hash = JsonRPCMarshaller.deserializeJSONObject(commandJson);
 			AlertResponse cmd = new AlertResponse(hash);
-			JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson, getMessageType());
+			JSONObject body = commandJson.getJSONObject(getMessageType());
 			assertNotNull("Command type doesn't match expected message type", body);
 			
 			// test everything in the body
-			assertEquals("Command name doesn't match input name", JsonUtils.readStringFromJsonObject(body, RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
-			assertEquals("Correlation ID doesn't match input ID", JsonUtils.readIntegerFromJsonObject(body, RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
-
-			JSONObject parameters = JsonUtils.readJsonObjectFromJsonObject(body, RPCMessage.KEY_PARAMETERS);
-			assertEquals("Try again time doesn't match input time", JsonUtils.readIntegerFromJsonObject(parameters, AlertResponse.KEY_TRY_AGAIN_TIME), cmd.getTryAgainTime());
-			
+			assertEquals("Command name doesn't match input name", body.getString(RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
+			assertEquals("Correlation ID doesn't match input ID", (Integer) body.getInt(RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
+			assertEquals("Try again time doesn't match input time", JsonUtils.readIntegerFromJsonObject(paramsJson, AlertResponse.KEY_TRY_AGAIN_TIME), cmd.getTryAgainTime());
 		} 
 		catch (JSONException e) {
 			e.printStackTrace();

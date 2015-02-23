@@ -1,9 +1,9 @@
 package com.smartdevicelink.test.rpc.responses;
 
-import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,14 +18,24 @@ import com.smartdevicelink.test.utils.Validator;
 
 public class GetDTCsResponseTests extends BaseRpcTests{
 
-    private final List<String> DTC_LIST = Arrays.asList(new String[] { "0x1FED: Tire Pressure Low",
-            "0x84F2: Passenger Window Open Circuit Fault" });
+    private List<String> dtcList;
 
+    private JSONObject paramsJson;
+    
     @Override
     protected RPCMessage createMessage(){
         GetDTCsResponse msg = new GetDTCsResponse();
-
-        msg.setDtc(DTC_LIST);
+        paramsJson = JsonFileReader.getParams(getCommandType(), getMessageType());
+        
+		try {			
+			JSONArray dtcListArray = paramsJson.getJSONArray(GetDTCsResponse.KEY_DTC);
+			dtcList = JsonUtils.<String>createListFromJsonArray(dtcListArray);
+			msg.setDtc(dtcList);
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+        
 
         return msg;
     }
@@ -45,7 +55,7 @@ public class GetDTCsResponseTests extends BaseRpcTests{
         JSONObject result = new JSONObject();
 
         try{
-            result.put(GetDTCsResponse.KEY_DTC, JsonUtils.createJsonArray(DTC_LIST));
+            result.put(GetDTCsResponse.KEY_DTC, JsonUtils.createJsonArray(dtcList));
         }catch(JSONException e){
             /* do nothing */
         }
@@ -56,10 +66,10 @@ public class GetDTCsResponseTests extends BaseRpcTests{
     public void testDtcList(){
         List<String> cmdId = ( (GetDTCsResponse) msg ).getDtc();
 
-        assertEquals("DTC list size didn't match expected size.", DTC_LIST.size(), cmdId.size());
+        assertEquals("DTC list size didn't match expected size.", dtcList.size(), cmdId.size());
 
-        for(int i = 0; i < DTC_LIST.size(); i++){
-            assertEquals("DTC value at index " + i + " didn't match expected value.", DTC_LIST.get(i), cmdId.get(i));
+        for(int i = 0; i < dtcList.size(); i++){
+            assertEquals("DTC value at index " + i + " didn't match expected value.", dtcList.get(i), cmdId.get(i));
         }
     }
 
@@ -73,21 +83,21 @@ public class GetDTCsResponseTests extends BaseRpcTests{
     }
     
     public void testJsonConstructor () {
-    	JSONObject commandJson = JsonFileReader.readId(getCommandType(), getMessageType());
+    	JSONObject commandJson = JsonFileReader.get(getCommandType(), getMessageType());
     	assertNotNull("Command object is null", commandJson);
     	
 		try {
 			Hashtable<String, Object> hash = JsonRPCMarshaller.deserializeJSONObject(commandJson);
 			GetDTCsResponse cmd = new GetDTCsResponse(hash);
 			
-			JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson, getMessageType());
+			JSONObject body = commandJson.getJSONObject(getMessageType());
 			assertNotNull("Command type doesn't match expected message type", body);
 			
 			// test everything in the body
-			assertEquals("Command name doesn't match input name", JsonUtils.readStringFromJsonObject(body, RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
-			assertEquals("Correlation ID doesn't match input ID", JsonUtils.readIntegerFromJsonObject(body, RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
-
-			JSONObject parameters = JsonUtils.readJsonObjectFromJsonObject(body, RPCMessage.KEY_PARAMETERS);
+			assertEquals("Command name doesn't match input name", body.getString(RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
+			assertEquals("Correlation ID doesn't match input ID", (Integer) body.getInt(RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
+			
+			JSONObject parameters = body.getJSONObject(RPCMessage.KEY_PARAMETERS);
 			
 			List<String> dtcList = JsonUtils.readStringListFromJsonObject(parameters, GetDTCsResponse.KEY_DTC);
 			List<String> testDtcList = cmd.getDtc();

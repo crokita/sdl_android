@@ -1,9 +1,9 @@
 package com.smartdevicelink.test.rpc.responses;
 
-import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,14 +18,23 @@ import com.smartdevicelink.test.utils.Validator;
 
 public class DiagnosticMessageResponseTests extends BaseRpcTests{
 
-    private final List<Integer> MESSAGE_DATA_RESULT = Arrays.asList(new Integer[] { 1, 1, 3, 5, 8, 13, 21, 34,
-            55, 89                                        });
+    private List<Integer> messageDataResult;
+    
+    private JSONObject paramsJson;
 
     @Override
     protected RPCMessage createMessage(){
         DiagnosticMessageResponse msg = new DiagnosticMessageResponse();
-
-        msg.setMessageDataResult(MESSAGE_DATA_RESULT);
+        paramsJson = JsonFileReader.getParams(getCommandType(), getMessageType());
+        
+		try {			
+			JSONArray messageDataResultArray = paramsJson.getJSONArray(DiagnosticMessageResponse.KEY_MESSAGE_DATA_RESULT);
+			messageDataResult = JsonUtils.<Integer>createListFromJsonArray(messageDataResultArray);
+			msg.setMessageDataResult(messageDataResult);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+        
 
         return msg;
     }
@@ -45,8 +54,7 @@ public class DiagnosticMessageResponseTests extends BaseRpcTests{
         JSONObject result = new JSONObject();
 
         try{
-            result.put(DiagnosticMessageResponse.KEY_MESSAGE_DATA_RESULT,
-                    JsonUtils.createJsonArray(MESSAGE_DATA_RESULT));
+            result.put(DiagnosticMessageResponse.KEY_MESSAGE_DATA_RESULT, paramsJson.getJSONArray(DiagnosticMessageResponse.KEY_MESSAGE_DATA_RESULT));
         }catch(JSONException e){
             /* do nothing */
         }
@@ -57,10 +65,10 @@ public class DiagnosticMessageResponseTests extends BaseRpcTests{
     public void testMessageData(){
         List<Integer> cmdId = ( (DiagnosticMessageResponse) msg ).getMessageDataResult();
 
-        assertEquals("Array size didn't match expected size.", MESSAGE_DATA_RESULT.size(), cmdId.size());
+        assertEquals("Array size didn't match expected size.", messageDataResult.size(), cmdId.size());
 
-        for(int i = 0; i < MESSAGE_DATA_RESULT.size(); i++){
-            assertEquals("Message data didn't match input message data.", MESSAGE_DATA_RESULT.get(i), cmdId.get(i));
+        for(int i = 0; i < messageDataResult.size(); i++){
+            assertEquals("Message data didn't match input message data.", messageDataResult.get(i), cmdId.get(i));
         }
     }
 
@@ -74,21 +82,21 @@ public class DiagnosticMessageResponseTests extends BaseRpcTests{
     }
     
     public void testJsonConstructor () {
-    	JSONObject commandJson = JsonFileReader.readId(getCommandType(), getMessageType());
+    	JSONObject commandJson = JsonFileReader.get(getCommandType(), getMessageType());
     	assertNotNull("Command object is null", commandJson);
     	
 		try {
 			Hashtable<String, Object> hash = JsonRPCMarshaller.deserializeJSONObject(commandJson);
 			DiagnosticMessageResponse cmd = new DiagnosticMessageResponse(hash);
 			
-			JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson, getMessageType());
+			JSONObject body = commandJson.getJSONObject(getMessageType());
 			assertNotNull("Command type doesn't match expected message type", body);
 			
 			// test everything in the body
-			assertEquals("Command name doesn't match input name", JsonUtils.readStringFromJsonObject(body, RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
-			assertEquals("Correlation ID doesn't match input ID", JsonUtils.readIntegerFromJsonObject(body, RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
-
-			JSONObject parameters = JsonUtils.readJsonObjectFromJsonObject(body, RPCMessage.KEY_PARAMETERS);
+			assertEquals("Command name doesn't match input name", body.getString(RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
+			assertEquals("Correlation ID doesn't match input ID", (Integer) body.getInt(RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
+			
+			JSONObject parameters = body.getJSONObject(RPCMessage.KEY_PARAMETERS);
 			
 			List<Integer> dataResultList = JsonUtils.readIntegerListFromJsonObject(parameters, DiagnosticMessageResponse.KEY_MESSAGE_DATA_RESULT);
 			List<Integer> testResultList = cmd.getMessageDataResult();

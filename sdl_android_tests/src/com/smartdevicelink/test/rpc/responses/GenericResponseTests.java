@@ -35,4 +35,5 @@ public class GenericResponseTests extends BaseRpcTests{
 
         testNullBase(msg);
     }
+
 }

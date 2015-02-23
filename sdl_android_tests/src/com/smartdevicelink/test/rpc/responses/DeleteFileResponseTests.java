@@ -15,13 +15,17 @@ import com.smartdevicelink.test.utils.JsonUtils;
 
 public class DeleteFileResponseTests extends BaseRpcTests{
 
-    private static final int SPACE_AVAILABLE = 58534924;
+    private int spaceAvailable;
 
+    private JSONObject paramsJson;
+    
     @Override
     protected RPCMessage createMessage(){
         DeleteFileResponse msg = new DeleteFileResponse();
-
-        msg.setSpaceAvailable(SPACE_AVAILABLE);
+        paramsJson = JsonFileReader.getParams(getCommandType(), getMessageType());
+        
+        spaceAvailable = JsonUtils.readIntegerFromJsonObject(paramsJson, DeleteFileResponse.KEY_SPACE_AVAILABLE);
+        msg.setSpaceAvailable(spaceAvailable);
 
         return msg;
     }
@@ -41,7 +45,7 @@ public class DeleteFileResponseTests extends BaseRpcTests{
         JSONObject result = new JSONObject();
 
         try{
-            result.put(DeleteFileResponse.KEY_SPACE_AVAILABLE, SPACE_AVAILABLE);
+            result.put(DeleteFileResponse.KEY_SPACE_AVAILABLE, spaceAvailable);
         }catch(JSONException e){
             /* do nothing */
         }
@@ -51,7 +55,7 @@ public class DeleteFileResponseTests extends BaseRpcTests{
 
     public void testSpaceAvailable(){
         int spaceAvailable = ( (DeleteFileResponse) msg ).getSpaceAvailable();
-        assertEquals("Space available didn't match input space available.", SPACE_AVAILABLE, spaceAvailable);
+        assertEquals("Space available didn't match input space available.", spaceAvailable, spaceAvailable);
     }
 
     public void testNull(){
@@ -64,22 +68,22 @@ public class DeleteFileResponseTests extends BaseRpcTests{
     }
     
     public void testJsonConstructor () {
-    	JSONObject commandJson = JsonFileReader.readId(getCommandType(), getMessageType());
+    	JSONObject commandJson = JsonFileReader.get(getCommandType(), getMessageType());
     	assertNotNull("Command object is null", commandJson);
     	
 		try {
 			Hashtable<String, Object> hash = JsonRPCMarshaller.deserializeJSONObject(commandJson);
 			DeleteFileResponse cmd = new DeleteFileResponse(hash);
 			
-			JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson, getMessageType());
+			JSONObject body = commandJson.getJSONObject(getMessageType());
 			assertNotNull("Command type doesn't match expected message type", body);
 			
 			// test everything in the body
-			assertEquals("Command name doesn't match input name", JsonUtils.readStringFromJsonObject(body, RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
-			assertEquals("Correlation ID doesn't match input ID", JsonUtils.readIntegerFromJsonObject(body, RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
-
-			JSONObject parameters = JsonUtils.readJsonObjectFromJsonObject(body, RPCMessage.KEY_PARAMETERS);
-			assertEquals("Space available doesn't match input space available", JsonUtils.readIntegerFromJsonObject(parameters, DeleteFileResponse.KEY_SPACE_AVAILABLE), cmd.getSpaceAvailable());
+			assertEquals("Command name doesn't match input name", body.getString(RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
+			assertEquals("Correlation ID doesn't match input ID", (Integer) body.getInt(RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
+			
+			JSONObject parameters = body.getJSONObject(RPCMessage.KEY_PARAMETERS);
+			assertEquals("Space available doesn't match input space available", (Integer) parameters.getInt(DeleteFileResponse.KEY_SPACE_AVAILABLE), cmd.getSpaceAvailable());
 
 		} 
 		catch (JSONException e) {
