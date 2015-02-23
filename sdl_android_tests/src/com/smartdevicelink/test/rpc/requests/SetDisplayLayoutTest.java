@@ -15,13 +15,17 @@ import com.smartdevicelink.test.utils.JsonUtils;
 
 public class SetDisplayLayoutTest extends BaseRpcTests {
 
-	private static final String DISPLAY_LAYOUT = "displayLayout";
+	private String displayLayout;
+	
+	private JSONObject paramsJson;
 	
 	@Override
 	protected RPCMessage createMessage() {
 		SetDisplayLayout msg = new SetDisplayLayout();
-
-		msg.setDisplayLayout(DISPLAY_LAYOUT);
+		paramsJson = JsonFileReader.getParams(getCommandType(), getMessageType());
+		
+		displayLayout = JsonUtils.readStringFromJsonObject(paramsJson, SetDisplayLayout.KEY_DISPLAY_LAYOUT);
+		msg.setDisplayLayout(displayLayout);
 
 		return msg;
 	}
@@ -41,7 +45,7 @@ public class SetDisplayLayoutTest extends BaseRpcTests {
 		JSONObject result = new JSONObject();
 
 		try {
-			result.put(SetDisplayLayout.KEY_DISPLAY_LAYOUT, DISPLAY_LAYOUT);
+			result.put(SetDisplayLayout.KEY_DISPLAY_LAYOUT, displayLayout);
 			
 		} catch (JSONException e) {
 			/* do nothing */
@@ -53,7 +57,7 @@ public class SetDisplayLayoutTest extends BaseRpcTests {
 	public void testDisplayLayout() {
 		String copy = ( (SetDisplayLayout) msg ).getDisplayLayout();
 		
-		assertEquals("Data didn't match input data.", DISPLAY_LAYOUT, copy);
+		assertEquals("Data didn't match input data.", displayLayout, copy);
 	}
 
 	public void testNull() {
@@ -66,23 +70,22 @@ public class SetDisplayLayoutTest extends BaseRpcTests {
 	}
 	
     public void testJsonConstructor () {
-    	JSONObject commandJson = JsonFileReader.readId(getCommandType(), getMessageType());
+    	JSONObject commandJson = JsonFileReader.get(getCommandType(), getMessageType());
     	assertNotNull("Command object is null", commandJson);
     	
 		try {
 			Hashtable<String, Object> hash = JsonRPCMarshaller.deserializeJSONObject(commandJson);
 			SetDisplayLayout cmd = new SetDisplayLayout(hash);
 			
-			JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson, getMessageType());
+			JSONObject body = commandJson.getJSONObject(getMessageType());
 			assertNotNull("Command type doesn't match expected message type", body);
 			
 			// test everything in the body
-			assertEquals("Command name doesn't match input name", JsonUtils.readStringFromJsonObject(body, RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
-			assertEquals("Correlation ID doesn't match input ID", JsonUtils.readIntegerFromJsonObject(body, RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
-
-			JSONObject parameters = JsonUtils.readJsonObjectFromJsonObject(body, RPCMessage.KEY_PARAMETERS);
-			assertEquals("Display layout doesn't match input layout", 
-					JsonUtils.readStringFromJsonObject(parameters, SetDisplayLayout.KEY_DISPLAY_LAYOUT), cmd.getDisplayLayout());
+			assertEquals("Command name doesn't match input name", body.getString(RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
+			assertEquals("Correlation ID doesn't match input ID", (Integer) body.getInt(RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
+			
+			JSONObject parameters = body.getJSONObject(RPCMessage.KEY_PARAMETERS);
+			assertEquals("Display layout doesn't match input layout", parameters.getString(SetDisplayLayout.KEY_DISPLAY_LAYOUT), cmd.getDisplayLayout());
 			
 		} 
 		catch (JSONException e) {

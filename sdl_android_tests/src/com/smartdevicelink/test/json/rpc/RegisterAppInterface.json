@@ -10,16 +10,16 @@
         },
         {
           "text":"Phrase 2",
-          "type":"TEXT"
+          "type":"PRE_RECORDED"
         }
       ],
-      "hmiDisplayLanguageDesired":"EN-US",
+      "hmiDisplayLanguageDesired":"FR-CA",
       "appHMIType":[
         "SOCIAL",
         "MEDIA"
       ],
       "appID":"t4weGRSWY",
-      "languageDesired":"PT-BR",
+      "languageDesired":"NO-NO",
       "deviceInfo":{
         "hardware":"My Hardware",
         "firmwareRev":"My Firmware Revision",

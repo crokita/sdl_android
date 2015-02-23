@@ -19,23 +19,36 @@ import com.smartdevicelink.test.utils.Validator;
 
 public class PutFileTest extends BaseRpcTests {
 
-	private static final FileType FILE_TYPE = FileType.BINARY;
-	private static final boolean IS_PERSISTENT = true;
-	private static final boolean SYSTEM_FILE = true;
-	private static final Integer OFFSET = 0;
-	private static final Integer LENGTH = 0;
-	private static final byte[] BULK_DATA = new byte[]{0x00, 0x01, 0x02};
+	private boolean 	isPersistent;
+	private boolean 	systemFile;
+	private FileType 	fileType;
+	private String 		fileName;
+	private int 		offset;
+	private int		 	length;
+	private byte[]  	bulkData = new byte[]{0x00, 0x01, 0x02};
+	
+	private JSONObject paramsJson;
 	
 	@Override
 	protected RPCMessage createMessage() {
 		PutFile msg = new PutFile();
-
-		msg.setFileType(FILE_TYPE);
-		msg.setPersistentFile(IS_PERSISTENT);
-		msg.setSystemFile(SYSTEM_FILE);
-		msg.setOffset(OFFSET);
-		msg.setLength(LENGTH);
-		msg.setBulkData(BULK_DATA);
+		paramsJson = JsonFileReader.getParams(getCommandType(), getMessageType());
+		
+		isPersistent = JsonUtils.readBooleanFromJsonObject(paramsJson, PutFile.KEY_PERSISTENT_FILE);
+		msg.setPersistentFile(isPersistent);
+		systemFile = JsonUtils.readBooleanFromJsonObject(paramsJson, PutFile.KEY_SYSTEM_FILE);
+		msg.setSystemFile(systemFile);
+		fileType = FileType.valueForString(JsonUtils.readStringFromJsonObject(paramsJson, PutFile.KEY_FILE_TYPE));
+		msg.setFileType(fileType);
+		fileName = JsonUtils.readStringFromJsonObject(paramsJson, PutFile.KEY_SDL_FILE_NAME);
+		msg.setSdlFileName(fileName);
+		offset = JsonUtils.readIntegerFromJsonObject(paramsJson, PutFile.KEY_OFFSET);
+		msg.setOffset(offset);
+		length = JsonUtils.readIntegerFromJsonObject(paramsJson, PutFile.KEY_LENGTH);
+		msg.setLength(length);
+		
+		
+		msg.setBulkData(bulkData);
 
 		return msg;
 	}
@@ -55,11 +68,12 @@ public class PutFileTest extends BaseRpcTests {
 		JSONObject result = new JSONObject();
 
 		try {
-			result.put(PutFile.KEY_FILE_TYPE, FILE_TYPE);
-			result.put(PutFile.KEY_PERSISTENT_FILE, IS_PERSISTENT);
-			result.put(PutFile.KEY_SYSTEM_FILE, SYSTEM_FILE);
-			result.put(PutFile.KEY_OFFSET, OFFSET);
-			result.put(PutFile.KEY_LENGTH, LENGTH);
+			result.put(PutFile.KEY_FILE_TYPE, fileType);
+			result.put(PutFile.KEY_PERSISTENT_FILE, isPersistent);
+			result.put(PutFile.KEY_SYSTEM_FILE, systemFile);
+			result.put(PutFile.KEY_SDL_FILE_NAME, fileName);
+			result.put(PutFile.KEY_OFFSET, offset);
+			result.put(PutFile.KEY_LENGTH, length);
 			
 		} catch (JSONException e) {
 			/* do nothing */
@@ -71,37 +85,43 @@ public class PutFileTest extends BaseRpcTests {
 	public void testBulkData () {
 		byte[] copy = ( (PutFile) msg ).getBulkData();
 		
-		assertTrue("Data didn't match input data.", Validator.validateBulkData(copy, BULK_DATA));
+		assertTrue("Data didn't match input data.", Validator.validateBulkData(copy, bulkData));
 	}
 	
 	public void testFileType () {
 		FileType copy = ( (PutFile) msg ).getFileType();
 		
-		assertEquals("Data didn't match input data.", FILE_TYPE, copy);
+		assertEquals("Data didn't match input data.", fileType, copy);
 	}
 	
 	public void testIsPersistent () {
 		boolean copy = ( (PutFile) msg ).getPersistentFile();
 		
-		assertEquals("Data didn't match input data.", IS_PERSISTENT, copy);
+		assertEquals("Data didn't match input data.", isPersistent, copy);
 	}
 	
 	public void testSystemFile () {
 		boolean copy = ( (PutFile) msg ).getSystemFile();
 		
-		assertEquals("Data didn't match input data.", SYSTEM_FILE, copy);
+		assertEquals("Data didn't match input data.", systemFile, copy);
+	}
+	
+	public void testSdlFileName () {
+		String copy = ( (PutFile) msg ).getSdlFileName();
+		
+		assertEquals("Data didn't match input data.", fileName, copy);
 	}
 	
 	public void testOffset () {
 		Integer copy = ( (PutFile) msg ).getOffset();
 		
-		assertEquals("Data didn't match input data.", OFFSET, copy);
+		assertEquals("Data didn't match input data.", (Integer) offset, copy);
 	}
 	
 	public void testLength () {
 		Integer copy = ( (PutFile) msg ).getLength();
 		
-		assertEquals("Data didn't match input data.", LENGTH, copy);
+		assertEquals("Data didn't match input data.", (Integer) length, copy);
 	}
 
 	public void testNull() {
@@ -118,21 +138,22 @@ public class PutFileTest extends BaseRpcTests {
 	}
 	
     public void testJsonConstructor () {
-    	JSONObject commandJson = JsonFileReader.readId(getCommandType(), getMessageType());
+    	JSONObject commandJson = JsonFileReader.get(getCommandType(), getMessageType());
     	assertNotNull("Command object is null", commandJson);
     	
 		try {
 			Hashtable<String, Object> hash = JsonRPCMarshaller.deserializeJSONObject(commandJson);
 			PutFile cmd = new PutFile(hash);
 			
-			JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson, getMessageType());
+			JSONObject body = commandJson.getJSONObject(getMessageType());
 			assertNotNull("Command type doesn't match expected message type", body);
 			
 			// test everything in the body
-			assertEquals("Command name doesn't match input name", JsonUtils.readStringFromJsonObject(body, RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
-			assertEquals("Correlation ID doesn't match input ID", JsonUtils.readIntegerFromJsonObject(body, RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
-
-			JSONObject parameters = JsonUtils.readJsonObjectFromJsonObject(body, RPCMessage.KEY_PARAMETERS);
+			assertEquals("Command name doesn't match input name", body.getString(RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
+			assertEquals("Correlation ID doesn't match input ID", (Integer) body.getInt(RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
+			
+			JSONObject parameters = body.getJSONObject(RPCMessage.KEY_PARAMETERS);
+			
 			assertEquals("Persistent file doesn't match input persistent file", 
 					JsonUtils.readBooleanFromJsonObject(parameters, PutFile.KEY_PERSISTENT_FILE), cmd.getPersistentFile());
 			assertEquals("System file doesn't match input system file", 
@@ -150,6 +171,7 @@ public class PutFileTest extends BaseRpcTests {
 			//TODO: make sure the bulk data test passes once the new code is checked out
 			for (int index = 0; index < bulkDataArray.length(); index++) {
 				Integer byteAsInt = (Integer)bulkDataArray.get(index);
+				System.out.println(cmd.getBulkData());
 				assertEquals("Bulk data item doesn't match input data item", byteAsInt, (Integer) ( (Byte)cmd.getBulkData()[index] ).intValue());
 			}
 			

@@ -4,7 +4,7 @@
     "correlationID":123,
     "parameters":{
       "targetID":46,
-      "messageLength":231,
+      "messageLength":7,
       "messageData":[
         33245,
         23456,

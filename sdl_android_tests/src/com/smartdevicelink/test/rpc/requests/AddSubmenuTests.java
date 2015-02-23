@@ -51,9 +51,9 @@ public class AddSubmenuTests extends BaseRpcTests{
         JSONObject result = new JSONObject();
 
         try{
-            result.put(AddSubMenu.KEY_MENU_ID, paramsJson.getInt(AddSubMenu.KEY_MENU_ID));
+            result.put(AddSubMenu.KEY_MENU_ID, menuId);
             result.put(AddSubMenu.KEY_MENU_NAME, paramsJson.getString(AddSubMenu.KEY_MENU_NAME));
-            result.put(AddSubMenu.KEY_POSITION, paramsJson.getInt(AddSubMenu.KEY_POSITION));
+            result.put(AddSubMenu.KEY_POSITION, position);
         }catch(JSONException e){
             /* do nothing */
         }

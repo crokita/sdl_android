@@ -1,6 +1,5 @@
 package com.smartdevicelink.test.rpc.requests;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -19,17 +18,19 @@ import com.smartdevicelink.test.utils.JsonUtils;
 
 public class ResetGlobalPropertiesTest extends BaseRpcTests {
 
-	private final List<GlobalProperty> PROPERTIES = new ArrayList<GlobalProperty>();
+	private List<GlobalProperty> properties;
 
+	private JSONObject paramsJson;
+	
 	@Override
 	protected RPCMessage createMessage() {
-		PROPERTIES.add(GlobalProperty.VRHELPTITLE);
-		PROPERTIES.add(GlobalProperty.MENUICON);
-		
 		ResetGlobalProperties msg = new ResetGlobalProperties();
+		paramsJson = JsonFileReader.getParams(getCommandType(), getMessageType());
 
-		msg.setProperties(PROPERTIES);
-
+		JSONArray propertiesArray = JsonUtils.readJsonArrayFromJsonObject(paramsJson, ResetGlobalProperties.KEY_PROPERTIES);
+		properties = JsonUtils.<GlobalProperty>createListFromJsonArray(propertiesArray);			
+		msg.setProperties(properties);
+		
 		return msg;
 	}
 
@@ -48,8 +49,7 @@ public class ResetGlobalPropertiesTest extends BaseRpcTests {
 		JSONObject result = new JSONObject();
 
 		try {
-			result.put(ResetGlobalProperties.KEY_PROPERTIES, JsonUtils.createJsonArray(PROPERTIES));
-			
+			result.put(ResetGlobalProperties.KEY_PROPERTIES, JsonUtils.createJsonArray(properties));
 		} catch (JSONException e) {
 			/* do nothing */
 		}
@@ -60,10 +60,10 @@ public class ResetGlobalPropertiesTest extends BaseRpcTests {
 	public void testProperties() {
 		List<GlobalProperty> copy = ( (ResetGlobalProperties) msg ).getProperties();
 		
-        assertEquals("List size didn't match expected size.", PROPERTIES.size(), copy.size());
+        assertEquals("List size didn't match expected size.", properties.size(), copy.size());
 
-        for(int i = 0; i < PROPERTIES.size(); i++){
-            assertEquals("Input value didn't match expected value.", PROPERTIES.get(i), copy.get(i));
+        for(int i = 0; i < properties.size(); i++){
+            assertEquals("Input value didn't match expected value.", properties.get(i), copy.get(i).toString());
         }
 	}
 
@@ -77,23 +77,23 @@ public class ResetGlobalPropertiesTest extends BaseRpcTests {
 	}
 	
     public void testJsonConstructor () {
-    	JSONObject commandJson = JsonFileReader.readId(getCommandType(), getMessageType());
+    	JSONObject commandJson = JsonFileReader.get(getCommandType(), getMessageType());
     	assertNotNull("Command object is null", commandJson);
     	
 		try {
 			Hashtable<String, Object> hash = JsonRPCMarshaller.deserializeJSONObject(commandJson);
 			ResetGlobalProperties cmd = new ResetGlobalProperties(hash);
 			
-			JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson, getMessageType());
+			JSONObject body = commandJson.getJSONObject(getMessageType());
 			assertNotNull("Command type doesn't match expected message type", body);
 			
 			// test everything in the body
-			assertEquals("Command name doesn't match input name", JsonUtils.readStringFromJsonObject(body, RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
-			assertEquals("Correlation ID doesn't match input ID", JsonUtils.readIntegerFromJsonObject(body, RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
-
-			JSONObject parameters = JsonUtils.readJsonObjectFromJsonObject(body, RPCMessage.KEY_PARAMETERS);
+			assertEquals("Command name doesn't match input name", body.getString(RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
+			assertEquals("Correlation ID doesn't match input ID", (Integer) body.getInt(RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
 			
-			JSONArray propertiesArray = JsonUtils.readJsonArrayFromJsonObject(parameters, ResetGlobalProperties.KEY_PROPERTIES);
+			JSONObject parameters = body.getJSONObject(RPCMessage.KEY_PARAMETERS);
+			
+			JSONArray propertiesArray = parameters.getJSONArray(ResetGlobalProperties.KEY_PROPERTIES);
 			for (int index = 0; index < propertiesArray.length(); index++) {
 				GlobalProperty property = GlobalProperty.valueOf(propertiesArray.get(index).toString());
 				assertEquals("Global property item doesn't match input property item",  property, cmd.getProperties().get(index));

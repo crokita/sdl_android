@@ -15,13 +15,17 @@ import com.smartdevicelink.test.utils.JsonUtils;
 
 public class DeleteCommandTests extends BaseRpcTests{
 
-    private static final int COMMAND_ID = 1045;
+    private int commandId;
 
+    private JSONObject paramsJson;
+    
     @Override
     protected RPCMessage createMessage(){
         DeleteCommand msg = new DeleteCommand();
-
-        msg.setCmdID(COMMAND_ID);
+        paramsJson = JsonFileReader.getParams(getCommandType(), getMessageType());
+        
+        commandId = JsonUtils.readIntegerFromJsonObject(paramsJson, DeleteCommand.KEY_CMD_ID);
+        msg.setCmdID(commandId);
 
         return msg;
     }
@@ -41,7 +45,7 @@ public class DeleteCommandTests extends BaseRpcTests{
         JSONObject result = new JSONObject();
 
         try{
-            result.put(DeleteCommand.KEY_CMD_ID, COMMAND_ID);
+            result.put(DeleteCommand.KEY_CMD_ID, commandId);
         }catch(JSONException e){
             /* do nothing */
         }
@@ -50,8 +54,8 @@ public class DeleteCommandTests extends BaseRpcTests{
     }
 
     public void testCommandId(){
-        int cmdId = ( (DeleteCommand) msg ).getCmdID();
-        assertEquals("Command ID didn't match input command ID.", COMMAND_ID, cmdId);
+        int commandId = ( (DeleteCommand) msg ).getCmdID();
+        assertEquals("Command ID didn't match input command ID.", this.commandId, commandId);
     }
 
     public void testNull(){
@@ -64,22 +68,22 @@ public class DeleteCommandTests extends BaseRpcTests{
     }
     
     public void testJsonConstructor () {
-    	JSONObject commandJson = JsonFileReader.readId(getCommandType(), getMessageType());
+    	JSONObject commandJson = JsonFileReader.get(getCommandType(), getMessageType());
     	assertNotNull("Command object is null", commandJson);
     	
 		try {
 			Hashtable<String, Object> hash = JsonRPCMarshaller.deserializeJSONObject(commandJson);
 			DeleteCommand cmd = new DeleteCommand(hash);
 			
-			JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson, getMessageType());
+			JSONObject body = commandJson.getJSONObject(getMessageType());
 			assertNotNull("Command type doesn't match expected message type", body);
 			
 			// test everything in the body
-			assertEquals("Command name doesn't match input name", JsonUtils.readStringFromJsonObject(body, RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
-			assertEquals("Correlation ID doesn't match input ID", JsonUtils.readIntegerFromJsonObject(body, RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
+			assertEquals("Command name doesn't match input name", body.getString(RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
+			assertEquals("Correlation ID doesn't match input ID", (Integer) body.getInt(RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
 
-			JSONObject parameters = JsonUtils.readJsonObjectFromJsonObject(body, RPCMessage.KEY_PARAMETERS);
-			assertEquals("Command ID doesn't match input ID", JsonUtils.readIntegerFromJsonObject(parameters, DeleteCommand.KEY_CMD_ID), cmd.getCmdID());
+			JSONObject parameters = body.getJSONObject(RPCMessage.KEY_PARAMETERS);
+			assertEquals("Command ID doesn't match input ID", (Integer) parameters.getInt(DeleteCommand.KEY_CMD_ID), cmd.getCmdID());
 		} 
 		catch (JSONException e) {
 			e.printStackTrace();

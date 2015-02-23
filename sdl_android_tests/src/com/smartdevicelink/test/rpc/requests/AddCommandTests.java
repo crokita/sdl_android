@@ -23,7 +23,7 @@ public class AddCommandTests extends BaseRpcTests{
     private Image           image;
     private MenuParams      menuParams;
     private List<String>    vrCommands;
-    private int		cmdId;
+    private int				cmdId;
 
 	private JSONObject paramsJson;
 	
@@ -70,7 +70,7 @@ public class AddCommandTests extends BaseRpcTests{
             result.put(AddCommand.KEY_CMD_ICON, paramsJson.getJSONObject(AddCommand.KEY_CMD_ICON));
             result.put(AddCommand.KEY_MENU_PARAMS, paramsJson.getJSONObject(AddCommand.KEY_MENU_PARAMS));
             result.put(AddCommand.KEY_VR_COMMANDS, paramsJson.getJSONArray(AddCommand.KEY_VR_COMMANDS));
-            result.put(AddCommand.KEY_CMD_ID, paramsJson.getInt(AddCommand.KEY_CMD_ID));
+            result.put(AddCommand.KEY_CMD_ID, cmdId);
         }catch(JSONException e){
             /* do nothing  */
         }

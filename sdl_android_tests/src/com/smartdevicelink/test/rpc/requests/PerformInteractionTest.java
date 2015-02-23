@@ -1,7 +1,6 @@
 package com.smartdevicelink.test.rpc.requests;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -12,15 +11,11 @@ import org.json.JSONObject;
 import com.smartdevicelink.marshal.JsonRPCMarshaller;
 import com.smartdevicelink.protocol.enums.FunctionID;
 import com.smartdevicelink.proxy.RPCMessage;
-import com.smartdevicelink.proxy.TTSChunkFactory;
-import com.smartdevicelink.proxy.rpc.Image;
 import com.smartdevicelink.proxy.rpc.PerformInteraction;
 import com.smartdevicelink.proxy.rpc.TTSChunk;
 import com.smartdevicelink.proxy.rpc.VrHelpItem;
-import com.smartdevicelink.proxy.rpc.enums.ImageType;
 import com.smartdevicelink.proxy.rpc.enums.InteractionMode;
 import com.smartdevicelink.proxy.rpc.enums.LayoutMode;
-import com.smartdevicelink.proxy.rpc.enums.SpeechCapabilities;
 import com.smartdevicelink.test.BaseRpcTests;
 import com.smartdevicelink.test.json.rpc.JsonFileReader;
 import com.smartdevicelink.test.utils.JsonUtils;
@@ -28,74 +23,71 @@ import com.smartdevicelink.test.utils.Validator;
 
 public class PerformInteractionTest extends BaseRpcTests {
 
+	private String           				initialText;
+	private InteractionMode  				mode;	
+	private LayoutMode       				interactionLayout;
+	private int          					timeout;
+	private List<Integer>    				choiceSetIds     	= new ArrayList<Integer>();
+	private List<TTSChunk>   				initialPrompt 		= new ArrayList<TTSChunk>();
+	private List<TTSChunk>   				helpPrompt 			= new ArrayList<TTSChunk>();
+	private List<TTSChunk>   				timeoutPrompt 		= new ArrayList<TTSChunk>();
+	private List<VrHelpItem> 				vrHelp 				= new ArrayList<VrHelpItem>();	
 	
-	private List<TTSChunk>   initialPrompt;
-	private List<TTSChunk>   helpPrompt;
-	private List<TTSChunk>   timeoutPrompt;
-	private List<VrHelpItem> vrHelp;	
-	
-	private static final Integer          TIMEOUT            = 0;
-	private static final String           INITIAL_TEXT       = "initialText";
-	private static final LayoutMode       INTERACTION_LAYOUT = LayoutMode.ICON_ONLY;
-	private static final InteractionMode  MODE               = InteractionMode.VR_ONLY;	
-	private final List<Integer>    CHOICE_SET_IDS     = Arrays.asList(new Integer[]{0,1});
-	
-	// VrHelpItem Constants
-	private final Image IMAGE_1  = new Image();
-	private final Image IMAGE_2  = new Image();
+	private JSONObject paramsJson;
 	
 	@Override
 	protected RPCMessage createMessage() {
 		PerformInteraction msg = new PerformInteraction();
-
-		createCustomObjects();
+		paramsJson = JsonFileReader.getParams(getCommandType(), getMessageType());
 		
-		msg.setInitialPrompt(initialPrompt);
-		msg.setHelpPrompt(helpPrompt);
-		msg.setTimeoutPrompt(timeoutPrompt);
-		msg.setVrHelp(vrHelp);
-		msg.setInteractionChoiceSetIDList(CHOICE_SET_IDS);
-		msg.setInteractionLayout(INTERACTION_LAYOUT);
-		msg.setInitialText(INITIAL_TEXT);
-		msg.setInteractionMode(MODE);
-		msg.setTimeout(TIMEOUT);
+		try {			
+			initialText = paramsJson.getString(PerformInteraction.KEY_INITIAL_TEXT);
+			msg.setInitialText(initialText);
+			mode = InteractionMode.valueForString(paramsJson.getString(PerformInteraction.KEY_INTERACTION_MODE));
+			msg.setInteractionMode(mode);
+			interactionLayout = LayoutMode.valueForString(paramsJson.getString(PerformInteraction.KEY_INTERACTION_LAYOUT));
+			msg.setInteractionLayout(interactionLayout);
+			timeout = paramsJson.getInt(PerformInteraction.KEY_TIMEOUT);
+			msg.setTimeout(timeout);
+
+			JSONArray choiceSetIdsArray = paramsJson.getJSONArray(PerformInteraction.KEY_INTERACTION_CHOICE_SET_ID_LIST);
+			choiceSetIds = JsonUtils.<Integer>createListFromJsonArray(choiceSetIdsArray);
+			msg.setInteractionChoiceSetIDList(choiceSetIds);
+			
+			JSONArray initialPromptArray = paramsJson.getJSONArray(PerformInteraction.KEY_INITIAL_PROMPT);
+			for (int index = 0; index < initialPromptArray.length(); index++) {
+				TTSChunk ttsChunk = new TTSChunk(JsonRPCMarshaller.deserializeJSONObject( (JSONObject)initialPromptArray.get(index)) );
+				initialPrompt.add(ttsChunk);
+			}
+			msg.setInitialPrompt(initialPrompt);
+			
+			JSONArray helpPromptArray = paramsJson.getJSONArray(PerformInteraction.KEY_HELP_PROMPT);
+			for (int index = 0; index < helpPromptArray.length(); index++) {
+				TTSChunk ttsChunk = new TTSChunk(JsonRPCMarshaller.deserializeJSONObject( (JSONObject)helpPromptArray.get(index)) );
+				helpPrompt.add(ttsChunk);
+			}
+			msg.setHelpPrompt(helpPrompt);
+			
+			JSONArray timeoutPromptArray = paramsJson.getJSONArray(PerformInteraction.KEY_TIMEOUT_PROMPT);
+			for (int index = 0; index < timeoutPromptArray.length(); index++) {
+				TTSChunk ttsChunk = new TTSChunk(JsonRPCMarshaller.deserializeJSONObject( (JSONObject)timeoutPromptArray.get(index)) );
+				timeoutPrompt.add(ttsChunk);
+			}
+			msg.setTimeoutPrompt(timeoutPrompt);
+			
+			JSONArray vrHelpArray = paramsJson.getJSONArray(PerformInteraction.KEY_VR_HELP);
+			for (int index = 0; index < vrHelpArray.length(); index++) {
+				VrHelpItem ttsChunk = new VrHelpItem(JsonRPCMarshaller.deserializeJSONObject( (JSONObject)vrHelpArray.get(index)) );
+				vrHelp.add(ttsChunk);
+			}
+			msg.setVrHelp(vrHelp);
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
 
 		return msg;
-	}
-	
-	private void createCustomObjects () {
-		helpPrompt    = new ArrayList<TTSChunk>(2);
-		initialPrompt = new ArrayList<TTSChunk>(2);
-		timeoutPrompt = new ArrayList<TTSChunk>(2);
-		vrHelp        = new ArrayList<VrHelpItem>(2);
-		
-		
-        helpPrompt.add(TTSChunkFactory.createChunk(SpeechCapabilities.TEXT, "Welcome to the jungle"));
-        helpPrompt.add(TTSChunkFactory.createChunk(SpeechCapabilities.TEXT, "Say a command"));
-        
-        initialPrompt.add(TTSChunkFactory.createChunk(SpeechCapabilities.TEXT, "Welcome to the jungle"));
-        initialPrompt.add(TTSChunkFactory.createChunk(SpeechCapabilities.TEXT, "Say a command"));
-        
-        timeoutPrompt.add(TTSChunkFactory.createChunk(SpeechCapabilities.TEXT, "Welcome to the jungle"));
-        timeoutPrompt.add(TTSChunkFactory.createChunk(SpeechCapabilities.TEXT, "Say a command"));
-        
-        IMAGE_1.setValue("value1");
-        IMAGE_1.setImageType(ImageType.DYNAMIC);
-        IMAGE_2.setValue("value2");
-        IMAGE_2.setImageType(ImageType.STATIC);
-        
-        VrHelpItem vrItem1 = new VrHelpItem();
-        vrItem1.setText("text");
-        vrItem1.setImage(IMAGE_1);
-        vrItem1.setPosition(0);
-        
-        VrHelpItem vrItem2 = new VrHelpItem();
-        vrItem2.setText("help");
-        vrItem2.setImage(IMAGE_2);
-        vrItem2.setPosition(1);
-        
-        vrHelp.add(vrItem1);
-        vrHelp.add(vrItem2);
 	}
 
 	@Override
@@ -110,54 +102,18 @@ public class PerformInteractionTest extends BaseRpcTests {
 
 	@Override
 	protected JSONObject getExpectedParameters(int sdlVersion) {
-		JSONObject result         = new JSONObject(),
-				   ttsChunk       = new JSONObject(),
-				   vrHelpItem     = new JSONObject(),
-				   image          = new JSONObject();
-		JSONArray  helpPrompts    = new JSONArray(), 
-				   initialPrompts = new JSONArray(), 
-				   timeoutPrompts = new JSONArray(),
-				   vrHelpItems    = new JSONArray();
+		JSONObject result = new JSONObject();
 
-		try {
-			ttsChunk.put(TTSChunk.KEY_TEXT, "Welcome to the jungle");
-			ttsChunk.put(TTSChunk.KEY_TYPE, SpeechCapabilities.TEXT);
-			helpPrompts.put(ttsChunk);
-			initialPrompts.put(ttsChunk);
-			timeoutPrompts.put(ttsChunk);
-			
-			ttsChunk = new JSONObject();
-			ttsChunk.put(TTSChunk.KEY_TEXT, "Say a command");
-			ttsChunk.put(TTSChunk.KEY_TYPE, SpeechCapabilities.TEXT);
-			helpPrompts.put(ttsChunk);
-			initialPrompts.put(ttsChunk);
-			timeoutPrompts.put(ttsChunk);
-			
-			image.put(Image.KEY_IMAGE_TYPE, ImageType.DYNAMIC);
-			image.put(Image.KEY_VALUE, "value1");			
-			vrHelpItem.put(VrHelpItem.KEY_TEXT, "text");
-			vrHelpItem.put(VrHelpItem.KEY_IMAGE, image);
-			vrHelpItem.put(VrHelpItem.KEY_POSITION, 0);
-			vrHelpItems.put(vrHelpItem);
-			
-			image = new JSONObject();
-			image.put(Image.KEY_IMAGE_TYPE, ImageType.STATIC);
-			image.put(Image.KEY_VALUE, "value2");	
-			vrHelpItem = new JSONObject();
-			vrHelpItem.put(VrHelpItem.KEY_TEXT, "help");
-			vrHelpItem.put(VrHelpItem.KEY_IMAGE, image);
-			vrHelpItem.put(VrHelpItem.KEY_POSITION, 1);
-			vrHelpItems.put(vrHelpItem);
-			
-			result.put(PerformInteraction.KEY_INITIAL_PROMPT,     initialPrompts);
-			result.put(PerformInteraction.KEY_HELP_PROMPT,        helpPrompts);
-			result.put(PerformInteraction.KEY_TIMEOUT_PROMPT,     timeoutPrompts);
-			result.put(PerformInteraction.KEY_VR_HELP,            vrHelpItems);
-			result.put(PerformInteraction.KEY_INTERACTION_CHOICE_SET_ID_LIST,     JsonUtils.createJsonArray(CHOICE_SET_IDS));
-			result.put(PerformInteraction.KEY_INTERACTION_LAYOUT, INTERACTION_LAYOUT);
-			result.put(PerformInteraction.KEY_INITIAL_TEXT,       INITIAL_TEXT);
-			result.put(PerformInteraction.KEY_INTERACTION_MODE,   MODE);
-			result.put(PerformInteraction.KEY_TIMEOUT,            TIMEOUT);
+		try {			
+			result.put(PerformInteraction.KEY_INITIAL_PROMPT,     paramsJson.getJSONArray(PerformInteraction.KEY_INITIAL_PROMPT));
+			result.put(PerformInteraction.KEY_HELP_PROMPT,        paramsJson.getJSONArray(PerformInteraction.KEY_HELP_PROMPT));
+			result.put(PerformInteraction.KEY_TIMEOUT_PROMPT,     paramsJson.getJSONArray(PerformInteraction.KEY_TIMEOUT_PROMPT));
+			result.put(PerformInteraction.KEY_VR_HELP,            paramsJson.getJSONArray(PerformInteraction.KEY_VR_HELP));
+			result.put(PerformInteraction.KEY_INTERACTION_CHOICE_SET_ID_LIST, paramsJson.getJSONArray(PerformInteraction.KEY_INTERACTION_CHOICE_SET_ID_LIST));
+			result.put(PerformInteraction.KEY_INTERACTION_LAYOUT, interactionLayout);
+			result.put(PerformInteraction.KEY_INITIAL_TEXT,       initialText);
+			result.put(PerformInteraction.KEY_INTERACTION_MODE,   mode);
+			result.put(PerformInteraction.KEY_TIMEOUT,            timeout);
 			
 		} catch (JSONException e) {
 			/* do nothing */
@@ -197,31 +153,31 @@ public class PerformInteractionTest extends BaseRpcTests {
 	public void testChoiceSetIds () {
 		List<Integer> copy = ( (PerformInteraction) msg).getInteractionChoiceSetIDList();
 		
-		assertEquals("Choice set ids didn't match input data.", CHOICE_SET_IDS, copy);
+		assertEquals("Choice set ids didn't match input data.", choiceSetIds, copy);
 	}
 	
 	public void testInteractionLayout () {
 		LayoutMode copy = ( (PerformInteraction) msg).getInteractionLayout();
 		
-		assertEquals("Interaction layout didn't match input data.", INTERACTION_LAYOUT, copy);
+		assertEquals("Interaction layout didn't match input data.", interactionLayout, copy);
 	}
 	
 	public void testInitialText () {
 		String copy = ( (PerformInteraction) msg).getInitialText();
 		
-		assertEquals("Initial text didn't match input data.", INITIAL_TEXT, copy);
+		assertEquals("Initial text didn't match input data.", initialText, copy);
 	}
 
 	public void testInteractionMode () {
 		InteractionMode copy = ( (PerformInteraction) msg).getInteractionMode();
 		
-		assertEquals("Interaction mode didn't match input data.", MODE, copy);
+		assertEquals("Interaction mode didn't match input data.", mode, copy);
 	}
 	
 	public void testTimeout () {
 		Integer copy = ( (PerformInteraction) msg).getTimeout();
 		
-		assertEquals("Timeout didn't match input data.", TIMEOUT, copy);
+		assertEquals("Timeout didn't match input data.", (Integer) timeout, copy);
 	}
 	
 	public void testNull() {
@@ -242,25 +198,25 @@ public class PerformInteractionTest extends BaseRpcTests {
 	}
 	
     public void testJsonConstructor () {
-    	JSONObject commandJson = JsonFileReader.readId(getCommandType(), getMessageType());
+    	JSONObject commandJson = JsonFileReader.get(getCommandType(), getMessageType());
     	assertNotNull("Command object is null", commandJson);
     	
 		try {
 			Hashtable<String, Object> hash = JsonRPCMarshaller.deserializeJSONObject(commandJson);
 			PerformInteraction cmd = new PerformInteraction(hash);
 			
-			JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson, getMessageType());
+			JSONObject body = commandJson.getJSONObject(getMessageType());
 			assertNotNull("Command type doesn't match expected message type", body);
 			
 			// test everything in the body
-			assertEquals("Command name doesn't match input name", JsonUtils.readStringFromJsonObject(body, RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
-			assertEquals("Correlation ID doesn't match input ID", JsonUtils.readIntegerFromJsonObject(body, RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
-
-			JSONObject parameters = JsonUtils.readJsonObjectFromJsonObject(body, RPCMessage.KEY_PARAMETERS);
+			assertEquals("Command name doesn't match input name", body.getString(RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
+			assertEquals("Correlation ID doesn't match input ID", (Integer) body.getInt(RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
+			
+			JSONObject parameters = body.getJSONObject(RPCMessage.KEY_PARAMETERS);
 			assertEquals("Initial text doesn't match input text", 
-					JsonUtils.readStringFromJsonObject(parameters, PerformInteraction.KEY_INITIAL_TEXT), cmd.getInitialText());
+					parameters.getString(PerformInteraction.KEY_INITIAL_TEXT), cmd.getInitialText());
 			assertEquals("Interaction mode doesn't match input mode", 
-					JsonUtils.readStringFromJsonObject(parameters, PerformInteraction.KEY_INTERACTION_MODE), cmd.getInteractionMode().toString());
+					parameters.getString(PerformInteraction.KEY_INTERACTION_MODE), cmd.getInteractionMode().toString());
 
 			List<Integer> interactionIDList = JsonUtils.readIntegerListFromJsonObject(parameters, PerformInteraction.KEY_INTERACTION_CHOICE_SET_ID_LIST);
 			List<Integer> testIDList = cmd.getInteractionChoiceSetIDList();
@@ -268,9 +224,9 @@ public class PerformInteractionTest extends BaseRpcTests {
 			assertTrue("Interaction choice set ID list doesn't match input ID list", Validator.validateIntegerList(interactionIDList, testIDList));
 			
 			assertEquals("Interaction layout doesn't match input layout", 
-					JsonUtils.readStringFromJsonObject(parameters, PerformInteraction.KEY_INTERACTION_LAYOUT), cmd.getInteractionLayout().toString());
+					parameters.getString(PerformInteraction.KEY_INTERACTION_LAYOUT), cmd.getInteractionLayout().toString());
 			
-			JSONArray initalPromptArray = JsonUtils.readJsonArrayFromJsonObject(parameters, PerformInteraction.KEY_INITIAL_PROMPT);
+			JSONArray initalPromptArray = parameters.getJSONArray(PerformInteraction.KEY_INITIAL_PROMPT);
 			List<TTSChunk> initalPromptList = new ArrayList<TTSChunk>();
 			for (int index = 0; index < initalPromptArray.length(); index++) {
 	        	TTSChunk chunk = new TTSChunk(JsonRPCMarshaller.deserializeJSONObject( (JSONObject)initalPromptArray.get(index)) );
@@ -278,7 +234,7 @@ public class PerformInteractionTest extends BaseRpcTests {
 			}
 			assertTrue("Initial prompt list doesn't match input prompt list",  Validator.validateTtsChunks(initalPromptList, cmd.getInitialPrompt()));
 			
-			JSONArray helpPromptArray = JsonUtils.readJsonArrayFromJsonObject(parameters, PerformInteraction.KEY_HELP_PROMPT);
+			JSONArray helpPromptArray = parameters.getJSONArray(PerformInteraction.KEY_HELP_PROMPT);
 			List<TTSChunk> helpPromptList = new ArrayList<TTSChunk>();
 			for (int index = 0; index < helpPromptArray.length(); index++) {
 	        	TTSChunk chunk = new TTSChunk(JsonRPCMarshaller.deserializeJSONObject( (JSONObject)helpPromptArray.get(index)) );
@@ -286,7 +242,7 @@ public class PerformInteractionTest extends BaseRpcTests {
 			}
 			assertTrue("Help prompt list doesn't match input prompt list",  Validator.validateTtsChunks(helpPromptList, cmd.getHelpPrompt()));
 			
-			JSONArray timeoutPromptArray = JsonUtils.readJsonArrayFromJsonObject(parameters, PerformInteraction.KEY_TIMEOUT_PROMPT);
+			JSONArray timeoutPromptArray = parameters.getJSONArray(PerformInteraction.KEY_TIMEOUT_PROMPT);
 			List<TTSChunk> timeoutPromptList = new ArrayList<TTSChunk>();
 			for (int index = 0; index < timeoutPromptArray.length(); index++) {
 	        	TTSChunk chunk = new TTSChunk(JsonRPCMarshaller.deserializeJSONObject( (JSONObject)timeoutPromptArray.get(index)) );
@@ -294,9 +250,9 @@ public class PerformInteractionTest extends BaseRpcTests {
 			}
 			assertTrue("Timeout prompt list doesn't match input prompt list",  Validator.validateTtsChunks(timeoutPromptList, cmd.getTimeoutPrompt()));
 			
-			assertEquals("Timeout doesn't match input timeout", JsonUtils.readIntegerFromJsonObject(parameters, PerformInteraction.KEY_TIMEOUT), cmd.getTimeout());
+			assertEquals("Timeout doesn't match input timeout", (Integer) parameters.getInt(PerformInteraction.KEY_TIMEOUT), cmd.getTimeout());
 			
-			JSONArray vrHelpArray = JsonUtils.readJsonArrayFromJsonObject(parameters, PerformInteraction.KEY_VR_HELP);
+			JSONArray vrHelpArray = parameters.getJSONArray(PerformInteraction.KEY_VR_HELP);
 			List<VrHelpItem> vrHelpList= new ArrayList<VrHelpItem>();
 			for (int index = 0; index < vrHelpArray.length(); index++) {
 				VrHelpItem vrHelpItem = new VrHelpItem(JsonRPCMarshaller.deserializeJSONObject( (JSONObject)vrHelpArray.get(index)) );

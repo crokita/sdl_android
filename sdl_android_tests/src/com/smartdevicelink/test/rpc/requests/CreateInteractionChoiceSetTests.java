@@ -15,49 +15,36 @@ import com.smartdevicelink.proxy.rpc.Choice;
 import com.smartdevicelink.proxy.rpc.CreateInteractionChoiceSet;
 import com.smartdevicelink.test.BaseRpcTests;
 import com.smartdevicelink.test.json.rpc.JsonFileReader;
-import com.smartdevicelink.test.utils.JsonUtils;
 import com.smartdevicelink.test.utils.Validator;
 
 public class CreateInteractionChoiceSetTests extends BaseRpcTests{
 
-    //private static final String TAG = "CreateInteractionChoiceSetTests";
+    private int    				choiceId;
+    private List<Choice>        choiceList = new ArrayList<Choice>();
+
+    private JSONObject paramsJson;
     
-    private static final int    CHOICE_SET_ID          = 16164;
-    private static final int    CHOICE1_ID             = 5163;
-    private static final String CHOICE1_NAME           = "Choice #1";
-    private static final String CHOICE1_SECONDARY_TEXT = "Second text";
-    private static final int    CHOICE2_ID             = 8151;
-    private static final String CHOICE2_NAME           = "Choice #2";
-    private static final String CHOICE2_SECONDARY_TEXT = "Second text";
-
-    private List<Choice>        choiceList;
-
     @Override
     protected RPCMessage createMessage(){
         CreateInteractionChoiceSet msg = new CreateInteractionChoiceSet();
+        paramsJson = JsonFileReader.getParams(getCommandType(), getMessageType());
 
-        createChoiceList();
-
-        msg.setInteractionChoiceSetID(CHOICE_SET_ID);
-        msg.setChoiceSet(choiceList);
+        try {
+        	choiceId = paramsJson.getInt(CreateInteractionChoiceSet.KEY_INTERACTION_CHOICE_SET_ID);
+	        msg.setInteractionChoiceSetID(choiceId);
+	        
+			JSONArray choiceArray = paramsJson.getJSONArray(CreateInteractionChoiceSet.KEY_CHOICE_SET);
+			for (int index = 0; index < choiceArray.length(); index++) {
+				Choice choice = new Choice(JsonRPCMarshaller.deserializeJSONObject( (JSONObject)choiceArray.get(index)) );
+				choiceList.add(choice);
+			}
+			msg.setChoiceSet(choiceList);
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 
         return msg;
-    }
-
-    private void createChoiceList(){
-        choiceList = new ArrayList<Choice>(2);
-
-        Choice choice = new Choice();
-        choice.setChoiceID(CHOICE1_ID);
-        choice.setMenuName(CHOICE1_NAME);
-        choice.setSecondaryText(CHOICE1_SECONDARY_TEXT);
-        choiceList.add(choice);
-
-        choice = new Choice();
-        choice.setChoiceID(CHOICE2_ID);
-        choice.setMenuName(CHOICE2_NAME);
-        choice.setSecondaryText(CHOICE2_SECONDARY_TEXT);
-        choiceList.add(choice);
     }
 
     @Override
@@ -72,23 +59,11 @@ public class CreateInteractionChoiceSetTests extends BaseRpcTests{
 
     @Override
     protected JSONObject getExpectedParameters(int sdlVersion){
-        JSONObject result = new JSONObject(), choice1 = new JSONObject(), choice2 = new JSONObject();
-        JSONArray choiceArray = new JSONArray();
+        JSONObject result = new JSONObject();
 
         try{
-            choice1.put(Choice.KEY_CHOICE_ID, CHOICE1_ID);
-            choice1.put(Choice.KEY_MENU_NAME, CHOICE1_NAME);
-            choice1.put(Choice.KEY_SECONDARY_TEXT, CHOICE1_SECONDARY_TEXT);
-
-            choice2.put(Choice.KEY_CHOICE_ID, CHOICE2_ID);
-            choice2.put(Choice.KEY_MENU_NAME, CHOICE2_NAME);
-            choice2.put(Choice.KEY_SECONDARY_TEXT, CHOICE2_SECONDARY_TEXT);
-
-            choiceArray.put(choice1);
-            choiceArray.put(choice2);
-
-            result.put(CreateInteractionChoiceSet.KEY_INTERACTION_CHOICE_SET_ID, CHOICE_SET_ID);
-            result.put(CreateInteractionChoiceSet.KEY_CHOICE_SET, choiceArray);
+            result.put(CreateInteractionChoiceSet.KEY_INTERACTION_CHOICE_SET_ID, choiceId);
+            result.put(CreateInteractionChoiceSet.KEY_CHOICE_SET, paramsJson.getJSONArray(CreateInteractionChoiceSet.KEY_CHOICE_SET));
         }catch(JSONException e){
             /* do nothing */
         }
@@ -97,8 +72,8 @@ public class CreateInteractionChoiceSetTests extends BaseRpcTests{
     }
 
     public void testChoiceSetId(){
-        int cmdId = ( (CreateInteractionChoiceSet) msg ).getInteractionChoiceSetID();
-        assertEquals("Command ID didn't match input command ID.", CHOICE_SET_ID, cmdId);
+        int choiceId = ( (CreateInteractionChoiceSet) msg ).getInteractionChoiceSetID();
+        assertEquals("Command ID didn't match input command ID.", this.choiceId, choiceId);
     }
 
     public void testChoiceList(){
@@ -106,9 +81,7 @@ public class CreateInteractionChoiceSetTests extends BaseRpcTests{
 
         assertEquals("Choice list size didn't match expected size.", choiceList.size(), copy.size());
         for(int i = 0; i < copy.size(); i++){
-            //log("validating choice at index " + i + ": \"" + choiceList.get(i) + "\" vs. \"" + copy.get(i) + "\"");
-            assertTrue("Choice at index " + i + " didn't match expected value.",
-                    Validator.validateChoice(choiceList.get(i), copy.get(i)));
+            assertTrue("Choice at index " + i + " didn't match expected value.", Validator.validateChoice(choiceList.get(i), copy.get(i)));
         }
     }
 
@@ -123,25 +96,25 @@ public class CreateInteractionChoiceSetTests extends BaseRpcTests{
     }
 
     public void testJsonConstructor () {
-    	JSONObject commandJson = JsonFileReader.readId(getCommandType(), getMessageType());
+    	JSONObject commandJson = JsonFileReader.get(getCommandType(), getMessageType());
     	assertNotNull("Command object is null", commandJson);
     	
 		try {
 			Hashtable<String, Object> hash = JsonRPCMarshaller.deserializeJSONObject(commandJson);
 			CreateInteractionChoiceSet cmd = new CreateInteractionChoiceSet(hash);
 			
-			JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson, getMessageType());
+			JSONObject body = commandJson.getJSONObject(getMessageType());
 			assertNotNull("Command type doesn't match expected message type", body);
 			
 			// test everything in the body
-			assertEquals("Command name doesn't match input name", JsonUtils.readStringFromJsonObject(body, RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
-			assertEquals("Correlation ID doesn't match input ID", JsonUtils.readIntegerFromJsonObject(body, RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
+			assertEquals("Command name doesn't match input name", body.getString(RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
+			assertEquals("Correlation ID doesn't match input ID", (Integer) body.getInt(RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
 
-			JSONObject parameters = JsonUtils.readJsonObjectFromJsonObject(body, RPCMessage.KEY_PARAMETERS);
+			JSONObject parameters = body.getJSONObject(RPCMessage.KEY_PARAMETERS);
 			assertEquals("Interaction choice set ID doesn't match input ID", 
-					JsonUtils.readIntegerFromJsonObject(parameters, CreateInteractionChoiceSet.KEY_INTERACTION_CHOICE_SET_ID), cmd.getInteractionChoiceSetID());
+					(Integer) parameters.getInt(CreateInteractionChoiceSet.KEY_INTERACTION_CHOICE_SET_ID), cmd.getInteractionChoiceSetID());
 			
-			JSONArray choiceSetArray = JsonUtils.readJsonArrayFromJsonObject(parameters, CreateInteractionChoiceSet.KEY_CHOICE_SET);
+			JSONArray choiceSetArray = parameters.getJSONArray(CreateInteractionChoiceSet.KEY_CHOICE_SET);
 			for (int index = 0; index < choiceSetArray.length(); index++) {
 				Choice chunk = new Choice(JsonRPCMarshaller.deserializeJSONObject( (JSONObject)choiceSetArray.get(index)) );
 				assertTrue("Choice item doesn't match input Choice item",  Validator.validateChoice(chunk, cmd.getChoiceSet().get(index)) );

@@ -1,9 +1,10 @@
 package com.smartdevicelink.test.rpc.requests;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,16 +19,23 @@ import com.smartdevicelink.test.utils.Validator;
 
 public class ReadDIDTest extends BaseRpcTests {
 	
-	private static final Integer ECU_NAME = -1;
-	private final List<Integer> DID_LOCATIONS = Arrays.asList(new Integer[]{-1,-2});
+	private int 			ecuName;
+	private List<Integer> 	didLocations = new ArrayList<Integer>();
+	
+	private JSONObject paramsJson;
 	
 	@Override
 	protected RPCMessage createMessage() {
 		ReadDID msg = new ReadDID();
+		paramsJson = JsonFileReader.getParams(getCommandType(), getMessageType());
 
-		msg.setEcuName(ECU_NAME);
-		msg.setDidLocation(DID_LOCATIONS);
-
+		ecuName = JsonUtils.readIntegerFromJsonObject(paramsJson, ReadDID.KEY_ECU_NAME);
+		msg.setEcuName(ecuName);
+		
+		JSONArray didLocationsArray = JsonUtils.readJsonArrayFromJsonObject(paramsJson, ReadDID.KEY_DID_LOCATION);
+		didLocations = JsonUtils.<Integer>createListFromJsonArray(didLocationsArray);
+		msg.setDidLocation(didLocations);
+		
 		return msg;
 	}
 
@@ -46,8 +54,8 @@ public class ReadDIDTest extends BaseRpcTests {
 		JSONObject result = new JSONObject();
 
 		try {
-			result.put(ReadDID.KEY_ECU_NAME, ECU_NAME);
-			result.put(ReadDID.KEY_DID_LOCATION, JsonUtils.createJsonArray(DID_LOCATIONS));
+			result.put(ReadDID.KEY_ECU_NAME, ecuName);
+			result.put(ReadDID.KEY_DID_LOCATION, paramsJson.getJSONArray(ReadDID.KEY_DID_LOCATION));
 			
 		} catch (JSONException e) {
 			/* do nothing */
@@ -59,13 +67,13 @@ public class ReadDIDTest extends BaseRpcTests {
 	public void testEcuName() {
 		Integer copy = ( (ReadDID) msg ).getEcuName();
 		
-		assertEquals("Data didn't match input data.", ECU_NAME, copy);
+		assertEquals("Data didn't match input data.", (Integer) ecuName, copy);
 	}
 	
 	public void testDidLocation () {
 		List<Integer> copy = ( (ReadDID) msg ).getDidLocation();
 		
-		assertEquals("Data didn't match input data.", DID_LOCATIONS, copy);
+		assertEquals("Data didn't match input data.", didLocations, copy);
 	}
 
 	public void testNull() {
@@ -79,28 +87,27 @@ public class ReadDIDTest extends BaseRpcTests {
 	}
 
     public void testJsonConstructor () {
-    	JSONObject commandJson = JsonFileReader.readId(getCommandType(), getMessageType());
+    	JSONObject commandJson = JsonFileReader.get(getCommandType(), getMessageType());
     	assertNotNull("Command object is null", commandJson);
     	
 		try {
 			Hashtable<String, Object> hash = JsonRPCMarshaller.deserializeJSONObject(commandJson);
 			ReadDID cmd = new ReadDID(hash);
 			
-			JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson, getMessageType());
+			JSONObject body = commandJson.getJSONObject(getMessageType());
 			assertNotNull("Command type doesn't match expected message type", body);
 			
 			// test everything in the body
-			assertEquals("Command name doesn't match input name", JsonUtils.readStringFromJsonObject(body, RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
-			assertEquals("Correlation ID doesn't match input ID", JsonUtils.readIntegerFromJsonObject(body, RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
-
-			JSONObject parameters = JsonUtils.readJsonObjectFromJsonObject(body, RPCMessage.KEY_PARAMETERS);
-			assertEquals("ECU name doesn't match input name", JsonUtils.readIntegerFromJsonObject(parameters, ReadDID.KEY_ECU_NAME), cmd.getEcuName());
+			assertEquals("Command name doesn't match input name", body.getString(RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
+			assertEquals("Correlation ID doesn't match input ID", (Integer) body.getInt(RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
+			
+			JSONObject parameters = body.getJSONObject(RPCMessage.KEY_PARAMETERS);
+			assertEquals("ECU name doesn't match input name", (Integer) parameters.getInt(ReadDID.KEY_ECU_NAME), cmd.getEcuName());
 
 			List<Integer> didLocationList = JsonUtils.readIntegerListFromJsonObject(parameters, ReadDID.KEY_DID_LOCATION);
 			List<Integer> testLocationList = cmd.getDidLocation();
 			assertEquals("DID location list length not same as reference location list length", didLocationList.size(), testLocationList.size());
 			assertTrue("DID location list doesn't match input location list", Validator.validateIntegerList(didLocationList, testLocationList));
-			
 			
 		} 
 		catch (JSONException e) {

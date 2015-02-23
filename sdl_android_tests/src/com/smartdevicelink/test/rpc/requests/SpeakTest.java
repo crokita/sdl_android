@@ -11,37 +11,38 @@ import org.json.JSONObject;
 import com.smartdevicelink.marshal.JsonRPCMarshaller;
 import com.smartdevicelink.protocol.enums.FunctionID;
 import com.smartdevicelink.proxy.RPCMessage;
-import com.smartdevicelink.proxy.TTSChunkFactory;
 import com.smartdevicelink.proxy.rpc.Speak;
 import com.smartdevicelink.proxy.rpc.TTSChunk;
-import com.smartdevicelink.proxy.rpc.enums.SpeechCapabilities;
 import com.smartdevicelink.test.BaseRpcTests;
 import com.smartdevicelink.test.json.rpc.JsonFileReader;
-import com.smartdevicelink.test.utils.JsonUtils;
 import com.smartdevicelink.test.utils.Validator;
 
 public class SpeakTest extends BaseRpcTests {
 
-	private List<TTSChunk> ttsChunks;
+	private List<TTSChunk> ttsChunks = new ArrayList<TTSChunk>();
+	
+	private JSONObject paramsJson;
 	
 	@Override
 	protected RPCMessage createMessage() {
 		Speak msg = new Speak();
+		paramsJson = JsonFileReader.getParams(getCommandType(), getMessageType());
 		
-		createCustomObjects();
-
-		msg.setTtsChunks(ttsChunks);
+		try {			
+			JSONArray ttsChunkArray = paramsJson.getJSONArray(Speak.KEY_TTS_CHUNKS);
+			for (int index = 0; index < ttsChunkArray.length(); index++) {
+				TTSChunk ttsChunk = new TTSChunk(JsonRPCMarshaller.deserializeJSONObject( (JSONObject)ttsChunkArray.get(index)) );
+				ttsChunks.add(ttsChunk);
+			}
+			msg.setTtsChunks(ttsChunks);
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 
 		return msg;
 	}
 	
-	private void createCustomObjects () {
-		ttsChunks  = new ArrayList<TTSChunk>(2);
-		
-		ttsChunks.add(TTSChunkFactory.createChunk(SpeechCapabilities.TEXT, "Welcome to the jungle"));
-		ttsChunks.add(TTSChunkFactory.createChunk(SpeechCapabilities.TEXT, "Say a command"));
-	}
-
 	@Override
 	protected String getMessageType() {
 		return RPCMessage.KEY_REQUEST;
@@ -55,21 +56,9 @@ public class SpeakTest extends BaseRpcTests {
 	@Override
 	protected JSONObject getExpectedParameters(int sdlVersion) {
 		JSONObject result = new JSONObject();
-		JSONArray ttsChunk = new JSONArray();
-		
+
 		try {
-		    JSONObject chunk = new JSONObject();
-			chunk.put(TTSChunk.KEY_TEXT, "Welcome to the jungle");
-	        chunk.put(TTSChunk.KEY_TYPE, SpeechCapabilities.TEXT);
-	        ttsChunk.put(chunk);
-	        
-	        chunk = new JSONObject();
-			chunk.put(TTSChunk.KEY_TEXT, "Say a command");
-			chunk.put(TTSChunk.KEY_TYPE, SpeechCapabilities.TEXT);
-			ttsChunk.put(chunk);
-	        
-			result.put(Speak.KEY_TTS_CHUNKS, ttsChunk);
-			
+			result.put(Speak.KEY_TTS_CHUNKS, paramsJson.getJSONArray(Speak.KEY_TTS_CHUNKS));
 		} catch (JSONException e) {
 			/* do nothing */
 		}
@@ -93,23 +82,23 @@ public class SpeakTest extends BaseRpcTests {
 	}
 	
     public void testJsonConstructor () {
-    	JSONObject commandJson = JsonFileReader.readId(getCommandType(), getMessageType());
+    	JSONObject commandJson = JsonFileReader.get(getCommandType(), getMessageType());
     	assertNotNull("Command object is null", commandJson);
     	
 		try {
 			Hashtable<String, Object> hash = JsonRPCMarshaller.deserializeJSONObject(commandJson);
 			Speak cmd = new Speak(hash);
 			
-			JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson, getMessageType());
+			JSONObject body = commandJson.getJSONObject(getMessageType());
 			assertNotNull("Command type doesn't match expected message type", body);
 			
 			// test everything in the body
-			assertEquals("Command name doesn't match input name", JsonUtils.readStringFromJsonObject(body, RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
-			assertEquals("Correlation ID doesn't match input ID", JsonUtils.readIntegerFromJsonObject(body, RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
-
-			JSONObject parameters = JsonUtils.readJsonObjectFromJsonObject(body, RPCMessage.KEY_PARAMETERS);
+			assertEquals("Command name doesn't match input name", body.getString(RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
+			assertEquals("Correlation ID doesn't match input ID", (Integer) body.getInt(RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
 			
-			JSONArray ttsChunkArray = JsonUtils.readJsonArrayFromJsonObject(parameters, Speak.KEY_TTS_CHUNKS);
+			JSONObject parameters = body.getJSONObject(RPCMessage.KEY_PARAMETERS);
+			
+			JSONArray ttsChunkArray = parameters.getJSONArray(Speak.KEY_TTS_CHUNKS);
 			List<TTSChunk> ttsChunkList = new ArrayList<TTSChunk>();
 			for (int index = 0; index < ttsChunkArray.length(); index++) {
 	        	TTSChunk chunk = new TTSChunk(JsonRPCMarshaller.deserializeJSONObject( (JSONObject)ttsChunkArray.get(index)) );

@@ -16,13 +16,18 @@ import com.smartdevicelink.proxy.rpc.SoftButton;
 import com.smartdevicelink.proxy.rpc.TTSChunk;
 import com.smartdevicelink.test.BaseRpcTests;
 import com.smartdevicelink.test.json.rpc.JsonFileReader;
-import com.smartdevicelink.test.utils.JsonUtils;
 import com.smartdevicelink.test.utils.Validator;
 
 public class AlertTests extends BaseRpcTests{
-    
-    private List<TTSChunk> TTS_CHUNK_LIST;
-    private List<SoftButton> SOFT_BUTTON_LIST;
+	
+	private int					duration;
+	private String				alertText1;
+	private String				alertText2;
+	private String				alertText3;
+	private boolean				playTone;
+	private boolean				progressIndicator;
+    private List<TTSChunk> 		ttsChunkList = new ArrayList<TTSChunk>();
+    private List<SoftButton> 	softButtonList = new ArrayList<SoftButton>();
     
     private JSONObject paramsJson;
     
@@ -30,29 +35,34 @@ public class AlertTests extends BaseRpcTests{
     protected RPCMessage createMessage(){
         Alert msg = new Alert();
         paramsJson = JsonFileReader.getParams(getCommandType(), getMessageType());
-        
+
 		try {	
-	        msg.setDuration(JsonUtils.readIntegerFromJsonObject(paramsJson, Alert.KEY_DURATION));
-	        msg.setAlertText1(JsonUtils.readStringFromJsonObject(paramsJson, Alert.KEY_ALERT_TEXT_1));
-	        msg.setAlertText2(JsonUtils.readStringFromJsonObject(paramsJson, Alert.KEY_ALERT_TEXT_2));
-	        msg.setAlertText3(JsonUtils.readStringFromJsonObject(paramsJson, Alert.KEY_ALERT_TEXT_3));
-	        msg.setPlayTone(JsonUtils.readBooleanFromJsonObject(paramsJson, Alert.KEY_PLAY_TONE));
-	        msg.setProgressIndicator(JsonUtils.readBooleanFromJsonObject(paramsJson, Alert.KEY_PROGRESS_INDICATOR));
-	        
-			JSONArray ttsChunkArray = JsonUtils.readJsonArrayFromJsonObject(paramsJson, Alert.KEY_TTS_CHUNKS);
+			duration = paramsJson.getInt(Alert.KEY_DURATION);
+			msg.setDuration(duration);
+			alertText1 = paramsJson.getString(Alert.KEY_ALERT_TEXT_1);
+			msg.setAlertText1(alertText1);
+			alertText2 = paramsJson.getString(Alert.KEY_ALERT_TEXT_2);
+			msg.setAlertText2(alertText2);
+			alertText3 = paramsJson.getString(Alert.KEY_ALERT_TEXT_3);
+			msg.setAlertText3(alertText3);
+			playTone = paramsJson.getBoolean(Alert.KEY_PLAY_TONE);
+			msg.setPlayTone(playTone);
+			progressIndicator = paramsJson.getBoolean(Alert.KEY_PROGRESS_INDICATOR);
+			msg.setProgressIndicator(progressIndicator);
+		        
+			JSONArray ttsChunkArray = paramsJson.getJSONArray(Alert.KEY_TTS_CHUNKS);
 			for (int index = 0; index < ttsChunkArray.length(); index++) {
 				TTSChunk ttsChunk = new TTSChunk(JsonRPCMarshaller.deserializeJSONObject( (JSONObject)ttsChunkArray.get(index)) );
-				TTS_CHUNK_LIST.add(ttsChunk);
+				ttsChunkList.add(ttsChunk);
 			}
+			msg.setTtsChunks(ttsChunkList);
 			
-			msg.setTtsChunks(TTS_CHUNK_LIST);
-			
-			JSONArray softButtonsArray = JsonUtils.readJsonArrayFromJsonObject(paramsJson, Alert.KEY_SOFT_BUTTONS);
+			JSONArray softButtonsArray = paramsJson.getJSONArray(Alert.KEY_SOFT_BUTTONS);
 			for (int index = 0; index < softButtonsArray.length(); index++) {
 				SoftButton softButton = new SoftButton(JsonRPCMarshaller.deserializeJSONObject( (JSONObject)softButtonsArray.get(index)) );
-				SOFT_BUTTON_LIST.add(softButton);
+				softButtonList.add(softButton);
 			}
-	        msg.setSoftButtons(SOFT_BUTTON_LIST);
+	        msg.setSoftButtons(softButtonList);
 
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -76,14 +86,14 @@ public class AlertTests extends BaseRpcTests{
         JSONObject result = new JSONObject();
         
         try{
-            result.put(Alert.KEY_DURATION, JsonUtils.readIntegerFromJsonObject(paramsJson, Alert.KEY_DURATION));
-            result.put(Alert.KEY_ALERT_TEXT_1, JsonUtils.readStringFromJsonObject(paramsJson, Alert.KEY_ALERT_TEXT_1));
-            result.put(Alert.KEY_ALERT_TEXT_2, JsonUtils.readStringFromJsonObject(paramsJson, Alert.KEY_ALERT_TEXT_2));
-            result.put(Alert.KEY_ALERT_TEXT_3, JsonUtils.readStringFromJsonObject(paramsJson, Alert.KEY_ALERT_TEXT_3));
-            result.put(Alert.KEY_PLAY_TONE, JsonUtils.readBooleanFromJsonObject(paramsJson, Alert.KEY_PLAY_TONE));
-            result.put(Alert.KEY_PROGRESS_INDICATOR, JsonUtils.readBooleanFromJsonObject(paramsJson, Alert.KEY_PROGRESS_INDICATOR));
-        	result.put(Alert.KEY_TTS_CHUNKS, JsonUtils.readJsonArrayFromJsonObject(paramsJson, Alert.KEY_TTS_CHUNKS));
-        	result.put(Alert.KEY_SOFT_BUTTONS, JsonUtils.readJsonArrayFromJsonObject(paramsJson, Alert.KEY_SOFT_BUTTONS));
+            result.put(Alert.KEY_DURATION, duration);
+            result.put(Alert.KEY_ALERT_TEXT_1, alertText1);
+            result.put(Alert.KEY_ALERT_TEXT_2, alertText2);
+            result.put(Alert.KEY_ALERT_TEXT_3, alertText3);
+            result.put(Alert.KEY_PLAY_TONE, playTone);
+            result.put(Alert.KEY_PROGRESS_INDICATOR, progressIndicator);
+        	result.put(Alert.KEY_TTS_CHUNKS, paramsJson.getJSONArray(Alert.KEY_TTS_CHUNKS));
+        	result.put(Alert.KEY_SOFT_BUTTONS, paramsJson.getJSONArray(Alert.KEY_SOFT_BUTTONS));
         }catch(JSONException e){
             /* do nothing */
         }
@@ -93,46 +103,45 @@ public class AlertTests extends BaseRpcTests{
 
     public void testDuration(){
         int duration = ( (Alert) msg ).getDuration();
-        assertEquals("Duration didn't match input duration.", (int) JsonUtils.readIntegerFromJsonObject(paramsJson, Alert.KEY_DURATION), duration);
+        assertEquals("Duration didn't match input duration.", this.duration, duration);
     }
 
     public void testAlertText1(){
         String alertText1 = ( (Alert) msg ).getAlertText1();
-        assertEquals("Alert text 1 didn't match input text.", JsonUtils.readStringFromJsonObject(paramsJson, Alert.KEY_ALERT_TEXT_1), alertText1);
+        assertEquals("Alert text 1 didn't match input text.", this.alertText1, alertText1);
     }
 
     public void testAlertText2(){
         String alertText2 = ( (Alert) msg ).getAlertText2();
-        assertEquals("Alert text 2 didn't match input text.", JsonUtils.readStringFromJsonObject(paramsJson, Alert.KEY_ALERT_TEXT_2), alertText2);
+        assertEquals("Alert text 2 didn't match input text.", this.alertText2, alertText2);
     }
 
     public void testAlertText3(){
         String alertText3 = ( (Alert) msg ).getAlertText3();
-        assertEquals("Alert text 3 didn't match input text.", JsonUtils.readStringFromJsonObject(paramsJson, Alert.KEY_ALERT_TEXT_3), alertText3);
+        assertEquals("Alert text 3 didn't match input text.", this.alertText3, alertText3);
     }
 
     public void testPlayTone(){
         boolean playTone = ( (Alert) msg ).getPlayTone();
-        assertEquals("Play tone didn't match input play tone.", (boolean) JsonUtils.readBooleanFromJsonObject(paramsJson, Alert.KEY_PLAY_TONE), playTone);
+        assertEquals("Play tone didn't match input play tone.", this.playTone, playTone);
     }
 
     public void testProgressIndicator(){
         boolean progressIndicator = ( (Alert) msg ).getProgressIndicator();
-        assertEquals("Progress indicator didn't match input progress indicator.", 
-        		(boolean) JsonUtils.readBooleanFromJsonObject(paramsJson, Alert.KEY_PROGRESS_INDICATOR), progressIndicator);
+        assertEquals("Progress indicator didn't match input progress indicator.", this.progressIndicator, progressIndicator);
     }
 
 	public void testTtsChunks () {
 		List<TTSChunk> copy = ( (Alert) msg ).getTtsChunks();
 		
-		assertTrue("Input value didn't match expected value.", Validator.validateTtsChunks(TTS_CHUNK_LIST, copy));
+		assertTrue("Input value didn't match expected value.", Validator.validateTtsChunks(ttsChunkList, copy));
 
 	}
 	
 	public void testSoftButtons () {
 		List<SoftButton> copy = ( (Alert) msg ).getSoftButtons();
 		
-		assertTrue("Input value didn't match expected value.", Validator.validateSoftButtons(SOFT_BUTTON_LIST, copy));
+		assertTrue("Input value didn't match expected value.", Validator.validateSoftButtons(softButtonList, copy));
 	}
     
     public void testNull(){
@@ -158,22 +167,22 @@ public class AlertTests extends BaseRpcTests{
 		try {
 			Hashtable<String, Object> hash = JsonRPCMarshaller.deserializeJSONObject(commandJson);
 			Alert cmd = new Alert(hash);
-			JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson, getMessageType());
+			JSONObject body = commandJson.getJSONObject(getMessageType());
 			assertNotNull("Command type doesn't match expected message type", body);
 			
 			// test everything in the body
-			assertEquals("Command name doesn't match input name", JsonUtils.readStringFromJsonObject(body, RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
-			assertEquals("Correlation ID doesn't match input ID", JsonUtils.readIntegerFromJsonObject(body, RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
+			assertEquals("Command name doesn't match input name", body.getString(RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
+			assertEquals("Correlation ID doesn't match input ID", (Integer) body.getInt(RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
 
-			assertEquals("Play tone doesn't match input tone", JsonUtils.readBooleanFromJsonObject(paramsJson, Alert.KEY_PLAY_TONE), cmd.getPlayTone());
-			assertEquals("Duration doesn't match input duration", JsonUtils.readIntegerFromJsonObject(paramsJson, Alert.KEY_DURATION), cmd.getDuration());
-			assertEquals("Alert text 1 doesn't match input text", JsonUtils.readStringFromJsonObject(paramsJson, Alert.KEY_ALERT_TEXT_1), cmd.getAlertText1());
-			assertEquals("Alert text 2 doesn't match input text", JsonUtils.readStringFromJsonObject(paramsJson, Alert.KEY_ALERT_TEXT_2), cmd.getAlertText2());
-			assertEquals("Alert text 3 doesn't match input text", JsonUtils.readStringFromJsonObject(paramsJson, Alert.KEY_ALERT_TEXT_3), cmd.getAlertText3());
+			assertEquals("Play tone doesn't match input tone", 	  (Boolean) paramsJson.getBoolean(Alert.KEY_PLAY_TONE), cmd.getPlayTone());
+			assertEquals("Duration doesn't match input duration", (Integer) paramsJson.getInt(Alert.KEY_DURATION), cmd.getDuration());
+			assertEquals("Alert text 1 doesn't match input text", paramsJson.getString(Alert.KEY_ALERT_TEXT_1), cmd.getAlertText1());
+			assertEquals("Alert text 2 doesn't match input text", paramsJson.getString(Alert.KEY_ALERT_TEXT_2), cmd.getAlertText2());
+			assertEquals("Alert text 3 doesn't match input text", paramsJson.getString(Alert.KEY_ALERT_TEXT_3), cmd.getAlertText3());
 			assertEquals("Progress indicator doesn't match input indicator", 
-					JsonUtils.readBooleanFromJsonObject(paramsJson, Alert.KEY_PROGRESS_INDICATOR), cmd.getProgressIndicator());
+					(Boolean) paramsJson.getBoolean(Alert.KEY_PROGRESS_INDICATOR), cmd.getProgressIndicator());
 			
-			JSONArray ttsChunkArray = JsonUtils.readJsonArrayFromJsonObject(paramsJson, Alert.KEY_TTS_CHUNKS);
+			JSONArray ttsChunkArray = paramsJson.getJSONArray(Alert.KEY_TTS_CHUNKS);
 			List<TTSChunk> ttsChunkList = new ArrayList<TTSChunk>();
 			for (int index = 0; index < ttsChunkArray.length(); index++) {
 	        	TTSChunk chunk = new TTSChunk(JsonRPCMarshaller.deserializeJSONObject( (JSONObject)ttsChunkArray.get(index)) );
@@ -181,7 +190,7 @@ public class AlertTests extends BaseRpcTests{
 			}
 			assertTrue("TTSChunk list doesn't match input TTSChunk list",  Validator.validateTtsChunks(ttsChunkList, cmd.getTtsChunks()));
 			
-			JSONArray softButtonArray = JsonUtils.readJsonArrayFromJsonObject(paramsJson, Alert.KEY_SOFT_BUTTONS);
+			JSONArray softButtonArray = paramsJson.getJSONArray(Alert.KEY_SOFT_BUTTONS);
 			List<SoftButton> softButtonList = new ArrayList<SoftButton>();
 			for (int index = 0; index < softButtonArray.length(); index++) {
 				SoftButton chunk = new SoftButton(JsonRPCMarshaller.deserializeJSONObject( (JSONObject)softButtonArray.get(index)) );

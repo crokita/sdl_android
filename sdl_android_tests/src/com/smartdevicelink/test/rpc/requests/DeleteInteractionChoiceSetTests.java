@@ -15,13 +15,17 @@ import com.smartdevicelink.test.utils.JsonUtils;
 
 public class DeleteInteractionChoiceSetTests extends BaseRpcTests{
 
-    private static final int CHOICE_SET_ID = 15904;
+    private int choiceSetId;
 
+    private JSONObject paramsJson;
+    
     @Override
     protected RPCMessage createMessage(){
         DeleteInteractionChoiceSet msg = new DeleteInteractionChoiceSet();
+        paramsJson = JsonFileReader.getParams(getCommandType(), getMessageType());
 
-        msg.setInteractionChoiceSetID(CHOICE_SET_ID);
+        choiceSetId = JsonUtils.readIntegerFromJsonObject(paramsJson, DeleteInteractionChoiceSet.KEY_INTERACTION_CHOICE_SET_ID);
+        msg.setInteractionChoiceSetID(choiceSetId);
 
         return msg;
     }
@@ -41,7 +45,7 @@ public class DeleteInteractionChoiceSetTests extends BaseRpcTests{
         JSONObject result = new JSONObject();
 
         try{
-            result.put(DeleteInteractionChoiceSet.KEY_INTERACTION_CHOICE_SET_ID, CHOICE_SET_ID);
+            result.put(DeleteInteractionChoiceSet.KEY_INTERACTION_CHOICE_SET_ID, choiceSetId);
         }catch(JSONException e){
             /* do nothing */
         }
@@ -50,8 +54,8 @@ public class DeleteInteractionChoiceSetTests extends BaseRpcTests{
     }
 
     public void testChoiceSetId(){
-        int cmdId = ( (DeleteInteractionChoiceSet) msg ).getInteractionChoiceSetID();
-        assertEquals("Choice set ID didn't match input choice set ID.", CHOICE_SET_ID, cmdId);
+        int choiceSetId = ( (DeleteInteractionChoiceSet) msg ).getInteractionChoiceSetID();
+        assertEquals("Choice set ID didn't match input choice set ID.", this.choiceSetId, choiceSetId);
     }
 
     public void testNull(){
@@ -64,23 +68,23 @@ public class DeleteInteractionChoiceSetTests extends BaseRpcTests{
     }
     
     public void testJsonConstructor () {
-    	JSONObject commandJson = JsonFileReader.readId(getCommandType(), getMessageType());
+    	JSONObject commandJson = JsonFileReader.get(getCommandType(), getMessageType());
     	assertNotNull("Command object is null", commandJson);
     	
 		try {
 			Hashtable<String, Object> hash = JsonRPCMarshaller.deserializeJSONObject(commandJson);
 			DeleteInteractionChoiceSet cmd = new DeleteInteractionChoiceSet(hash);
 			
-			JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson, getMessageType());
+			JSONObject body = commandJson.getJSONObject(getMessageType());
 			assertNotNull("Command type doesn't match expected message type", body);
 			
 			// test everything in the body
-			assertEquals("Command name doesn't match input name", JsonUtils.readStringFromJsonObject(body, RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
-			assertEquals("Correlation ID doesn't match input ID", JsonUtils.readIntegerFromJsonObject(body, RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
+			assertEquals("Command name doesn't match input name", body.getString(RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
+			assertEquals("Correlation ID doesn't match input ID", (Integer) body.getInt(RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
 
-			JSONObject parameters = JsonUtils.readJsonObjectFromJsonObject(body, RPCMessage.KEY_PARAMETERS);
+			JSONObject parameters = body.getJSONObject(RPCMessage.KEY_PARAMETERS);
 			assertEquals("Command ID doesn't match input ID", 
-					JsonUtils.readIntegerFromJsonObject(parameters, DeleteInteractionChoiceSet.KEY_INTERACTION_CHOICE_SET_ID), cmd.getInteractionChoiceSetID());
+					(Integer) parameters.getInt(DeleteInteractionChoiceSet.KEY_INTERACTION_CHOICE_SET_ID), cmd.getInteractionChoiceSetID());
 			
 		} 
 		catch (JSONException e) {

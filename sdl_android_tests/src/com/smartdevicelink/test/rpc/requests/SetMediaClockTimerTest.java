@@ -13,38 +13,40 @@ import com.smartdevicelink.proxy.rpc.StartTime;
 import com.smartdevicelink.proxy.rpc.enums.UpdateMode;
 import com.smartdevicelink.test.BaseRpcTests;
 import com.smartdevicelink.test.json.rpc.JsonFileReader;
-import com.smartdevicelink.test.utils.JsonUtils;
 import com.smartdevicelink.test.utils.Validator;
 
 public class SetMediaClockTimerTest extends BaseRpcTests {
 
-	private static final StartTime START_TIME = new StartTime();
-	private static final StartTime END_TIME = new StartTime();
-	private static final UpdateMode UPDATE_MODE = UpdateMode.RESUME;
+	private StartTime startTime = new StartTime();
+	private StartTime endTime = new StartTime();
+	private UpdateMode updateMode;
 
+	private JSONObject paramsJson;
+	
 	@Override
 	protected RPCMessage createMessage() {
 		SetMediaClockTimer msg = new SetMediaClockTimer();
-
-		createCustomObjects();
+		paramsJson = JsonFileReader.getParams(getCommandType(), getMessageType());
 		
-		msg.setStartTime(START_TIME);
-		msg.setEndTime(END_TIME);
-		msg.setUpdateMode(UPDATE_MODE);
+		try {
+			JSONObject startTimeObj = paramsJson.getJSONObject(SetMediaClockTimer.KEY_START_TIME);
+			startTime = new StartTime(JsonRPCMarshaller.deserializeJSONObject(startTimeObj));
+			msg.setStartTime(startTime);
+			
+			JSONObject endTimeObj = paramsJson.getJSONObject(SetMediaClockTimer.KEY_END_TIME);
+			endTime = new StartTime(JsonRPCMarshaller.deserializeJSONObject(endTimeObj));
+			msg.setEndTime(endTime);
+		
+			updateMode = UpdateMode.valueForString(paramsJson.getString(SetMediaClockTimer.KEY_UPDATE_MODE));
+			msg.setUpdateMode(updateMode);
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 
 		return msg;
 	}
 	
-	private void createCustomObjects () {
-		START_TIME.setHours(0);
-		START_TIME.setMinutes(0);
-		START_TIME.setSeconds(0);
-		
-		END_TIME.setHours(0);
-		END_TIME.setMinutes(0);
-		END_TIME.setSeconds(0);
-	}
-
 	@Override
 	protected String getMessageType() {
 		return RPCMessage.KEY_REQUEST;
@@ -58,20 +60,11 @@ public class SetMediaClockTimerTest extends BaseRpcTests {
 	@Override
 	protected JSONObject getExpectedParameters(int sdlVersion) {
 		JSONObject result = new JSONObject();
-		JSONObject start = new JSONObject(), end = new JSONObject();
 
 		try {
-			start.put(StartTime.KEY_HOURS, START_TIME.getHours());
-			start.put(StartTime.KEY_MINUTES, START_TIME.getMinutes());
-			start.put(StartTime.KEY_SECONDS, START_TIME.getSeconds());
-			
-			end.put(StartTime.KEY_HOURS, END_TIME.getHours());
-			end.put(StartTime.KEY_MINUTES, END_TIME.getMinutes());
-			end.put(StartTime.KEY_SECONDS, END_TIME.getSeconds());
-						
-			result.put(SetMediaClockTimer.KEY_START_TIME, start);
-			result.put(SetMediaClockTimer.KEY_END_TIME, end);
-			result.put(SetMediaClockTimer.KEY_UPDATE_MODE, UPDATE_MODE);
+			result.put(SetMediaClockTimer.KEY_START_TIME, paramsJson.getJSONObject(SetMediaClockTimer.KEY_START_TIME));
+			result.put(SetMediaClockTimer.KEY_END_TIME, paramsJson.getJSONObject(SetMediaClockTimer.KEY_END_TIME));
+			result.put(SetMediaClockTimer.KEY_UPDATE_MODE, updateMode);
 			
 		} catch (JSONException e) {
 			/* do nothing */
@@ -83,19 +76,19 @@ public class SetMediaClockTimerTest extends BaseRpcTests {
 	public void testStartTime() {
 		StartTime copy = ( (SetMediaClockTimer) msg ).getStartTime();
 		
-		assertTrue("Input value didn't match expected value.", Validator.validateStartTime(START_TIME, copy));
+		assertTrue("Input value didn't match expected value.", Validator.validateStartTime(startTime, copy));
 	}
 	
 	public void testEndTime() {
 		StartTime copy = ( (SetMediaClockTimer) msg ).getEndTime();
 		
-		assertTrue("Input value didn't match expected value.", Validator.validateStartTime(END_TIME, copy));
+		assertTrue("Input value didn't match expected value.", Validator.validateStartTime(endTime, copy));
 	}
 	
 	public void testUpdateMode () {
 		UpdateMode copy = ( (SetMediaClockTimer) msg ).getUpdateMode();
 		
-		assertEquals("Data didn't match input data.", UPDATE_MODE, copy);
+		assertEquals("Data didn't match input data.", updateMode, copy);
 	}
 
 	public void testNull() {
@@ -110,32 +103,32 @@ public class SetMediaClockTimerTest extends BaseRpcTests {
 	}
 	
     public void testJsonConstructor () {
-    	JSONObject commandJson = JsonFileReader.readId(getCommandType(), getMessageType());
+    	JSONObject commandJson = JsonFileReader.get(getCommandType(), getMessageType());
     	assertNotNull("Command object is null", commandJson);
     	
 		try {
 			Hashtable<String, Object> hash = JsonRPCMarshaller.deserializeJSONObject(commandJson);
 			SetMediaClockTimer cmd = new SetMediaClockTimer(hash);
 			
-			JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson, getMessageType());
+			JSONObject body = commandJson.getJSONObject(getMessageType());
 			assertNotNull("Command type doesn't match expected message type", body);
 			
 			// test everything in the body
-			assertEquals("Command name doesn't match input name", JsonUtils.readStringFromJsonObject(body, RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
-			assertEquals("Correlation ID doesn't match input ID", JsonUtils.readIntegerFromJsonObject(body, RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
-
-			JSONObject parameters = JsonUtils.readJsonObjectFromJsonObject(body, RPCMessage.KEY_PARAMETERS);
+			assertEquals("Command name doesn't match input name", body.getString(RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
+			assertEquals("Correlation ID doesn't match input ID", (Integer) body.getInt(RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
 			
-			JSONObject startTime = JsonUtils.readJsonObjectFromJsonObject(parameters, SetMediaClockTimer.KEY_START_TIME);
+			JSONObject parameters = body.getJSONObject(RPCMessage.KEY_PARAMETERS);
+			
+			JSONObject startTime = parameters.getJSONObject(SetMediaClockTimer.KEY_START_TIME);
 			StartTime referenceStartTime = new StartTime(JsonRPCMarshaller.deserializeJSONObject(startTime));
 			assertTrue("Start time doesn't match expected time", Validator.validateStartTime(referenceStartTime, cmd.getStartTime()));
 			
-			JSONObject endTime = JsonUtils.readJsonObjectFromJsonObject(parameters, SetMediaClockTimer.KEY_END_TIME);
+			JSONObject endTime = parameters.getJSONObject(SetMediaClockTimer.KEY_END_TIME);
 			StartTime referenceEndTime = new StartTime(JsonRPCMarshaller.deserializeJSONObject(endTime));
 			assertTrue("End time doesn't match expected time", Validator.validateStartTime(referenceEndTime, cmd.getEndTime()));
 			
 			assertEquals("Update mode doesn't match input mode", 
-					JsonUtils.readStringFromJsonObject(parameters, SetMediaClockTimer.KEY_UPDATE_MODE), cmd.getUpdateMode().toString());
+					parameters.getString(SetMediaClockTimer.KEY_UPDATE_MODE), cmd.getUpdateMode().toString());
 			
 		} 
 		catch (JSONException e) {

@@ -16,13 +16,17 @@ import com.smartdevicelink.test.utils.JsonUtils;
 
 public class SubscribeButtonTest extends BaseRpcTests {
 
-	private static final ButtonName BUTTON = ButtonName.OK;
+	private ButtonName button;
+	
+	private JSONObject paramsJson;
 	
 	@Override
 	protected RPCMessage createMessage() {
 		SubscribeButton msg = new SubscribeButton();
-
-		msg.setButtonName(BUTTON);
+		paramsJson = JsonFileReader.getParams(getCommandType(), getMessageType());
+		
+		button = ButtonName.valueForString(JsonUtils.readStringFromJsonObject(paramsJson, SubscribeButton.KEY_BUTTON_NAME));
+		msg.setButtonName(button);
 
 		return msg;
 	}
@@ -42,7 +46,7 @@ public class SubscribeButtonTest extends BaseRpcTests {
 		JSONObject result = new JSONObject();
 
 		try {
-			result.put(SubscribeButton.KEY_BUTTON_NAME, BUTTON);
+			result.put(SubscribeButton.KEY_BUTTON_NAME, button);
 			
 		} catch (JSONException e) {
 			/* do nothing */
@@ -54,7 +58,7 @@ public class SubscribeButtonTest extends BaseRpcTests {
 	public void testButtonName() {
 		ButtonName copy = ( (SubscribeButton) msg ).getButtonName();
 		
-		assertEquals("Data didn't match input data.", BUTTON, copy);
+		assertEquals("Data didn't match input data.", button, copy);
 	}
 
 	public void testNull() {
@@ -67,23 +71,22 @@ public class SubscribeButtonTest extends BaseRpcTests {
 	}
 	
     public void testJsonConstructor () {
-    	JSONObject commandJson = JsonFileReader.readId(getCommandType(), getMessageType());
+    	JSONObject commandJson = JsonFileReader.get(getCommandType(), getMessageType());
     	assertNotNull("Command object is null", commandJson);
     	
 		try {
 			Hashtable<String, Object> hash = JsonRPCMarshaller.deserializeJSONObject(commandJson);
 			SubscribeButton cmd = new SubscribeButton(hash);
 			
-			JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson, getMessageType());
+			JSONObject body = commandJson.getJSONObject(getMessageType());
 			assertNotNull("Command type doesn't match expected message type", body);
 			
 			// test everything in the body
-			assertEquals("Command name doesn't match input name", JsonUtils.readStringFromJsonObject(body, RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
-			assertEquals("Correlation ID doesn't match input ID", JsonUtils.readIntegerFromJsonObject(body, RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
-
-			JSONObject parameters = JsonUtils.readJsonObjectFromJsonObject(body, RPCMessage.KEY_PARAMETERS);
-			assertEquals("Button name doesn't match input name", 
-					JsonUtils.readStringFromJsonObject(parameters, SubscribeButton.KEY_BUTTON_NAME), cmd.getButtonName().toString());
+			assertEquals("Command name doesn't match input name", body.getString(RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
+			assertEquals("Correlation ID doesn't match input ID", (Integer) body.getInt(RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
+			
+			JSONObject parameters = body.getJSONObject(RPCMessage.KEY_PARAMETERS);
+			assertEquals("Button name doesn't match input name", parameters.getString(SubscribeButton.KEY_BUTTON_NAME), cmd.getButtonName().toString());
 			
 		} 
 		catch (JSONException e) {

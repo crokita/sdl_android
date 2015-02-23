@@ -15,13 +15,17 @@ import com.smartdevicelink.test.utils.JsonUtils;
 
 public class SetAppIconTest extends BaseRpcTests {
 	
-	private static final String FILE_NAME = "fileName";
+	private String fileName;
 
+	private JSONObject paramsJson;
+	
 	@Override
 	protected RPCMessage createMessage() {
 		SetAppIcon msg = new SetAppIcon();
-
-		msg.setSdlFileName(FILE_NAME);
+		paramsJson = JsonFileReader.getParams(getCommandType(), getMessageType());
+		
+		fileName = JsonUtils.readStringFromJsonObject(paramsJson, SetAppIcon.KEY_SDL_FILE_NAME);
+		msg.setSdlFileName(fileName);
 
 		return msg;
 	}
@@ -41,7 +45,7 @@ public class SetAppIconTest extends BaseRpcTests {
 		JSONObject result = new JSONObject();
 
 		try {
-			result.put(SetAppIcon.KEY_SDL_FILE_NAME, FILE_NAME);
+			result.put(SetAppIcon.KEY_SDL_FILE_NAME, fileName);
 			
 		} catch (JSONException e) {
 			/* do nothing */
@@ -53,7 +57,7 @@ public class SetAppIconTest extends BaseRpcTests {
 	public void testFileName() {
 		String copy = ( (SetAppIcon) msg ).getSdlFileName();
 		
-		assertEquals("Data didn't match input data.", FILE_NAME, copy);
+		assertEquals("Data didn't match input data.", fileName, copy);
 	}
 
 	public void testNull() {
@@ -66,22 +70,22 @@ public class SetAppIconTest extends BaseRpcTests {
 	}
 	
     public void testJsonConstructor () {
-    	JSONObject commandJson = JsonFileReader.readId(getCommandType(), getMessageType());
+    	JSONObject commandJson = JsonFileReader.get(getCommandType(), getMessageType());
     	assertNotNull("Command object is null", commandJson);
     	
 		try {
 			Hashtable<String, Object> hash = JsonRPCMarshaller.deserializeJSONObject(commandJson);
 			SetAppIcon cmd = new SetAppIcon(hash);
 			
-			JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson, getMessageType());
+			JSONObject body = commandJson.getJSONObject(getMessageType());
 			assertNotNull("Command type doesn't match expected message type", body);
 			
 			// test everything in the body
-			assertEquals("Command name doesn't match input name", JsonUtils.readStringFromJsonObject(body, RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
-			assertEquals("Correlation ID doesn't match input ID", JsonUtils.readIntegerFromJsonObject(body, RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
-
-			JSONObject parameters = JsonUtils.readJsonObjectFromJsonObject(body, RPCMessage.KEY_PARAMETERS);
-			assertEquals("File name doesn't match input name", JsonUtils.readStringFromJsonObject(parameters, SetAppIcon.KEY_SDL_FILE_NAME), cmd.getSdlFileName());
+			assertEquals("Command name doesn't match input name", body.getString(RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
+			assertEquals("Correlation ID doesn't match input ID", (Integer) body.getInt(RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
+			
+			JSONObject parameters = body.getJSONObject(RPCMessage.KEY_PARAMETERS);
+			assertEquals("File name doesn't match input name", parameters.getString(SetAppIcon.KEY_SDL_FILE_NAME), cmd.getSdlFileName());
 			
 		} 
 		catch (JSONException e) {

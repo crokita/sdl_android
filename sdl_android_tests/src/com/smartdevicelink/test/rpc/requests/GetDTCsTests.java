@@ -15,15 +15,20 @@ import com.smartdevicelink.test.utils.JsonUtils;
 
 public class GetDTCsTests extends BaseRpcTests{
 
-    private static final int ECU_NAME = 1589;
-    private static final int DTC_MASK = 0;
+    private int ecuName;
+    private int dtcMask;
 
+    private JSONObject paramsJson;
+    
     @Override
     protected RPCMessage createMessage(){
         GetDTCs msg = new GetDTCs();
+        paramsJson = JsonFileReader.getParams(getCommandType(), getMessageType());
 
-        msg.setEcuName(ECU_NAME);
-        msg.setDtcMask(DTC_MASK);
+        ecuName = JsonUtils.readIntegerFromJsonObject(paramsJson, GetDTCs.KEY_ECU_NAME);
+        msg.setEcuName(ecuName);
+        dtcMask = JsonUtils.readIntegerFromJsonObject(paramsJson, GetDTCs.KEY_ECU_NAME);
+        msg.setDtcMask(dtcMask);
 
         return msg;
     }
@@ -43,8 +48,8 @@ public class GetDTCsTests extends BaseRpcTests{
         JSONObject result = new JSONObject();
 
         try{
-            result.put(GetDTCs.KEY_ECU_NAME, ECU_NAME);
-            result.put(GetDTCs.KEY_DTC_MASK, DTC_MASK);
+            result.put(GetDTCs.KEY_ECU_NAME, ecuName);
+            result.put(GetDTCs.KEY_DTC_MASK, dtcMask);
         }catch(JSONException e){
             /* do nothing */
         }
@@ -53,13 +58,13 @@ public class GetDTCsTests extends BaseRpcTests{
     }
 
     public void testEcuName(){
-        int cmdId = ( (GetDTCs) msg ).getEcuName();
-        assertEquals("ECU name didn't match input ECU name.", ECU_NAME, cmdId);
+        int ecuName = ( (GetDTCs) msg ).getEcuName();
+        assertEquals("ECU name didn't match input ECU name.", this.ecuName, ecuName);
     }
 
     public void testDtcMask(){
-        int cmdId = ( (GetDTCs) msg ).getDtcMask();
-        assertEquals("DTC mask didn't match input DTC mask.", DTC_MASK, cmdId);
+        int dtcMask = ( (GetDTCs) msg ).getDtcMask();
+        assertEquals("DTC mask didn't match input DTC mask.", this.dtcMask, dtcMask);
     }
 
     public void testNull(){
@@ -73,25 +78,24 @@ public class GetDTCsTests extends BaseRpcTests{
     }
     
     public void testJsonConstructor () {
-    	JSONObject commandJson = JsonFileReader.readId(getCommandType(), getMessageType());
+    	JSONObject commandJson = JsonFileReader.get(getCommandType(), getMessageType());
     	assertNotNull("Command object is null", commandJson);
     	
 		try {
 			Hashtable<String, Object> hash = JsonRPCMarshaller.deserializeJSONObject(commandJson);
 			GetDTCs cmd = new GetDTCs(hash);
 			
-			JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson, getMessageType());
+			JSONObject body = commandJson.getJSONObject(getMessageType());
 			assertNotNull("Command type doesn't match expected message type", body);
 			
 			// test everything in the body
-			assertEquals("Command name doesn't match input name", JsonUtils.readStringFromJsonObject(body, RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
-			assertEquals("Correlation ID doesn't match input ID", JsonUtils.readIntegerFromJsonObject(body, RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
-
-			JSONObject parameters = JsonUtils.readJsonObjectFromJsonObject(body, RPCMessage.KEY_PARAMETERS);
+			assertEquals("Command name doesn't match input name", body.getString(RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
+			assertEquals("Correlation ID doesn't match input ID", (Integer) body.getInt(RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
 			
-			assertEquals("DTC mask doesn't match input DTC mask", JsonUtils.readIntegerFromJsonObject(parameters, GetDTCs.KEY_DTC_MASK), cmd.getDtcMask());
-			assertEquals("ECU name doesn't match input ECU name", JsonUtils.readIntegerFromJsonObject(parameters, GetDTCs.KEY_ECU_NAME), cmd.getEcuName());
+			JSONObject parameters = body.getJSONObject(RPCMessage.KEY_PARAMETERS);
 			
+			assertEquals("DTC mask doesn't match input DTC mask", (Integer) parameters.getInt(GetDTCs.KEY_DTC_MASK), cmd.getDtcMask());
+			assertEquals("ECU name doesn't match input ECU name", (Integer) parameters.getInt(GetDTCs.KEY_ECU_NAME), cmd.getEcuName());
 			
 		} 
 		catch (JSONException e) {

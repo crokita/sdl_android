@@ -52,7 +52,7 @@ public class JsonFileReader {
         
 	}
 	
-	public static JSONObject readId (String id, String type) {
+	private static JSONObject readId (String id, String type) {
 		String fileName = id + EXT;
 		File file = new File(PATH + fileName);
 

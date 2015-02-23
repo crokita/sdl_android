@@ -15,37 +15,41 @@ import com.smartdevicelink.proxy.rpc.ScrollableMessage;
 import com.smartdevicelink.proxy.rpc.SoftButton;
 import com.smartdevicelink.test.BaseRpcTests;
 import com.smartdevicelink.test.json.rpc.JsonFileReader;
-import com.smartdevicelink.test.utils.JsonUtils;
 import com.smartdevicelink.test.utils.Validator;
 
 public class ScrollableMessageTest extends BaseRpcTests {
 
-	private static final String MESSAGE = "message";
-	private static final Integer TIMEOUT = 0;
-	private final List<SoftButton> SOFT_BUTTON_LIST = new ArrayList<SoftButton>();
-	private static final String SOFT_BUTTON_TEXT = "Hello";
-	private static final Boolean SOFT_BUTTON_HIGHLIGHTED = true;
+	private String			 	message;
+	private int 				timeout;
+	private List<SoftButton> 	softButtonList = new ArrayList<SoftButton>();
     
+	private JSONObject paramsJson;
+	
 	@Override
 	protected RPCMessage createMessage() {
 		ScrollableMessage msg = new ScrollableMessage();
-
-		createCustomObjects();
+		paramsJson = JsonFileReader.getParams(getCommandType(), getMessageType());
 		
-		msg.setTimeout(TIMEOUT);
-		msg.setSoftButtons(SOFT_BUTTON_LIST);
-		msg.setScrollableMessageBody(MESSAGE);
+		try {			
+			message = paramsJson.getString(ScrollableMessage.KEY_SCROLLABLE_MESSAGE_BODY);
+			msg.setScrollableMessageBody(message);
+			timeout = paramsJson.getInt(ScrollableMessage.KEY_TIMEOUT);
+			msg.setTimeout(timeout);
+			
+			JSONArray softButtonArray = paramsJson.getJSONArray(ScrollableMessage.KEY_SOFT_BUTTONS);
+			for (int index = 0; index < softButtonArray.length(); index++) {
+				SoftButton ttsChunk = new SoftButton(JsonRPCMarshaller.deserializeJSONObject( (JSONObject)softButtonArray.get(index)) );
+				softButtonList.add(ttsChunk);
+			}
+			msg.setSoftButtons(softButtonList);
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 
 		return msg;
 	}
 	
-	private void createCustomObjects() {
-		SoftButton softButton = new SoftButton();
-		softButton.setText(SOFT_BUTTON_TEXT);
-		softButton.setIsHighlighted(SOFT_BUTTON_HIGHLIGHTED);
-		SOFT_BUTTON_LIST.add(softButton);
-	}
-
 	@Override
 	protected String getMessageType() {
 		return RPCMessage.KEY_REQUEST;
@@ -61,15 +65,9 @@ public class ScrollableMessageTest extends BaseRpcTests {
 		JSONObject result = new JSONObject();
 
 		try {
-			result.put(ScrollableMessage.KEY_SCROLLABLE_MESSAGE_BODY, MESSAGE);
-			result.put(ScrollableMessage.KEY_TIMEOUT, TIMEOUT);
-			
-			JSONObject softButtonObj = new JSONObject();
-			softButtonObj.put(SoftButton.KEY_TEXT, SOFT_BUTTON_TEXT);
-			softButtonObj.put(SoftButton.KEY_IS_HIGHLIGHTED, SOFT_BUTTON_HIGHLIGHTED);
-			JSONArray softButtonArray = new JSONArray();
-			softButtonArray.put(softButtonObj);
-			result.put(ScrollableMessage.KEY_SOFT_BUTTONS, softButtonArray);
+			result.put(ScrollableMessage.KEY_SCROLLABLE_MESSAGE_BODY, message);
+			result.put(ScrollableMessage.KEY_TIMEOUT, timeout);
+			result.put(ScrollableMessage.KEY_SOFT_BUTTONS, paramsJson.getJSONArray(ScrollableMessage.KEY_SOFT_BUTTONS));
 			
 		} catch (JSONException e) {
 			/* do nothing */
@@ -81,22 +79,22 @@ public class ScrollableMessageTest extends BaseRpcTests {
 	public void testMessage () {
 		String copy = ( (ScrollableMessage) msg ).getScrollableMessageBody();
 		
-		assertEquals("Data didn't match input data.", MESSAGE, copy);
+		assertEquals("Data didn't match input data.", message, copy);
 	}
 	
 	public void testTimeout () {
 		Integer copy = ( (ScrollableMessage) msg ).getTimeout();
 		
-		assertEquals("Data didn't match input data.", TIMEOUT, copy);
+		assertEquals("Data didn't match input data.", (Integer) timeout, copy);
 	}
 	
 	public void testSoftButton () {
 		List<SoftButton> copy = ( (ScrollableMessage) msg ).getSoftButtons();
 
-		assertEquals("List size didn't match expected size.", SOFT_BUTTON_LIST.size(), copy.size());
+		assertEquals("List size didn't match expected size.", softButtonList.size(), copy.size());
 		
-		for (int i = 0; i < SOFT_BUTTON_LIST.size(); i++) {
-			assertEquals("Input value didn't match expected value.", SOFT_BUTTON_LIST.get(i), copy.get(i));
+		for (int i = 0; i < softButtonList.size(); i++) {
+			assertEquals("Input value didn't match expected value.", softButtonList.get(i), copy.get(i));
 		}
 	}
 
@@ -112,26 +110,26 @@ public class ScrollableMessageTest extends BaseRpcTests {
 	}
 	
     public void testJsonConstructor () {
-    	JSONObject commandJson = JsonFileReader.readId(getCommandType(), getMessageType());
+    	JSONObject commandJson = JsonFileReader.get(getCommandType(), getMessageType());
     	assertNotNull("Command object is null", commandJson);
     	
 		try {
 			Hashtable<String, Object> hash = JsonRPCMarshaller.deserializeJSONObject(commandJson);
 			ScrollableMessage cmd = new ScrollableMessage(hash);
 			
-			JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson, getMessageType());
+			JSONObject body = commandJson.getJSONObject(getMessageType());
 			assertNotNull("Command type doesn't match expected message type", body);
 			
 			// test everything in the body
-			assertEquals("Command name doesn't match input name", JsonUtils.readStringFromJsonObject(body, RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
-			assertEquals("Correlation ID doesn't match input ID", JsonUtils.readIntegerFromJsonObject(body, RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
-
-			JSONObject parameters = JsonUtils.readJsonObjectFromJsonObject(body, RPCMessage.KEY_PARAMETERS);
+			assertEquals("Command name doesn't match input name", body.getString(RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
+			assertEquals("Correlation ID doesn't match input ID", (Integer) body.getInt(RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
+			
+			JSONObject parameters = body.getJSONObject(RPCMessage.KEY_PARAMETERS);
 			assertEquals("Scrollable message body doesn't match input body", 
-					JsonUtils.readStringFromJsonObject(parameters, ScrollableMessage.KEY_SCROLLABLE_MESSAGE_BODY), cmd.getScrollableMessageBody());
-			assertEquals("Timeout doesn't match input timeout", JsonUtils.readIntegerFromJsonObject(parameters, ScrollableMessage.KEY_TIMEOUT), cmd.getTimeout());
+					parameters.getString(ScrollableMessage.KEY_SCROLLABLE_MESSAGE_BODY), cmd.getScrollableMessageBody());
+			assertEquals("Timeout doesn't match input timeout", (Integer) parameters.getInt(ScrollableMessage.KEY_TIMEOUT), cmd.getTimeout());
 
-			JSONArray softButtonArray = JsonUtils.readJsonArrayFromJsonObject(parameters, ScrollableMessage.KEY_SOFT_BUTTONS);
+			JSONArray softButtonArray = parameters.getJSONArray(ScrollableMessage.KEY_SOFT_BUTTONS);
 			List<SoftButton> softButtonList = new ArrayList<SoftButton>();
 			for (int index = 0; index < softButtonArray.length(); index++) {
 				SoftButton chunk = new SoftButton(JsonRPCMarshaller.deserializeJSONObject( (JSONObject)softButtonArray.get(index)) );

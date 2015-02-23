@@ -1,9 +1,9 @@
 package com.smartdevicelink.test.rpc.requests;
 
-import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,21 +18,36 @@ import com.smartdevicelink.test.utils.Validator;
 
 public class SliderTest extends BaseRpcTests {
 	
-	private static final Integer NUM_TICKS = 0;
-	private static final Integer POSITION = 0;
-	private static final Integer TIMEOUT = 0;
-	private static final String HEADER = "header";
-	private final List<String> FOOTER = Arrays.asList(new String[]{"param1","param2"});
+	private int numTicks;
+	private int position;
+	private int timeout;
+	private String header;
+	private List<String> footer;
 
+	private JSONObject paramsJson;
+	
 	@Override
 	protected RPCMessage createMessage() {
 		Slider msg = new Slider();
-
-		msg.setNumTicks(NUM_TICKS);
-		msg.setPosition(POSITION);
-		msg.setTimeout(TIMEOUT);
-		msg.setSliderHeader(HEADER);
-		msg.setSliderFooter(FOOTER);
+		paramsJson = JsonFileReader.getParams(getCommandType(), getMessageType());
+		
+		try {
+			numTicks = paramsJson.getInt(Slider.KEY_NUM_TICKS);
+			msg.setNumTicks(numTicks);
+			position = paramsJson.getInt(Slider.KEY_POSITION);
+			msg.setPosition(position);
+			timeout = paramsJson.getInt(Slider.KEY_TIMEOUT);
+			msg.setTimeout(timeout);
+			header = paramsJson.getString(Slider.KEY_SLIDER_HEADER);
+			msg.setSliderHeader(header);
+			
+			JSONArray footerArray = paramsJson.getJSONArray(Slider.KEY_SLIDER_FOOTER);
+			footer = JsonUtils.<String>createListFromJsonArray(footerArray);
+			msg.setSliderFooter(footer);
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 
 		return msg;
 	}
@@ -52,11 +67,11 @@ public class SliderTest extends BaseRpcTests {
 		JSONObject result = new JSONObject();
 
 		try {
-			result.put(Slider.KEY_SLIDER_HEADER, HEADER);
-			result.put(Slider.KEY_SLIDER_FOOTER, JsonUtils.createJsonArray(FOOTER));
-			result.put(Slider.KEY_POSITION, POSITION);
-			result.put(Slider.KEY_TIMEOUT, TIMEOUT);
-			result.put(Slider.KEY_NUM_TICKS, NUM_TICKS);
+			result.put(Slider.KEY_SLIDER_HEADER, header);
+			result.put(Slider.KEY_SLIDER_FOOTER, paramsJson.getJSONArray(Slider.KEY_SLIDER_FOOTER));
+			result.put(Slider.KEY_POSITION, position);
+			result.put(Slider.KEY_TIMEOUT, timeout);
+			result.put(Slider.KEY_NUM_TICKS, numTicks);
 			
 		} catch (JSONException e) {
 			/* do nothing */
@@ -68,31 +83,31 @@ public class SliderTest extends BaseRpcTests {
 	public void testHeader () {
 		String copy = ( (Slider) msg ).getSliderHeader();
 		
-		assertEquals("Data didn't match input data.", HEADER, copy);
+		assertEquals("Data didn't match input data.", header, copy);
 	}
 	
 	public void testFooter () {
 		List<String> copy = ( (Slider) msg ).getSliderFooter();
 		
-	    assertTrue("Input value didn't match expected value.", Validator.validateStringList(FOOTER, copy));
+	    assertTrue("Input value didn't match expected value.", Validator.validateStringList(footer, copy));
 	}
 	
 	public void testPosition () {
 		Integer copy = ( (Slider) msg ).getPosition();
 		
-		assertEquals("Data didn't match input data.", POSITION, copy);
+		assertEquals("Data didn't match input data.", (Integer) position, copy);
 	}
 	
 	public void testTimeout () {
 		Integer copy = ( (Slider) msg ).getTimeout();
 		
-		assertEquals("Data didn't match input data.", TIMEOUT, copy);
+		assertEquals("Data didn't match input data.", (Integer) timeout, copy);
 	}
 	
 	public void testNumTicks () {
 		Integer copy = ( (Slider) msg ).getNumTicks();
 		
-		assertEquals("Data didn't match input data.", NUM_TICKS, copy);
+		assertEquals("Data didn't match input data.", (Integer) numTicks, copy);
 	}
 
 	public void testNull() {
@@ -109,36 +124,31 @@ public class SliderTest extends BaseRpcTests {
 	}
 	
     public void testJsonConstructor () {
-    	JSONObject commandJson = JsonFileReader.readId(getCommandType(), getMessageType());
+    	JSONObject commandJson = JsonFileReader.get(getCommandType(), getMessageType());
     	assertNotNull("Command object is null", commandJson);
     	
 		try {
 			Hashtable<String, Object> hash = JsonRPCMarshaller.deserializeJSONObject(commandJson);
 			Slider cmd = new Slider(hash);
 			
-			JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson, getMessageType());
+			JSONObject body = commandJson.getJSONObject(getMessageType());
 			assertNotNull("Command type doesn't match expected message type", body);
 			
 			// test everything in the body
-			assertEquals("Command name doesn't match input name", JsonUtils.readStringFromJsonObject(body, RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
-			assertEquals("Correlation ID doesn't match input ID", JsonUtils.readIntegerFromJsonObject(body, RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
-
-			JSONObject parameters = JsonUtils.readJsonObjectFromJsonObject(body, RPCMessage.KEY_PARAMETERS);
-			assertEquals("Tick number doesn't match input number", JsonUtils.readIntegerFromJsonObject(parameters, Slider.KEY_NUM_TICKS), cmd.getNumTicks());
-			assertEquals("Slider header doesn't match input header", JsonUtils.readStringFromJsonObject(parameters, Slider.KEY_SLIDER_HEADER), cmd.getSliderHeader());
+			assertEquals("Command name doesn't match input name", body.getString(RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
+			assertEquals("Correlation ID doesn't match input ID", (Integer) body.getInt(RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
+			
+			JSONObject parameters = body.getJSONObject(RPCMessage.KEY_PARAMETERS);
+			assertEquals("Tick number doesn't match input number", (Integer) parameters.getInt(Slider.KEY_NUM_TICKS), cmd.getNumTicks());
+			assertEquals("Slider header doesn't match input header", parameters.getString(Slider.KEY_SLIDER_HEADER), cmd.getSliderHeader());
 
 			List<String> sliderFooterList = JsonUtils.readStringListFromJsonObject(parameters, Slider.KEY_SLIDER_FOOTER);
 			List<String> testFooterList = cmd.getSliderFooter();
 			assertEquals("Slider footer list length not same as reference footer list length", sliderFooterList.size(), testFooterList.size());
 			assertTrue("Slider footer list doesn't match input footer list", Validator.validateStringList(sliderFooterList, testFooterList));
 			
-			assertEquals("Position doesn't match input position", JsonUtils.readIntegerFromJsonObject(parameters, Slider.KEY_POSITION), cmd.getPosition());
-			assertEquals("Timeout doesn't match input timeout", JsonUtils.readIntegerFromJsonObject(parameters, Slider.KEY_TIMEOUT), cmd.getTimeout());
-
-			
-
-			
-			
+			assertEquals("Position doesn't match input position", (Integer) parameters.getInt(Slider.KEY_POSITION), cmd.getPosition());
+			assertEquals("Timeout doesn't match input timeout", (Integer) parameters.getInt(Slider.KEY_TIMEOUT), cmd.getTimeout());
 		} 
 		catch (JSONException e) {
 			e.printStackTrace();

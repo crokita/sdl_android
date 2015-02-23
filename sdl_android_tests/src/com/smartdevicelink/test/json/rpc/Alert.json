@@ -16,7 +16,7 @@
 				},
 				{
 					"text":"Phrase 2",
-					"type":"TEXT"
+					"type":"SAPI_PHONEMES"
 				}
 			],
 			"softButtons":[
