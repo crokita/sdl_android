@@ -63,12 +63,12 @@ public class DiagnosticMessageResponseTests extends BaseRpcTests{
     }
 
     public void testMessageData(){
-        List<Integer> cmdId = ( (DiagnosticMessageResponse) msg ).getMessageDataResult();
+        List<Integer> copy = ( (DiagnosticMessageResponse) msg ).getMessageDataResult();
 
-        assertEquals("Array size didn't match expected size.", messageDataResult.size(), cmdId.size());
+        assertEquals("Array size didn't match expected size.", messageDataResult.size(), copy.size());
 
         for(int i = 0; i < messageDataResult.size(); i++){
-            assertEquals("Message data didn't match input message data.", messageDataResult.get(i), cmdId.get(i));
+            assertEquals("Message data didn't match input message data.", messageDataResult.get(i), copy.get(i));
         }
     }
 

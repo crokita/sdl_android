@@ -19,7 +19,7 @@ import com.smartdevicelink.test.utils.Validator;
 public class ListFilesResponseTests extends BaseRpcTests{
 
     private List<String> fileNames;
-    private int          spaceAvailable;
+    private Integer      spaceAvailable;
 
     private JSONObject paramsJson;
     
@@ -27,7 +27,6 @@ public class ListFilesResponseTests extends BaseRpcTests{
     protected RPCMessage createMessage(){
         ListFilesResponse msg = new ListFilesResponse();
         paramsJson = JsonFileReader.getParams(getCommandType(), getMessageType());
-        
         
 		JSONArray fileNamesArray = JsonUtils.readJsonArrayFromJsonObject(paramsJson, ListFilesResponse.KEY_FILENAMES);
 		fileNames = JsonUtils.<String>createListFromJsonArray(fileNamesArray);
@@ -54,7 +53,7 @@ public class ListFilesResponseTests extends BaseRpcTests{
         JSONObject result = new JSONObject();
 
         try{
-            result.put(ListFilesResponse.KEY_FILENAMES, JsonUtils.createJsonArray(fileNames));
+            result.put(ListFilesResponse.KEY_FILENAMES, paramsJson.getJSONArray(ListFilesResponse.KEY_FILENAMES));
             result.put(ListFilesResponse.KEY_SPACE_AVAILABLE, spaceAvailable);
         }catch(JSONException e){
             /* do nothing */
@@ -70,8 +69,8 @@ public class ListFilesResponseTests extends BaseRpcTests{
     }
 
     public void testSpaceAvailable(){
-        int spaceAvailable = ( (ListFilesResponse) msg ).getSpaceAvailable();
-        assertEquals("Space available didn't match expected space available.", spaceAvailable, spaceAvailable);
+        Integer copy = ( (ListFilesResponse) msg ).getSpaceAvailable();
+        assertEquals("Space available didn't match expected space available.", spaceAvailable, copy);
     }
 
     public void testNull(){

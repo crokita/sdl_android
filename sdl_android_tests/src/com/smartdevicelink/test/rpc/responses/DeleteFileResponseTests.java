@@ -15,7 +15,7 @@ import com.smartdevicelink.test.utils.JsonUtils;
 
 public class DeleteFileResponseTests extends BaseRpcTests{
 
-    private int spaceAvailable;
+    private Integer spaceAvailable;
 
     private JSONObject paramsJson;
     
@@ -54,8 +54,8 @@ public class DeleteFileResponseTests extends BaseRpcTests{
     }
 
     public void testSpaceAvailable(){
-        int spaceAvailable = ( (DeleteFileResponse) msg ).getSpaceAvailable();
-        assertEquals("Space available didn't match input space available.", spaceAvailable, spaceAvailable);
+    	Integer copy = ( (DeleteFileResponse) msg ).getSpaceAvailable();
+        assertEquals("Space available didn't match input space available.", spaceAvailable, copy);
     }
 
     public void testNull(){

@@ -17,12 +17,12 @@ import com.smartdevicelink.test.utils.Validator;
 
 public class PutFileTest extends BaseRpcTests {
 
-	private boolean 	isPersistent;
-	private boolean 	systemFile;
+	private Boolean 	isPersistent;
+	private Boolean 	systemFile;
 	private FileType 	fileType;
 	private String 		fileName;
-	private int 		offset;
-	private int		 	length;
+	private Integer 	offset;
+	private Integer		length;
 	private static final byte[] bulkData = new byte[]{0x00, 0x01, 0x02};
 	
 	private JSONObject paramsJson;
@@ -92,13 +92,13 @@ public class PutFileTest extends BaseRpcTests {
 	}
 	
 	public void testIsPersistent () {
-		boolean copy = ( (PutFile) msg ).getPersistentFile();
+		Boolean copy = ( (PutFile) msg ).getPersistentFile();
 		
 		assertEquals("Data didn't match input data.", isPersistent, copy);
 	}
 	
 	public void testSystemFile () {
-		boolean copy = ( (PutFile) msg ).getSystemFile();
+		Boolean copy = ( (PutFile) msg ).getSystemFile();
 		
 		assertEquals("Data didn't match input data.", systemFile, copy);
 	}

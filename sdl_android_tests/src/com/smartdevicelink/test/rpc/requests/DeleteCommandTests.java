@@ -15,7 +15,7 @@ import com.smartdevicelink.test.utils.JsonUtils;
 
 public class DeleteCommandTests extends BaseRpcTests{
 
-    private int commandId;
+    private Integer commandId;
 
     private JSONObject paramsJson;
     
@@ -54,8 +54,8 @@ public class DeleteCommandTests extends BaseRpcTests{
     }
 
     public void testCommandId(){
-        int commandId = ( (DeleteCommand) msg ).getCmdID();
-        assertEquals("Command ID didn't match input command ID.", this.commandId, commandId);
+    	Integer copy = ( (DeleteCommand) msg ).getCmdID();
+        assertEquals("Command ID didn't match input command ID.", commandId, copy);
     }
 
     public void testNull(){

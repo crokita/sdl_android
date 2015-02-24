@@ -49,7 +49,7 @@ public class ResetGlobalPropertiesTest extends BaseRpcTests {
 		JSONObject result = new JSONObject();
 
 		try {
-			result.put(ResetGlobalProperties.KEY_PROPERTIES, JsonUtils.createJsonArray(properties));
+			result.put(ResetGlobalProperties.KEY_PROPERTIES, paramsJson.getJSONArray(ResetGlobalProperties.KEY_PROPERTIES));
 		} catch (JSONException e) {
 			/* do nothing */
 		}

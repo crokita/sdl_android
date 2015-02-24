@@ -15,7 +15,7 @@ import com.smartdevicelink.test.utils.JsonUtils;
 
 public class DeleteSubMenuTests extends BaseRpcTests{
 
-    private int menuId;
+    private Integer menuId;
     
     private JSONObject paramsJson;
 
@@ -54,8 +54,8 @@ public class DeleteSubMenuTests extends BaseRpcTests{
     }
 
     public void testMenuId(){
-        int menuId = ( (DeleteSubMenu) msg ).getMenuID();
-        assertEquals("Menu ID didn't match input menu ID.", this.menuId, menuId);
+    	Integer copy = ( (DeleteSubMenu) msg ).getMenuID();
+        assertEquals("Menu ID didn't match input menu ID.", menuId, copy);
     }
 
     public void testNull(){

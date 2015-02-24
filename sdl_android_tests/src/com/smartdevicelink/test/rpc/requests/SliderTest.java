@@ -18,9 +18,9 @@ import com.smartdevicelink.test.utils.Validator;
 
 public class SliderTest extends BaseRpcTests {
 	
-	private int numTicks;
-	private int position;
-	private int timeout;
+	private Integer numTicks;
+	private Integer position;
+	private Integer timeout;
 	private String header;
 	private List<String> footer;
 

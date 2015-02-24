@@ -19,7 +19,7 @@ import com.smartdevicelink.test.utils.Validator;
 
 public class ReadDIDTest extends BaseRpcTests {
 	
-	private int 			ecuName;
+	private Integer 		ecuName;
 	private List<Integer> 	didLocations = new ArrayList<Integer>();
 	
 	private JSONObject paramsJson;

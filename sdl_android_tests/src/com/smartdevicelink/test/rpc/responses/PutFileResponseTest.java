@@ -15,7 +15,7 @@ import com.smartdevicelink.test.utils.JsonUtils;
 
 public class PutFileResponseTest extends BaseRpcTests {
 
-	private int spaceAvailable;
+	private Integer spaceAvailable;
 	
 	private JSONObject paramsJson;
 	

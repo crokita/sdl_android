@@ -15,7 +15,7 @@ import com.smartdevicelink.test.utils.JsonUtils;
 
 public class DeleteInteractionChoiceSetTests extends BaseRpcTests{
 
-    private int choiceSetId;
+    private Integer choiceSetId;
 
     private JSONObject paramsJson;
     
@@ -54,8 +54,8 @@ public class DeleteInteractionChoiceSetTests extends BaseRpcTests{
     }
 
     public void testChoiceSetId(){
-        int choiceSetId = ( (DeleteInteractionChoiceSet) msg ).getInteractionChoiceSetID();
-        assertEquals("Choice set ID didn't match input choice set ID.", this.choiceSetId, choiceSetId);
+    	Integer copy = ( (DeleteInteractionChoiceSet) msg ).getInteractionChoiceSetID();
+        assertEquals("Choice set ID didn't match input choice set ID.", choiceSetId, copy);
     }
 
     public void testNull(){

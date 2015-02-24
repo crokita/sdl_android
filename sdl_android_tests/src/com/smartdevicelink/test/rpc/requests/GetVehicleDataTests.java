@@ -15,31 +15,31 @@ import com.smartdevicelink.test.utils.JsonUtils;
 
 public class GetVehicleDataTests extends BaseRpcTests{
 
-    public boolean speed;
-	public boolean rpm;
-	public boolean externalTemperature;
-	public boolean fuelLevel;
-	public boolean vin;
-	public boolean prndl;
-	public boolean tirePressure;
-	public boolean engineTorque;
-	public boolean odometer;
-	public boolean gps;
-	public boolean fuelLevelState;
-	public boolean instantFuelConsumption;
-	public boolean beltStatus;
-	public boolean bodyInformation;
-	public boolean deviceStatus;
-	public boolean driverBraking;
-	public boolean wiperStatus;
-	public boolean headLampStatus;
-	public boolean accPedalPosition;
-	public boolean steeringWheelAngle;
-	public boolean eCallInfo;
-	public boolean airbagStatus;
-	public boolean emergencyEvent;
-	public boolean clusterModeStatus;
-	public boolean myKey;
+    public Boolean speed;
+	public Boolean rpm;
+	public Boolean externalTemperature;
+	public Boolean fuelLevel;
+	public Boolean vin;
+	public Boolean prndl;
+	public Boolean tirePressure;
+	public Boolean engineTorque;
+	public Boolean odometer;
+	public Boolean gps;
+	public Boolean fuelLevelState;
+	public Boolean instantFuelConsumption;
+	public Boolean beltStatus;
+	public Boolean bodyInformation;
+	public Boolean deviceStatus;
+	public Boolean driverBraking;
+	public Boolean wiperStatus;
+	public Boolean headLampStatus;
+	public Boolean accPedalPosition;
+	public Boolean steeringWheelAngle;
+	public Boolean eCallInfo;
+	public Boolean airbagStatus;
+	public Boolean emergencyEvent;
+	public Boolean clusterModeStatus;
+	public Boolean myKey;
     
 	private JSONObject paramsJson;
 	
@@ -150,31 +150,31 @@ public class GetVehicleDataTests extends BaseRpcTests{
     }
     
 	public void testBatchAdd(){		
-		assertEquals("Speed vehicle data wasn't set correctly.", (Boolean) speed, ( (GetVehicleData) msg ).getSpeed());
-		assertEquals("RPM vehicle data wasn't set correctly.", (Boolean) rpm, ( (GetVehicleData) msg ).getRpm());
-		assertEquals("External temperature vehicle data wasn't set correctly.", (Boolean) externalTemperature, ( (GetVehicleData) msg ).getExternalTemperature());
-		assertEquals("Fuel level vehicle data wasn't set correctly.", (Boolean) fuelLevel, ( (GetVehicleData) msg ).getFuelLevel());
-		assertEquals("PRNDL vehicle data wasn't set correctly.", (Boolean) prndl, ( (GetVehicleData) msg ).getPrndl());
-		assertEquals("Tire pressure vehicle data wasn't set correctly.", (Boolean) tirePressure, ( (GetVehicleData) msg ).getTirePressure());
-		assertEquals("Engine torque vehicle data wasn't set correctly.", (Boolean) engineTorque, ( (GetVehicleData) msg ).getEngineTorque());
-		assertEquals("Odometer vehicle data wasn't set correctly.", (Boolean) odometer, ( (GetVehicleData) msg ).getOdometer());
-		assertEquals("GPS vehicle data wasn't set correctly.", (Boolean) gps, ( (GetVehicleData) msg ).getGps());
-		assertEquals("Fuel level state vehicle data wasn't set correctly.", (Boolean) fuelLevelState, ( (GetVehicleData) msg ).getFuelLevel_State());
-		assertEquals("Instant fuel consumption vehicle data wasn't set correctly.", (Boolean) instantFuelConsumption, ( (GetVehicleData) msg ).getInstantFuelConsumption());
-		assertEquals("VIN vehicle data wasn't set correctly.", (Boolean) vin, ( (GetVehicleData) msg ).getVin());
-		assertEquals("Belt status vehicle data wasn't set correctly.", (Boolean) beltStatus, ( (GetVehicleData) msg ).getBeltStatus());
-		assertEquals("Body information vehicle data wasn't set correctly.", (Boolean) bodyInformation, ( (GetVehicleData) msg ).getBodyInformation());
-		assertEquals("Device status vehicle data wasn't set correctly.", (Boolean) deviceStatus, ( (GetVehicleData) msg ).getDeviceStatus());
-		assertEquals("Driver braking vehicle data wasn't set correctly.", (Boolean) driverBraking, ( (GetVehicleData) msg ).getDriverBraking());
-		assertEquals("Wiper status vehicle data wasn't set correctly.", (Boolean) wiperStatus, ( (GetVehicleData) msg ).getWiperStatus());
-		assertEquals("Head lamp status vehicle data wasn't set correctly.", (Boolean) headLampStatus, ( (GetVehicleData) msg ).getHeadLampStatus());
-		assertEquals("Acceleration pedal position vehicle data wasn't set correctly.", (Boolean) accPedalPosition, ( (GetVehicleData) msg ).getAccPedalPosition());
-		assertEquals("Steering wheel angle vehicle data wasn't set correctly.", (Boolean) steeringWheelAngle, ( (GetVehicleData) msg ).getSteeringWheelAngle());
-		assertEquals("Emergency call info vehicle data wasn't set correctly.", (Boolean) eCallInfo, ( (GetVehicleData) msg ).getECallInfo());
-		assertEquals("Airbag status vehicle data wasn't set correctly.", (Boolean) airbagStatus, ( (GetVehicleData) msg ).getAirbagStatus());
-		assertEquals("Emergency event vehicle data wasn't set correctly.", (Boolean) emergencyEvent, ( (GetVehicleData) msg ).getEmergencyEvent());
-		assertEquals("Cluster mode status vehicle data wasn't set correctly.", (Boolean) clusterModeStatus, ( (GetVehicleData) msg ).getClusterModeStatus());
-		assertEquals("My key vehicle data wasn't set correctly.", (Boolean) myKey, ( (GetVehicleData) msg ).getMyKey());
+		assertEquals("Speed vehicle data wasn't set correctly.", speed, ( (GetVehicleData) msg ).getSpeed());
+		assertEquals("RPM vehicle data wasn't set correctly.", rpm, ( (GetVehicleData) msg ).getRpm());
+		assertEquals("External temperature vehicle data wasn't set correctly.", externalTemperature, ( (GetVehicleData) msg ).getExternalTemperature());
+		assertEquals("Fuel level vehicle data wasn't set correctly.", fuelLevel, ( (GetVehicleData) msg ).getFuelLevel());
+		assertEquals("PRNDL vehicle data wasn't set correctly.", prndl, ( (GetVehicleData) msg ).getPrndl());
+		assertEquals("Tire pressure vehicle data wasn't set correctly.", tirePressure, ( (GetVehicleData) msg ).getTirePressure());
+		assertEquals("Engine torque vehicle data wasn't set correctly.", engineTorque, ( (GetVehicleData) msg ).getEngineTorque());
+		assertEquals("Odometer vehicle data wasn't set correctly.", odometer, ( (GetVehicleData) msg ).getOdometer());
+		assertEquals("GPS vehicle data wasn't set correctly.", gps, ( (GetVehicleData) msg ).getGps());
+		assertEquals("Fuel level state vehicle data wasn't set correctly.", fuelLevelState, ( (GetVehicleData) msg ).getFuelLevel_State());
+		assertEquals("Instant fuel consumption vehicle data wasn't set correctly.", instantFuelConsumption, ( (GetVehicleData) msg ).getInstantFuelConsumption());
+		assertEquals("VIN vehicle data wasn't set correctly.", vin, ( (GetVehicleData) msg ).getVin());
+		assertEquals("Belt status vehicle data wasn't set correctly.", beltStatus, ( (GetVehicleData) msg ).getBeltStatus());
+		assertEquals("Body information vehicle data wasn't set correctly.", bodyInformation, ( (GetVehicleData) msg ).getBodyInformation());
+		assertEquals("Device status vehicle data wasn't set correctly.", deviceStatus, ( (GetVehicleData) msg ).getDeviceStatus());
+		assertEquals("Driver braking vehicle data wasn't set correctly.", driverBraking, ( (GetVehicleData) msg ).getDriverBraking());
+		assertEquals("Wiper status vehicle data wasn't set correctly.", wiperStatus, ( (GetVehicleData) msg ).getWiperStatus());
+		assertEquals("Head lamp status vehicle data wasn't set correctly.", headLampStatus, ( (GetVehicleData) msg ).getHeadLampStatus());
+		assertEquals("Acceleration pedal position vehicle data wasn't set correctly.", accPedalPosition, ( (GetVehicleData) msg ).getAccPedalPosition());
+		assertEquals("Steering wheel angle vehicle data wasn't set correctly.", steeringWheelAngle, ( (GetVehicleData) msg ).getSteeringWheelAngle());
+		assertEquals("Emergency call info vehicle data wasn't set correctly.", eCallInfo, ( (GetVehicleData) msg ).getECallInfo());
+		assertEquals("Airbag status vehicle data wasn't set correctly.", airbagStatus, ( (GetVehicleData) msg ).getAirbagStatus());
+		assertEquals("Emergency event vehicle data wasn't set correctly.", emergencyEvent, ( (GetVehicleData) msg ).getEmergencyEvent());
+		assertEquals("Cluster mode status vehicle data wasn't set correctly.", clusterModeStatus, ( (GetVehicleData) msg ).getClusterModeStatus());
+		assertEquals("My key vehicle data wasn't set correctly.", myKey, ( (GetVehicleData) msg ).getMyKey());
     }
 
     public void testNull(){

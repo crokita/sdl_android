@@ -82,8 +82,8 @@ public class SetDisplayLayoutResponseTest extends BaseRpcTests {
 		JSONObject result = new JSONObject();
 		
 		try {			
-			result.put(SetDisplayLayoutResponse.KEY_DISPLAY_CAPABILITIES, displayCapabilities.serializeJSON());
-			result.put(SetDisplayLayoutResponse.KEY_PRESET_BANK_CAPABILITIES, presetBankCapabilities.serializeJSON());
+			result.put(SetDisplayLayoutResponse.KEY_DISPLAY_CAPABILITIES, paramsJson.getJSONObject(SetDisplayLayoutResponse.KEY_DISPLAY_CAPABILITIES));
+			result.put(SetDisplayLayoutResponse.KEY_PRESET_BANK_CAPABILITIES, paramsJson.getJSONObject(SetDisplayLayoutResponse.KEY_PRESET_BANK_CAPABILITIES));
 			result.put(SetDisplayLayoutResponse.KEY_BUTTON_CAPABILITIES, paramsJson.getJSONArray(SetDisplayLayoutResponse.KEY_BUTTON_CAPABILITIES));
 			result.put(SetDisplayLayoutResponse.KEY_SOFT_BUTTON_CAPABILITIES, paramsJson.getJSONArray(SetDisplayLayoutResponse.KEY_SOFT_BUTTON_CAPABILITIES));
 			

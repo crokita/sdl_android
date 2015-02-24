@@ -26,7 +26,7 @@ public class PerformInteractionTest extends BaseRpcTests {
 	private String           				initialText;
 	private InteractionMode  				mode;	
 	private LayoutMode       				interactionLayout;
-	private int          					timeout;
+	private Integer          				timeout;
 	private List<Integer>    				choiceSetIds     	= new ArrayList<Integer>();
 	private List<TTSChunk>   				initialPrompt 		= new ArrayList<TTSChunk>();
 	private List<TTSChunk>   				helpPrompt 			= new ArrayList<TTSChunk>();
@@ -105,15 +105,15 @@ public class PerformInteractionTest extends BaseRpcTests {
 		JSONObject result = new JSONObject();
 
 		try {			
-			result.put(PerformInteraction.KEY_INITIAL_PROMPT,     paramsJson.getJSONArray(PerformInteraction.KEY_INITIAL_PROMPT));
-			result.put(PerformInteraction.KEY_HELP_PROMPT,        paramsJson.getJSONArray(PerformInteraction.KEY_HELP_PROMPT));
-			result.put(PerformInteraction.KEY_TIMEOUT_PROMPT,     paramsJson.getJSONArray(PerformInteraction.KEY_TIMEOUT_PROMPT));
-			result.put(PerformInteraction.KEY_VR_HELP,            paramsJson.getJSONArray(PerformInteraction.KEY_VR_HELP));
-			result.put(PerformInteraction.KEY_INTERACTION_CHOICE_SET_ID_LIST, paramsJson.getJSONArray(PerformInteraction.KEY_INTERACTION_CHOICE_SET_ID_LIST));
-			result.put(PerformInteraction.KEY_INTERACTION_LAYOUT, interactionLayout);
-			result.put(PerformInteraction.KEY_INITIAL_TEXT,       initialText);
-			result.put(PerformInteraction.KEY_INTERACTION_MODE,   mode);
-			result.put(PerformInteraction.KEY_TIMEOUT,            timeout);
+			result.put(PerformInteraction.KEY_INITIAL_PROMPT,     				paramsJson.getJSONArray(PerformInteraction.KEY_INITIAL_PROMPT));
+			result.put(PerformInteraction.KEY_HELP_PROMPT,        				paramsJson.getJSONArray(PerformInteraction.KEY_HELP_PROMPT));
+			result.put(PerformInteraction.KEY_TIMEOUT_PROMPT,     				paramsJson.getJSONArray(PerformInteraction.KEY_TIMEOUT_PROMPT));
+			result.put(PerformInteraction.KEY_VR_HELP,            				paramsJson.getJSONArray(PerformInteraction.KEY_VR_HELP));
+			result.put(PerformInteraction.KEY_INTERACTION_CHOICE_SET_ID_LIST, 	paramsJson.getJSONArray(PerformInteraction.KEY_INTERACTION_CHOICE_SET_ID_LIST));
+			result.put(PerformInteraction.KEY_INTERACTION_LAYOUT, 				interactionLayout);
+			result.put(PerformInteraction.KEY_INITIAL_TEXT,       				initialText);
+			result.put(PerformInteraction.KEY_INTERACTION_MODE,   				mode);
+			result.put(PerformInteraction.KEY_TIMEOUT,            				timeout);
 			
 		} catch (JSONException e) {
 			/* do nothing */

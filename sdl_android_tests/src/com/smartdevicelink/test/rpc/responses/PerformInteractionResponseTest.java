@@ -16,7 +16,7 @@ import com.smartdevicelink.test.utils.JsonUtils;
 
 public class PerformInteractionResponseTest extends BaseRpcTests {
 
-	private int      	 	choiceId;
+	private Integer      	choiceId;
 	private TriggerSource 	triggerSource;
 	private String        	manualTextEntry;
     

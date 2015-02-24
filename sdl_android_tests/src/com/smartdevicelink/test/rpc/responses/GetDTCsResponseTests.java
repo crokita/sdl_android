@@ -55,7 +55,7 @@ public class GetDTCsResponseTests extends BaseRpcTests{
         JSONObject result = new JSONObject();
 
         try{
-            result.put(GetDTCsResponse.KEY_DTC, JsonUtils.createJsonArray(dtcList));
+            result.put(GetDTCsResponse.KEY_DTC, paramsJson.getJSONArray(GetDTCsResponse.KEY_DTC));
         }catch(JSONException e){
             /* do nothing */
         }

@@ -15,9 +15,9 @@ import com.smartdevicelink.test.utils.JsonUtils;
 
 public class AddSubmenuTests extends BaseRpcTests{
 
-    private int    menuId;
-    private String menuName;
-    private int    position;
+    private Integer    menuId;
+    private String 	   menuName;
+    private Integer    position;
 
 	private JSONObject paramsJson;
 	
@@ -52,7 +52,7 @@ public class AddSubmenuTests extends BaseRpcTests{
 
         try{
             result.put(AddSubMenu.KEY_MENU_ID, menuId);
-            result.put(AddSubMenu.KEY_MENU_NAME, paramsJson.getString(AddSubMenu.KEY_MENU_NAME));
+            result.put(AddSubMenu.KEY_MENU_NAME, menuName);
             result.put(AddSubMenu.KEY_POSITION, position);
         }catch(JSONException e){
             /* do nothing */
@@ -62,18 +62,18 @@ public class AddSubmenuTests extends BaseRpcTests{
     }
 
     public void testMenuId(){
-        int menuId = ( (AddSubMenu) msg ).getMenuID();
-        assertEquals("Menu ID didn't match input menu ID.", this.menuId, menuId);
+    	Integer copy = ( (AddSubMenu) msg ).getMenuID();
+        assertEquals("Menu ID didn't match input menu ID.", menuId, copy);
     }
 
     public void testMenuName(){
-        String menuName = ( (AddSubMenu) msg ).getMenuName();
-        assertEquals("Menu name didn't match input menu name.", this.menuName, menuName);
+        String copy = ( (AddSubMenu) msg ).getMenuName();
+        assertEquals("Menu name didn't match input menu name.", menuName, copy);
     }
 
     public void testMenuPosition(){
-        int position = ( (AddSubMenu) msg ).getPosition();
-        assertEquals("Position didn't match input position.", this.position, position);
+    	Integer copy = ( (AddSubMenu) msg ).getPosition();
+        assertEquals("Position didn't match input position.", position, copy);
     }
 
     public void testNull(){
@@ -100,9 +100,9 @@ public class AddSubmenuTests extends BaseRpcTests{
 			
 			// test everything in the body
 			assertEquals("Command name doesn't match input name", body.getString(RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
-			assertEquals("Correlation ID doesn't match input ID", (int) body.getInt(RPCMessage.KEY_CORRELATION_ID), (int) cmd.getCorrelationID());
+			assertEquals("Correlation ID doesn't match input ID", (Integer) body.getInt(RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
 
-			assertEquals("Menu ID doesn't match input ID", (int) paramsJson.getInt(AddSubMenu.KEY_MENU_ID), (int) cmd.getMenuID());
+			assertEquals("Menu ID doesn't match input ID", (Integer) paramsJson.getInt(AddSubMenu.KEY_MENU_ID), cmd.getMenuID());
 			assertEquals("Position doesn't match input position", JsonUtils.readIntegerFromJsonObject(paramsJson, AddSubMenu.KEY_POSITION), cmd.getPosition());
 			assertEquals("Menu name doesn't match input name", JsonUtils.readStringFromJsonObject(paramsJson, AddSubMenu.KEY_MENU_NAME), cmd.getMenuName());
 			

@@ -20,7 +20,7 @@ import com.smartdevicelink.test.utils.Validator;
 public class ScrollableMessageTest extends BaseRpcTests {
 
 	private String			 	message;
-	private int 				timeout;
+	private Integer 			timeout;
 	private List<SoftButton> 	softButtonList = new ArrayList<SoftButton>();
     
 	private JSONObject paramsJson;

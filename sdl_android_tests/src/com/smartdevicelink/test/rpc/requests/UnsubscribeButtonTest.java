@@ -47,7 +47,6 @@ public class UnsubscribeButtonTest extends BaseRpcTests {
 
 		try {
 			result.put(UnsubscribeButton.KEY_BUTTON_NAME, button);
-			
 		} catch (JSONException e) {
 			/* do nothing */
 		}

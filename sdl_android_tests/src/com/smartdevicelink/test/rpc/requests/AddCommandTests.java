@@ -23,7 +23,7 @@ public class AddCommandTests extends BaseRpcTests{
     private Image           image;
     private MenuParams      menuParams;
     private List<String>    vrCommands;
-    private int				cmdId;
+    private Integer			cmdId;
 
 	private JSONObject paramsJson;
 	
@@ -79,8 +79,8 @@ public class AddCommandTests extends BaseRpcTests{
     }
 
     public void testCommandId(){
-        int cmdId = ( (AddCommand) msg ).getCmdID();
-        assertEquals("Command ID didn't match input command ID.", this.cmdId, cmdId);
+        Integer copy = ( (AddCommand) msg ).getCmdID();
+        assertEquals("Command ID didn't match input command ID.", cmdId, copy);
     }
 
     public void testMenuParams(){

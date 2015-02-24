@@ -146,10 +146,10 @@ public class RegisterAppInterfaceResponseTest extends BaseRpcTests {
 		try {		
 			result.put(RegisterAppInterfaceResponse.KEY_LANGUAGE, language);
 			result.put(RegisterAppInterfaceResponse.KEY_HMI_DISPLAY_LANGUAGE, hmiLanguage);
-			result.put(RegisterAppInterfaceResponse.KEY_SUPPORTED_DIAG_MODES, JsonUtils.createJsonArray(supportedDiagModes));
-			result.put(RegisterAppInterfaceResponse.KEY_SDL_MSG_VERSION, sdlMsgVersion.serializeJSON());
-			result.put(RegisterAppInterfaceResponse.KEY_VEHICLE_TYPE, vehicleType.serializeJSON());
-			result.put(RegisterAppInterfaceResponse.KEY_PRESET_BANK_CAPABILITIES, presetBankCapabilities.serializeJSON());
+			result.put(RegisterAppInterfaceResponse.KEY_SUPPORTED_DIAG_MODES, paramsJson.getJSONArray(RegisterAppInterfaceResponse.KEY_SUPPORTED_DIAG_MODES));
+			result.put(RegisterAppInterfaceResponse.KEY_SDL_MSG_VERSION, paramsJson.getJSONObject(RegisterAppInterfaceResponse.KEY_SDL_MSG_VERSION));
+			result.put(RegisterAppInterfaceResponse.KEY_VEHICLE_TYPE, paramsJson.getJSONObject(RegisterAppInterfaceResponse.KEY_VEHICLE_TYPE));
+			result.put(RegisterAppInterfaceResponse.KEY_PRESET_BANK_CAPABILITIES, paramsJson.getJSONObject(RegisterAppInterfaceResponse.KEY_PRESET_BANK_CAPABILITIES));
 			result.put(RegisterAppInterfaceResponse.KEY_DISPLAY_CAPABILITIES, paramsJson.getJSONObject(RegisterAppInterfaceResponse.KEY_DISPLAY_CAPABILITIES));	
 			result.put(RegisterAppInterfaceResponse.KEY_BUTTON_CAPABILITIES, paramsJson.getJSONArray(RegisterAppInterfaceResponse.KEY_BUTTON_CAPABILITIES));
 			result.put(RegisterAppInterfaceResponse.KEY_SOFT_BUTTON_CAPABILITIES, paramsJson.getJSONArray(RegisterAppInterfaceResponse.KEY_SOFT_BUTTON_CAPABILITIES));

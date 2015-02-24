@@ -34,7 +34,7 @@ public class RegisterAppInterfaceTest extends BaseRpcTests {
 	private Language hmiLanguageDesired;
 	private String hashId;
 	private List<String> vrSynonyms;
-	private boolean isMediaApp;
+	private Boolean isMediaApp;
 	private DeviceInfo deviceInfo;
 	
 	private JSONObject paramsJson;
@@ -113,7 +113,7 @@ public class RegisterAppInterfaceTest extends BaseRpcTests {
 			result.put(RegisterAppInterface.KEY_HASH_ID, hashId);
 			result.put(RegisterAppInterface.KEY_TTS_NAME, paramsJson.getJSONArray(RegisterAppInterface.KEY_TTS_NAME));
 			result.put(RegisterAppInterface.KEY_VR_SYNONYMS, paramsJson.getJSONArray(RegisterAppInterface.KEY_VR_SYNONYMS));
-			result.put(RegisterAppInterface.KEY_APP_HMI_TYPE, JsonUtils.createJsonArray(appHmiTypes));
+			result.put(RegisterAppInterface.KEY_APP_HMI_TYPE, paramsJson.getJSONArray(RegisterAppInterface.KEY_APP_HMI_TYPE));
 			result.put(RegisterAppInterface.KEY_IS_MEDIA_APPLICATION, isMediaApp);
 			result.put(RegisterAppInterface.KEY_DEVICE_INFO, paramsJson.getJSONObject(RegisterAppInterface.KEY_DEVICE_INFO));
 		} catch (JSONException e) {

@@ -19,7 +19,7 @@ import com.smartdevicelink.test.utils.Validator;
 
 public class CreateInteractionChoiceSetTests extends BaseRpcTests{
 
-    private int    				choiceId;
+    private Integer    			choiceId;
     private List<Choice>        choiceList = new ArrayList<Choice>();
 
     private JSONObject paramsJson;
@@ -72,8 +72,8 @@ public class CreateInteractionChoiceSetTests extends BaseRpcTests{
     }
 
     public void testChoiceSetId(){
-        int choiceId = ( (CreateInteractionChoiceSet) msg ).getInteractionChoiceSetID();
-        assertEquals("Command ID didn't match input command ID.", this.choiceId, choiceId);
+    	Integer copy = ( (CreateInteractionChoiceSet) msg ).getInteractionChoiceSetID();
+        assertEquals("Command ID didn't match input command ID.", choiceId, copy);
     }
 
     public void testChoiceList(){

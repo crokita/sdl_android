@@ -66,7 +66,7 @@ public class SystemRequestTest extends BaseRpcTests {
 		JSONObject result = new JSONObject();
 
 		try {
-			result.put(SystemRequest.KEY_DATA, JsonUtils.createJsonArray(legacyData));
+			result.put(SystemRequest.KEY_DATA, paramsJson.getJSONArray(SystemRequest.KEY_DATA));
 			result.put(SystemRequest.KEY_FILE_NAME, fileName);
 			result.put(SystemRequest.KEY_REQUEST_TYPE, requestType);
 			

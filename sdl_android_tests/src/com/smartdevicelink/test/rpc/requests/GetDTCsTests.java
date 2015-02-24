@@ -15,8 +15,8 @@ import com.smartdevicelink.test.utils.JsonUtils;
 
 public class GetDTCsTests extends BaseRpcTests{
 
-    private int ecuName;
-    private int dtcMask;
+    private Integer ecuName;
+    private Integer dtcMask;
 
     private JSONObject paramsJson;
     
@@ -58,13 +58,13 @@ public class GetDTCsTests extends BaseRpcTests{
     }
 
     public void testEcuName(){
-        int ecuName = ( (GetDTCs) msg ).getEcuName();
-        assertEquals("ECU name didn't match input ECU name.", this.ecuName, ecuName);
+    	Integer copy = ( (GetDTCs) msg ).getEcuName();
+        assertEquals("ECU name didn't match input ECU name.", ecuName, copy);
     }
 
     public void testDtcMask(){
-        int dtcMask = ( (GetDTCs) msg ).getDtcMask();
-        assertEquals("DTC mask didn't match input DTC mask.", this.dtcMask, dtcMask);
+    	Integer copy = ( (GetDTCs) msg ).getDtcMask();
+        assertEquals("DTC mask didn't match input DTC mask.", dtcMask, copy);
     }
 
     public void testNull(){

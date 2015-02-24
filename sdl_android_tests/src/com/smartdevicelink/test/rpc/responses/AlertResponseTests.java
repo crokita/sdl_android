@@ -15,7 +15,7 @@ import com.smartdevicelink.test.utils.JsonUtils;
 
 public class AlertResponseTests extends BaseRpcTests{
 
-    private int tryAgainTime;
+    private Integer tryAgainTime;
 
     private JSONObject paramsJson;
     
@@ -53,8 +53,8 @@ public class AlertResponseTests extends BaseRpcTests{
     }
 
     public void testTryAgainTime(){
-        int tryAgainTime = ( (AlertResponse) msg ).getTryAgainTime();
-        assertEquals("Try again time didn't match expected time.", tryAgainTime, tryAgainTime);
+        Integer copy = ( (AlertResponse) msg ).getTryAgainTime();
+        assertEquals("Try again time didn't match expected time.", tryAgainTime, copy);
     }
 
     public void testNull(){

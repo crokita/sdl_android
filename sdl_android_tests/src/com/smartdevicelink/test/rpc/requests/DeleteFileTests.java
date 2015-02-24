@@ -54,8 +54,8 @@ public class DeleteFileTests extends BaseRpcTests{
     }
 
     public void testSmartDeviceLinkFileName(){
-         String filename = ( (DeleteFile) msg ).getSdlFileName();
-         assertEquals("Filename didn't match input filename.", this.fileName, filename);
+         String copy = ( (DeleteFile) msg ).getSdlFileName();
+         assertEquals("Filename didn't match input filename.", this.fileName, copy);
     }
 
     public void testNull(){

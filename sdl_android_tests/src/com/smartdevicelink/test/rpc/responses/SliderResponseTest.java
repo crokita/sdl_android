@@ -15,7 +15,7 @@ import com.smartdevicelink.test.utils.JsonUtils;
 
 public class SliderResponseTest extends BaseRpcTests {
 
-	private int position;
+	private Integer position;
 	
 	private JSONObject paramsJson;
 	
@@ -46,7 +46,6 @@ public class SliderResponseTest extends BaseRpcTests {
 
 		try {
 			result.put(SliderResponse.KEY_SLIDER_POSITION, position);
-			
 		} catch (JSONException e) {
 			/* do nothing */
 		}

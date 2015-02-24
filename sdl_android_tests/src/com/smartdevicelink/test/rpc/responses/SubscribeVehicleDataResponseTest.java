@@ -128,30 +128,30 @@ public class SubscribeVehicleDataResponseTest extends BaseRpcTests {
 		JSONObject result = new JSONObject();
 
 		try {
-			result.put(SubscribeVehicleDataResponse.KEY_SPEED, speed.serializeJSON());
-	        result.put(SubscribeVehicleDataResponse.KEY_RPM, rpm.serializeJSON());
-	        result.put(SubscribeVehicleDataResponse.KEY_EXTERNAL_TEMPERATURE, externalTemperature.serializeJSON());
-	        result.put(SubscribeVehicleDataResponse.KEY_FUEL_LEVEL, fuelLevel.serializeJSON());
-	        result.put(SubscribeVehicleDataResponse.KEY_PRNDL, prndl.serializeJSON());
-	        result.put(SubscribeVehicleDataResponse.KEY_TIRE_PRESSURE, tirePressure.serializeJSON());
-	        result.put(SubscribeVehicleDataResponse.KEY_ENGINE_TORQUE, engineTorque.serializeJSON());
-	        result.put(SubscribeVehicleDataResponse.KEY_ODOMETER, odometer.serializeJSON());
-	        result.put(SubscribeVehicleDataResponse.KEY_GPS, gps.serializeJSON());
-	        result.put(SubscribeVehicleDataResponse.KEY_FUEL_LEVEL_STATE, fuelLevelState.serializeJSON());
-	        result.put(SubscribeVehicleDataResponse.KEY_INSTANT_FUEL_CONSUMPTION, instantFuelConsumption.serializeJSON());
-	        result.put(SubscribeVehicleDataResponse.KEY_BELT_STATUS, beltStatus.serializeJSON());
-	        result.put(SubscribeVehicleDataResponse.KEY_BODY_INFORMATION, bodyInformation.serializeJSON());
-	        result.put(SubscribeVehicleDataResponse.KEY_DEVICE_STATUS, deviceStatus.serializeJSON());
-	        result.put(SubscribeVehicleDataResponse.KEY_DRIVER_BRAKING, driverBraking.serializeJSON());
-	        result.put(SubscribeVehicleDataResponse.KEY_WIPER_STATUS, wiperStatus.serializeJSON());
-	        result.put(SubscribeVehicleDataResponse.KEY_HEAD_LAMP_STATUS, headLampStatus.serializeJSON());
-	        result.put(SubscribeVehicleDataResponse.KEY_ACC_PEDAL_POSITION, accPedalPosition.serializeJSON());
-	        result.put(SubscribeVehicleDataResponse.KEY_STEERING_WHEEL_ANGLE, steeringWheelAngle.serializeJSON());
-	        result.put(SubscribeVehicleDataResponse.KEY_E_CALL_INFO, eCallInfo.serializeJSON());
-	        result.put(SubscribeVehicleDataResponse.KEY_AIRBAG_STATUS, airbagStatus.serializeJSON());
-	        result.put(SubscribeVehicleDataResponse.KEY_EMERGENCY_EVENT, emergencyEvent.serializeJSON());
-	        result.put(SubscribeVehicleDataResponse.KEY_CLUSTER_MODE_STATUS, clusterModeStatus.serializeJSON());
-	        result.put(SubscribeVehicleDataResponse.KEY_MY_KEY, myKey.serializeJSON());
+			result.put(SubscribeVehicleDataResponse.KEY_SPEED, paramsJson.getJSONObject(SubscribeVehicleDataResponse.KEY_SPEED));
+	        result.put(SubscribeVehicleDataResponse.KEY_RPM, paramsJson.getJSONObject(SubscribeVehicleDataResponse.KEY_RPM));
+	        result.put(SubscribeVehicleDataResponse.KEY_EXTERNAL_TEMPERATURE, paramsJson.getJSONObject(SubscribeVehicleDataResponse.KEY_EXTERNAL_TEMPERATURE));
+	        result.put(SubscribeVehicleDataResponse.KEY_FUEL_LEVEL, paramsJson.getJSONObject(SubscribeVehicleDataResponse.KEY_FUEL_LEVEL));
+	        result.put(SubscribeVehicleDataResponse.KEY_PRNDL, paramsJson.getJSONObject(SubscribeVehicleDataResponse.KEY_PRNDL));
+	        result.put(SubscribeVehicleDataResponse.KEY_TIRE_PRESSURE, paramsJson.getJSONObject(SubscribeVehicleDataResponse.KEY_TIRE_PRESSURE));
+	        result.put(SubscribeVehicleDataResponse.KEY_ENGINE_TORQUE, paramsJson.getJSONObject(SubscribeVehicleDataResponse.KEY_ENGINE_TORQUE));
+	        result.put(SubscribeVehicleDataResponse.KEY_ODOMETER, paramsJson.getJSONObject(SubscribeVehicleDataResponse.KEY_ODOMETER));
+	        result.put(SubscribeVehicleDataResponse.KEY_GPS, paramsJson.getJSONObject(SubscribeVehicleDataResponse.KEY_GPS));
+	        result.put(SubscribeVehicleDataResponse.KEY_FUEL_LEVEL_STATE, paramsJson.getJSONObject(SubscribeVehicleDataResponse.KEY_FUEL_LEVEL_STATE));
+	        result.put(SubscribeVehicleDataResponse.KEY_INSTANT_FUEL_CONSUMPTION, paramsJson.getJSONObject(SubscribeVehicleDataResponse.KEY_INSTANT_FUEL_CONSUMPTION));
+	        result.put(SubscribeVehicleDataResponse.KEY_BELT_STATUS, paramsJson.getJSONObject(SubscribeVehicleDataResponse.KEY_BELT_STATUS));
+	        result.put(SubscribeVehicleDataResponse.KEY_BODY_INFORMATION, paramsJson.getJSONObject(SubscribeVehicleDataResponse.KEY_BODY_INFORMATION));
+	        result.put(SubscribeVehicleDataResponse.KEY_DEVICE_STATUS, paramsJson.getJSONObject(SubscribeVehicleDataResponse.KEY_DEVICE_STATUS));
+	        result.put(SubscribeVehicleDataResponse.KEY_DRIVER_BRAKING, paramsJson.getJSONObject(SubscribeVehicleDataResponse.KEY_DRIVER_BRAKING));
+	        result.put(SubscribeVehicleDataResponse.KEY_WIPER_STATUS, paramsJson.getJSONObject(SubscribeVehicleDataResponse.KEY_WIPER_STATUS));
+	        result.put(SubscribeVehicleDataResponse.KEY_HEAD_LAMP_STATUS, paramsJson.getJSONObject(SubscribeVehicleDataResponse.KEY_HEAD_LAMP_STATUS));
+	        result.put(SubscribeVehicleDataResponse.KEY_ACC_PEDAL_POSITION, paramsJson.getJSONObject(SubscribeVehicleDataResponse.KEY_ACC_PEDAL_POSITION));
+	        result.put(SubscribeVehicleDataResponse.KEY_STEERING_WHEEL_ANGLE, paramsJson.getJSONObject(SubscribeVehicleDataResponse.KEY_STEERING_WHEEL_ANGLE));
+	        result.put(SubscribeVehicleDataResponse.KEY_E_CALL_INFO, paramsJson.getJSONObject(SubscribeVehicleDataResponse.KEY_E_CALL_INFO));
+	        result.put(SubscribeVehicleDataResponse.KEY_AIRBAG_STATUS, paramsJson.getJSONObject(SubscribeVehicleDataResponse.KEY_AIRBAG_STATUS));
+	        result.put(SubscribeVehicleDataResponse.KEY_EMERGENCY_EVENT, paramsJson.getJSONObject(SubscribeVehicleDataResponse.KEY_EMERGENCY_EVENT));
+	        result.put(SubscribeVehicleDataResponse.KEY_CLUSTER_MODE_STATUS, paramsJson.getJSONObject(SubscribeVehicleDataResponse.KEY_CLUSTER_MODE_STATUS));
+	        result.put(SubscribeVehicleDataResponse.KEY_MY_KEY, paramsJson.getJSONObject(SubscribeVehicleDataResponse.KEY_MY_KEY));
 		} catch (JSONException e) {
 			// do nothing
 		}

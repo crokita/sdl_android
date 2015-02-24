@@ -22,13 +22,13 @@ import com.smartdevicelink.test.utils.Validator;
 
 public class PerformAudioPassThruTests extends BaseRpcTests {
 	
-	private int 					maxDuration;
+	private Integer 				maxDuration;
 	private String 					text1;
 	private String 					text2;
-	private boolean 				muteAudio;
+	private Boolean 				muteAudio;
 	private SamplingRate 			samplingRate;
 	private AudioType 				audioType;
-	private final List<TTSChunk> 	initialPrompt  = new ArrayList<TTSChunk>();
+	private List<TTSChunk> 			initialPrompt  = new ArrayList<TTSChunk>();
 	private BitsPerSample 			bitsPerSample;
 
 	private JSONObject paramsJson;
@@ -85,14 +85,14 @@ public class PerformAudioPassThruTests extends BaseRpcTests {
 		JSONObject result = new JSONObject();
 
 		try {
-			result.put(PerformAudioPassThru.KEY_AUDIO_PASS_THRU_DISPLAY_TEXT_1,           text1);
-			result.put(PerformAudioPassThru.KEY_AUDIO_PASS_THRU_DISPLAY_TEXT_2,           text2);			
-			result.put(PerformAudioPassThru.KEY_MUTE_AUDIO,      muteAudio);	
-			result.put(PerformAudioPassThru.KEY_MAX_DURATION,    maxDuration);
-			result.put(PerformAudioPassThru.KEY_AUDIO_TYPE,      audioType);
-			result.put(PerformAudioPassThru.KEY_SAMPLING_RATE,   samplingRate);
-			result.put(PerformAudioPassThru.KEY_BITS_PER_SAMPLE, bitsPerSample);
-			result.put(PerformAudioPassThru.KEY_INITIAL_PROMPT,  paramsJson.getJSONArray(PerformAudioPassThru.KEY_INITIAL_PROMPT));
+			result.put(PerformAudioPassThru.KEY_AUDIO_PASS_THRU_DISPLAY_TEXT_1,     text1);
+			result.put(PerformAudioPassThru.KEY_AUDIO_PASS_THRU_DISPLAY_TEXT_2,     text2);			
+			result.put(PerformAudioPassThru.KEY_MUTE_AUDIO,      					muteAudio);	
+			result.put(PerformAudioPassThru.KEY_MAX_DURATION,    					maxDuration);
+			result.put(PerformAudioPassThru.KEY_AUDIO_TYPE,      					audioType);
+			result.put(PerformAudioPassThru.KEY_SAMPLING_RATE,   					samplingRate);
+			result.put(PerformAudioPassThru.KEY_BITS_PER_SAMPLE, 					bitsPerSample);
+			result.put(PerformAudioPassThru.KEY_INITIAL_PROMPT,  					paramsJson.getJSONArray(PerformAudioPassThru.KEY_INITIAL_PROMPT));
 			
 		} catch (JSONException e) {
 			/* do nothing */
@@ -141,13 +141,13 @@ public class PerformAudioPassThruTests extends BaseRpcTests {
 	}
 	
 	public void testMaxDuration () {
-		int copy = ( (PerformAudioPassThru) msg ).getMaxDuration();
+		Integer copy = ( (PerformAudioPassThru) msg ).getMaxDuration();
 
 		assertEquals("Input value didn't match expected value.", this.maxDuration, copy);
 	}
 	
 	public void testMuteAudio () {
-		boolean copy = ( (PerformAudioPassThru) msg ).getMuteAudio();
+		Boolean copy = ( (PerformAudioPassThru) msg ).getMuteAudio();
 		
 		assertEquals("Input value didn't match expected value.", this.muteAudio, copy);
 	}

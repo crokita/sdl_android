@@ -61,13 +61,13 @@ public class ChangeRegistrationTests extends BaseRpcTests{
     }
 
     public void testLanguage(){
-        Language language = ( (ChangeRegistration) msg ).getLanguage();
-        assertEquals("Language didn't match input language.", this.language, language);
+        Language copy = ( (ChangeRegistration) msg ).getLanguage();
+        assertEquals("Language didn't match input language.", language, copy);
     }
 
     public void testHmiLanguage(){
-        Language hmiLanguage = ( (ChangeRegistration) msg ).getHmiDisplayLanguage();
-        assertEquals("HMI language didn't match input language.", this.hmiLanguage, hmiLanguage);
+        Language copy = ( (ChangeRegistration) msg ).getHmiDisplayLanguage();
+        assertEquals("HMI language didn't match input language.", hmiLanguage, copy);
     }
 
     public void testNull(){

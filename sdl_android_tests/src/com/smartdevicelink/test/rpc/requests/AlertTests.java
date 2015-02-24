@@ -20,12 +20,12 @@ import com.smartdevicelink.test.utils.Validator;
 
 public class AlertTests extends BaseRpcTests{
 	
-	private int					duration;
+	private Integer				duration;
 	private String				alertText1;
 	private String				alertText2;
 	private String				alertText3;
-	private boolean				playTone;
-	private boolean				progressIndicator;
+	private Boolean				playTone;
+	private Boolean				progressIndicator;
     private List<TTSChunk> 		ttsChunkList = new ArrayList<TTSChunk>();
     private List<SoftButton> 	softButtonList = new ArrayList<SoftButton>();
     
@@ -102,33 +102,33 @@ public class AlertTests extends BaseRpcTests{
     }
 
     public void testDuration(){
-        int duration = ( (Alert) msg ).getDuration();
-        assertEquals("Duration didn't match input duration.", this.duration, duration);
+        Integer copy = ( (Alert) msg ).getDuration();
+        assertEquals("Duration didn't match input duration.", duration, copy);
     }
 
     public void testAlertText1(){
-        String alertText1 = ( (Alert) msg ).getAlertText1();
-        assertEquals("Alert text 1 didn't match input text.", this.alertText1, alertText1);
+        String copy = ( (Alert) msg ).getAlertText1();
+        assertEquals("Alert text 1 didn't match input text.", alertText1, copy);
     }
 
     public void testAlertText2(){
-        String alertText2 = ( (Alert) msg ).getAlertText2();
-        assertEquals("Alert text 2 didn't match input text.", this.alertText2, alertText2);
+        String copy = ( (Alert) msg ).getAlertText2();
+        assertEquals("Alert text 2 didn't match input text.", alertText2, copy);
     }
 
     public void testAlertText3(){
-        String alertText3 = ( (Alert) msg ).getAlertText3();
-        assertEquals("Alert text 3 didn't match input text.", this.alertText3, alertText3);
+        String copy = ( (Alert) msg ).getAlertText3();
+        assertEquals("Alert text 3 didn't match input text.", alertText3, copy);
     }
 
     public void testPlayTone(){
-        boolean playTone = ( (Alert) msg ).getPlayTone();
-        assertEquals("Play tone didn't match input play tone.", this.playTone, playTone);
+        Boolean copy = ( (Alert) msg ).getPlayTone();
+        assertEquals("Play tone didn't match input play tone.", playTone, copy);
     }
 
     public void testProgressIndicator(){
-        boolean progressIndicator = ( (Alert) msg ).getProgressIndicator();
-        assertEquals("Progress indicator didn't match input progress indicator.", this.progressIndicator, progressIndicator);
+    	Boolean copy = ( (Alert) msg ).getProgressIndicator();
+        assertEquals("Progress indicator didn't match input progress indicator.", progressIndicator, copy);
     }
 
 	public void testTtsChunks () {

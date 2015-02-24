@@ -129,30 +129,30 @@ public class UnsubscribeVehicleDataResponseTest extends BaseRpcTests {
 		JSONObject result = new JSONObject();
 
 		try {
-			result.put(UnsubscribeVehicleDataResponse.KEY_SPEED, speed.serializeJSON());
-	        result.put(UnsubscribeVehicleDataResponse.KEY_RPM, rpm.serializeJSON());
-	        result.put(UnsubscribeVehicleDataResponse.KEY_EXTERNAL_TEMPERATURE, externalTemperature.serializeJSON());
-	        result.put(UnsubscribeVehicleDataResponse.KEY_FUEL_LEVEL, fuelLevel.serializeJSON());
-	        result.put(UnsubscribeVehicleDataResponse.KEY_PRNDL, prndl.serializeJSON());
-	        result.put(UnsubscribeVehicleDataResponse.KEY_TIRE_PRESSURE, tirePressure.serializeJSON());
-	        result.put(UnsubscribeVehicleDataResponse.KEY_ENGINE_TORQUE, engineTorque.serializeJSON());
-	        result.put(UnsubscribeVehicleDataResponse.KEY_ODOMETER, odometer.serializeJSON());
-	        result.put(UnsubscribeVehicleDataResponse.KEY_GPS, gps.serializeJSON());
-	        result.put(UnsubscribeVehicleDataResponse.KEY_FUEL_LEVEL_STATE, fuelLevelState.serializeJSON());
-	        result.put(UnsubscribeVehicleDataResponse.KEY_INSTANT_FUEL_CONSUMPTION, instantFuelConsumption.serializeJSON());
-	        result.put(UnsubscribeVehicleDataResponse.KEY_BELT_STATUS, beltStatus.serializeJSON());
-	        result.put(UnsubscribeVehicleDataResponse.KEY_BODY_INFORMATION, bodyInformation.serializeJSON());
-	        result.put(UnsubscribeVehicleDataResponse.KEY_DEVICE_STATUS, deviceStatus.serializeJSON());
-	        result.put(UnsubscribeVehicleDataResponse.KEY_DRIVER_BRAKING, driverBraking.serializeJSON());
-	        result.put(UnsubscribeVehicleDataResponse.KEY_WIPER_STATUS, wiperStatus.serializeJSON());
-	        result.put(UnsubscribeVehicleDataResponse.KEY_HEAD_LAMP_STATUS, headLampStatus.serializeJSON());
-	        result.put(UnsubscribeVehicleDataResponse.KEY_ACC_PEDAL_POSITION, accPedalPosition.serializeJSON());
-	        result.put(UnsubscribeVehicleDataResponse.KEY_STEERING_WHEEL_ANGLE, steeringWheelAngle.serializeJSON());
-	        result.put(UnsubscribeVehicleDataResponse.KEY_E_CALL_INFO, eCallInfo.serializeJSON());
-	        result.put(UnsubscribeVehicleDataResponse.KEY_AIRBAG_STATUS, airbagStatus.serializeJSON());
-	        result.put(UnsubscribeVehicleDataResponse.KEY_EMERGENCY_EVENT, emergencyEvent.serializeJSON());
-	        result.put(UnsubscribeVehicleDataResponse.KEY_CLUSTER_MODE_STATUS, clusterModeStatus.serializeJSON());
-	        result.put(UnsubscribeVehicleDataResponse.KEY_MY_KEY, myKey.serializeJSON());
+			result.put(UnsubscribeVehicleDataResponse.KEY_SPEED, paramsJson.getJSONObject(UnsubscribeVehicleDataResponse.KEY_SPEED));
+	        result.put(UnsubscribeVehicleDataResponse.KEY_RPM, paramsJson.getJSONObject(UnsubscribeVehicleDataResponse.KEY_RPM));
+	        result.put(UnsubscribeVehicleDataResponse.KEY_EXTERNAL_TEMPERATURE, paramsJson.getJSONObject(UnsubscribeVehicleDataResponse.KEY_EXTERNAL_TEMPERATURE));
+	        result.put(UnsubscribeVehicleDataResponse.KEY_FUEL_LEVEL, paramsJson.getJSONObject(UnsubscribeVehicleDataResponse.KEY_FUEL_LEVEL));
+	        result.put(UnsubscribeVehicleDataResponse.KEY_PRNDL, paramsJson.getJSONObject(UnsubscribeVehicleDataResponse.KEY_PRNDL));
+	        result.put(UnsubscribeVehicleDataResponse.KEY_TIRE_PRESSURE, paramsJson.getJSONObject(UnsubscribeVehicleDataResponse.KEY_TIRE_PRESSURE));
+	        result.put(UnsubscribeVehicleDataResponse.KEY_ENGINE_TORQUE, paramsJson.getJSONObject(UnsubscribeVehicleDataResponse.KEY_ENGINE_TORQUE));
+	        result.put(UnsubscribeVehicleDataResponse.KEY_ODOMETER, paramsJson.getJSONObject(UnsubscribeVehicleDataResponse.KEY_ODOMETER));
+	        result.put(UnsubscribeVehicleDataResponse.KEY_GPS, paramsJson.getJSONObject(UnsubscribeVehicleDataResponse.KEY_GPS));
+	        result.put(UnsubscribeVehicleDataResponse.KEY_FUEL_LEVEL_STATE, paramsJson.getJSONObject(UnsubscribeVehicleDataResponse.KEY_FUEL_LEVEL_STATE));
+	        result.put(UnsubscribeVehicleDataResponse.KEY_INSTANT_FUEL_CONSUMPTION, paramsJson.getJSONObject(UnsubscribeVehicleDataResponse.KEY_INSTANT_FUEL_CONSUMPTION));
+	        result.put(UnsubscribeVehicleDataResponse.KEY_BELT_STATUS, paramsJson.getJSONObject(UnsubscribeVehicleDataResponse.KEY_BELT_STATUS));
+	        result.put(UnsubscribeVehicleDataResponse.KEY_BODY_INFORMATION, paramsJson.getJSONObject(UnsubscribeVehicleDataResponse.KEY_BODY_INFORMATION));
+	        result.put(UnsubscribeVehicleDataResponse.KEY_DEVICE_STATUS, paramsJson.getJSONObject(UnsubscribeVehicleDataResponse.KEY_DEVICE_STATUS));
+	        result.put(UnsubscribeVehicleDataResponse.KEY_DRIVER_BRAKING, paramsJson.getJSONObject(UnsubscribeVehicleDataResponse.KEY_DRIVER_BRAKING));
+	        result.put(UnsubscribeVehicleDataResponse.KEY_WIPER_STATUS, paramsJson.getJSONObject(UnsubscribeVehicleDataResponse.KEY_WIPER_STATUS));
+	        result.put(UnsubscribeVehicleDataResponse.KEY_HEAD_LAMP_STATUS, paramsJson.getJSONObject(UnsubscribeVehicleDataResponse.KEY_HEAD_LAMP_STATUS));
+	        result.put(UnsubscribeVehicleDataResponse.KEY_ACC_PEDAL_POSITION, paramsJson.getJSONObject(UnsubscribeVehicleDataResponse.KEY_ACC_PEDAL_POSITION));
+	        result.put(UnsubscribeVehicleDataResponse.KEY_STEERING_WHEEL_ANGLE, paramsJson.getJSONObject(UnsubscribeVehicleDataResponse.KEY_STEERING_WHEEL_ANGLE));
+	        result.put(UnsubscribeVehicleDataResponse.KEY_E_CALL_INFO, paramsJson.getJSONObject(UnsubscribeVehicleDataResponse.KEY_E_CALL_INFO));
+	        result.put(UnsubscribeVehicleDataResponse.KEY_AIRBAG_STATUS, paramsJson.getJSONObject(UnsubscribeVehicleDataResponse.KEY_AIRBAG_STATUS));
+	        result.put(UnsubscribeVehicleDataResponse.KEY_EMERGENCY_EVENT, paramsJson.getJSONObject(UnsubscribeVehicleDataResponse.KEY_EMERGENCY_EVENT));
+	        result.put(UnsubscribeVehicleDataResponse.KEY_CLUSTER_MODE_STATUS, paramsJson.getJSONObject(UnsubscribeVehicleDataResponse.KEY_CLUSTER_MODE_STATUS));
+	        result.put(UnsubscribeVehicleDataResponse.KEY_MY_KEY, paramsJson.getJSONObject(UnsubscribeVehicleDataResponse.KEY_MY_KEY));
 		} catch (JSONException e) {
 			// do nothing
 		}

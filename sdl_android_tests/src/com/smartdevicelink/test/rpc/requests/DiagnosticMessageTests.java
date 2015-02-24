@@ -19,9 +19,9 @@ import com.smartdevicelink.test.utils.Validator;
 
 public class DiagnosticMessageTests extends BaseRpcTests{
 
-    private int           targetId;
+    private Integer       targetId;
     private List<Integer> messageData = new ArrayList<Integer>();
-    private int           messageLength;
+    private Integer       messageLength;
     
     private JSONObject paramsJson;
 
@@ -74,13 +74,13 @@ public class DiagnosticMessageTests extends BaseRpcTests{
     }
 
     public void testTargetId(){
-        int targetId = ( (DiagnosticMessage) msg ).getTargetID();
-        assertEquals("Target ID didn't match input target ID.", this.targetId, targetId);
+    	Integer copy = ( (DiagnosticMessage) msg ).getTargetID();
+        assertEquals("Target ID didn't match input target ID.", targetId, copy);
     }
 
     public void testMessageLength(){
-        int messageLength = ( (DiagnosticMessage) msg ).getMessageLength();
-        assertEquals("Message length didn't match input message length.", this.messageLength, messageLength);
+    	Integer copy = ( (DiagnosticMessage) msg ).getMessageLength();
+        assertEquals("Message length didn't match input message length.", messageLength, copy);
     }
 
     public void testMessageData(){
