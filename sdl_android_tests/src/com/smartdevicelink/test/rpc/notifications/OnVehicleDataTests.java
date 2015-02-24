@@ -19,7 +19,6 @@ import com.smartdevicelink.proxy.rpc.GPSData;
 import com.smartdevicelink.proxy.rpc.HeadLampStatus;
 import com.smartdevicelink.proxy.rpc.MyKey;
 import com.smartdevicelink.proxy.rpc.OnVehicleData;
-import com.smartdevicelink.proxy.rpc.SingleTireStatus;
 import com.smartdevicelink.proxy.rpc.TireStatus;
 import com.smartdevicelink.proxy.rpc.enums.ComponentVolumeStatus;
 import com.smartdevicelink.proxy.rpc.enums.PRNDL;
@@ -35,7 +34,7 @@ public class OnVehicleDataTests extends BaseRpcTests{
 	
     @Override
     protected RPCMessage createMessage(){
-    	return VehicleDataHelper.VEHICLE_DATA;
+    	return VehicleDataHelper.vehicleData;
     }
 
     @Override
@@ -53,31 +52,31 @@ public class OnVehicleDataTests extends BaseRpcTests{
         JSONObject result = new JSONObject();
 
         try{
-            result.put(OnVehicleData.KEY_SPEED, VehicleDataHelper.SPEED);
-            result.put(OnVehicleData.KEY_RPM, VehicleDataHelper.RPM);
-            result.put(OnVehicleData.KEY_EXTERNAL_TEMPERATURE, VehicleDataHelper.EXTERNAL_TEMPERATURE);
-            result.put(OnVehicleData.KEY_FUEL_LEVEL, VehicleDataHelper.FUEL_LEVEL);
-            result.put(OnVehicleData.KEY_VIN, VehicleDataHelper.VIN);
-            result.put(OnVehicleData.KEY_PRNDL, VehicleDataHelper.PRNDL_FINAL);
-            result.put(OnVehicleData.KEY_TIRE_PRESSURE, VehicleDataHelper.TIRE_PRESSURE.serializeJSON());
-            result.put(OnVehicleData.KEY_ENGINE_TORQUE, VehicleDataHelper.ENGINE_TORQUE);
-            result.put(OnVehicleData.KEY_ODOMETER, VehicleDataHelper.ODOMETER);
-            result.put(OnVehicleData.KEY_GPS, VehicleDataHelper.GPS.serializeJSON());
-            result.put(OnVehicleData.KEY_FUEL_LEVEL_STATE, VehicleDataHelper.FUEL_LEVEL_STATE);
-            result.put(OnVehicleData.KEY_INSTANT_FUEL_CONSUMPTION, VehicleDataHelper.INSTANT_FUEL_CONSUMPTION);
-            result.put(OnVehicleData.KEY_BELT_STATUS, VehicleDataHelper.BELT_STATUS.serializeJSON());
-            result.put(OnVehicleData.KEY_BODY_INFORMATION, VehicleDataHelper.BODY_INFORMATION.serializeJSON());
-            result.put(OnVehicleData.KEY_DEVICE_STATUS, VehicleDataHelper.DEVICE_STATUS.serializeJSON());
-            result.put(OnVehicleData.KEY_DRIVER_BRAKING, VehicleDataHelper.DRIVER_BRAKING);
-            result.put(OnVehicleData.KEY_WIPER_STATUS, VehicleDataHelper.WIPER_STATUS);
-            result.put(OnVehicleData.KEY_HEAD_LAMP_STATUS, VehicleDataHelper.HEAD_LAMP_STATUS.serializeJSON());
-            result.put(OnVehicleData.KEY_ACC_PEDAL_POSITION, VehicleDataHelper.ACC_PEDAL_POSITION);
-            result.put(OnVehicleData.KEY_STEERING_WHEEL_ANGLE, VehicleDataHelper.STEERING_WHEEL_ANGLE);
-            result.put(OnVehicleData.KEY_E_CALL_INFO, VehicleDataHelper.E_CALL_INFO.serializeJSON());
-            result.put(OnVehicleData.KEY_AIRBAG_STATUS, VehicleDataHelper.AIRBAG_STATUS.serializeJSON());
-            result.put(OnVehicleData.KEY_EMERGENCY_EVENT, VehicleDataHelper.EMERGENCY_EVENT.serializeJSON());
-            result.put(OnVehicleData.KEY_CLUSTER_MODE_STATUS, VehicleDataHelper.CLUSTER_MODE_STATUS.serializeJSON());
-            result.put(OnVehicleData.KEY_MY_KEY, VehicleDataHelper.MY_KEY.serializeJSON());
+            result.put(OnVehicleData.KEY_SPEED, VehicleDataHelper.speed);
+            result.put(OnVehicleData.KEY_RPM, VehicleDataHelper.rpm);
+            result.put(OnVehicleData.KEY_EXTERNAL_TEMPERATURE, VehicleDataHelper.externalTemperature);
+            result.put(OnVehicleData.KEY_FUEL_LEVEL, VehicleDataHelper.fuelLevel);
+            result.put(OnVehicleData.KEY_VIN, VehicleDataHelper.vin);
+            result.put(OnVehicleData.KEY_PRNDL, VehicleDataHelper.prndl);
+            result.put(OnVehicleData.KEY_TIRE_PRESSURE, VehicleDataHelper.tirePressure.serializeJSON());
+            result.put(OnVehicleData.KEY_ENGINE_TORQUE, VehicleDataHelper.engineTorque);
+            result.put(OnVehicleData.KEY_ODOMETER, VehicleDataHelper.odometer);
+            result.put(OnVehicleData.KEY_GPS, VehicleDataHelper.gps.serializeJSON());
+            result.put(OnVehicleData.KEY_FUEL_LEVEL_STATE, VehicleDataHelper.fuelLevelState);
+            result.put(OnVehicleData.KEY_INSTANT_FUEL_CONSUMPTION, VehicleDataHelper.instantFuelConsumption);
+            result.put(OnVehicleData.KEY_BELT_STATUS, VehicleDataHelper.beltStatus.serializeJSON());
+            result.put(OnVehicleData.KEY_BODY_INFORMATION, VehicleDataHelper.bodyInformation.serializeJSON());
+            result.put(OnVehicleData.KEY_DEVICE_STATUS, VehicleDataHelper.deviceStatus.serializeJSON());
+            result.put(OnVehicleData.KEY_DRIVER_BRAKING, VehicleDataHelper.driverBraking);
+            result.put(OnVehicleData.KEY_WIPER_STATUS, VehicleDataHelper.wiperStatus);
+            result.put(OnVehicleData.KEY_HEAD_LAMP_STATUS, VehicleDataHelper.headLampStatus.serializeJSON());
+            result.put(OnVehicleData.KEY_ACC_PEDAL_POSITION, VehicleDataHelper.accPedalPosition);
+            result.put(OnVehicleData.KEY_STEERING_WHEEL_ANGLE, VehicleDataHelper.steeringWheelAngle);
+            result.put(OnVehicleData.KEY_E_CALL_INFO, VehicleDataHelper.eCallInfo.serializeJSON());
+            result.put(OnVehicleData.KEY_AIRBAG_STATUS, VehicleDataHelper.airbagStatus.serializeJSON());
+            result.put(OnVehicleData.KEY_EMERGENCY_EVENT, VehicleDataHelper.emergencyEvent.serializeJSON());
+            result.put(OnVehicleData.KEY_CLUSTER_MODE_STATUS, VehicleDataHelper.clusterModeStatus.serializeJSON());
+            result.put(OnVehicleData.KEY_MY_KEY, VehicleDataHelper.myKey.serializeJSON());
             
         }catch(JSONException e){
             //do nothing 
@@ -88,288 +87,158 @@ public class OnVehicleDataTests extends BaseRpcTests{
     
     public void testSpeed() {
     	Double copy = ( (OnVehicleData) msg).getSpeed();
-    	assertEquals("Speed does not match input speed", VehicleDataHelper.SPEED, copy);
+    	assertEquals("Speed does not match input speed", VehicleDataHelper.speed, copy);
     }
     
     public void testRpm() {
     	int copy = ( (OnVehicleData) msg).getRpm();
-    	assertEquals("RPM does not match input RPM", VehicleDataHelper.RPM, copy);
+    	assertEquals("RPM does not match input RPM", VehicleDataHelper.rpm, copy);
     }
     
     public void testExternalTemperature() {
     	Double copy = ( (OnVehicleData) msg).getExternalTemperature();
-    	assertEquals("External temperature does not match input external temperature", VehicleDataHelper.EXTERNAL_TEMPERATURE, copy);
+    	assertEquals("External temperature does not match input external temperature", VehicleDataHelper.externalTemperature, copy);
     }
     
     public void testFuelLevel() {
     	Double copy = ( (OnVehicleData) msg).getFuelLevel();
-    	assertEquals("Fuel level does not match input fuel level", VehicleDataHelper.FUEL_LEVEL, copy);
+    	assertEquals("Fuel level does not match input fuel level", VehicleDataHelper.fuelLevel, copy);
     }
     
     public void testVin() {
     	String copy = ( (OnVehicleData) msg).getVin();
-    	assertEquals("VIN does not match input VIN", VehicleDataHelper.VIN, copy);
+    	assertEquals("VIN does not match input VIN", VehicleDataHelper.vin, copy);
     }
     
     public void testPRNDL() {
     	PRNDL copy = ( (OnVehicleData) msg).getPrndl();
-    	assertEquals("PRNDL does not match input PRNDL", VehicleDataHelper.PRNDL_FINAL, copy);
+    	assertEquals("PRNDL does not match input PRNDL", VehicleDataHelper.prndl, copy);
     }
     
     public void testTirePressure() {
     	TireStatus copy = ( (OnVehicleData) msg).getTirePressure();
-    	assertTrue("Tire pressure does not match input tire pressure", Validator.validateTireStatus(VehicleDataHelper.TIRE_PRESSURE, copy));
+    	assertTrue("Tire pressure does not match input tire pressure", Validator.validateTireStatus(VehicleDataHelper.tirePressure, copy));
     }
     
     public void testEngineTorque() {
     	Double copy = ( (OnVehicleData) msg).getEngineTorque();
-    	assertEquals("Engine torque does not match input engine torque", VehicleDataHelper.ENGINE_TORQUE, copy);
+    	assertEquals("Engine torque does not match input engine torque", VehicleDataHelper.engineTorque, copy);
     }
     
     public void testOdometer() {
     	int copy = ( (OnVehicleData) msg).getOdometer();
-    	assertEquals("Odometer does not match input odometer", VehicleDataHelper.ODOMETER, copy);
+    	assertEquals("Odometer does not match input odometer", VehicleDataHelper.odometer, copy);
     }
     
     public void testGps() {
     	GPSData copy = ( (OnVehicleData) msg).getGps();
-    	assertTrue("GPS does not match input GPS", Validator.validateGpsData(VehicleDataHelper.GPS, copy));
+    	assertTrue("GPS does not match input GPS", Validator.validateGpsData(VehicleDataHelper.gps, copy));
     }
     
     public void testFuelLevel_State() {
     	ComponentVolumeStatus copy = ( (OnVehicleData) msg).getFuelLevel_State();
-    	assertEquals("Fuel level does not match input fuel level", VehicleDataHelper.FUEL_LEVEL_STATE, copy);
+    	assertEquals("Fuel level does not match input fuel level", VehicleDataHelper.fuelLevelState, copy);
     }
     
     public void testInstantFuelConsumption() {
     	Double copy = ( (OnVehicleData) msg).getInstantFuelConsumption();
-    	assertEquals("Instant fuel consumption does not match input instant fuel consumption", VehicleDataHelper.INSTANT_FUEL_CONSUMPTION, copy);
+    	assertEquals("Instant fuel consumption does not match input instant fuel consumption", VehicleDataHelper.instantFuelConsumption, copy);
     }
     
     public void testBeltStatus() {
     	BeltStatus copy = ( (OnVehicleData) msg).getBeltStatus();
-    	assertTrue("Belt status does not match input belt status", Validator.validateBeltStatus(VehicleDataHelper.BELT_STATUS, copy));
+    	assertTrue("Belt status does not match input belt status", Validator.validateBeltStatus(VehicleDataHelper.beltStatus, copy));
     }
     
     public void testBodyInformation() {
     	BodyInformation copy = ( (OnVehicleData) msg).getBodyInformation();
-    	assertTrue("Body information does not match input body information", Validator.validateBodyInformation(VehicleDataHelper.BODY_INFORMATION, copy));
+    	assertTrue("Body information does not match input body information", Validator.validateBodyInformation(VehicleDataHelper.bodyInformation, copy));
     }
     
     public void testDeviceStatus() {
     	DeviceStatus copy = ( (OnVehicleData) msg).getDeviceStatus();
-    	assertTrue("Device status does not match input device status", Validator.validateDeviceStatus(VehicleDataHelper.DEVICE_STATUS, copy));
+    	assertTrue("Device status does not match input device status", Validator.validateDeviceStatus(VehicleDataHelper.deviceStatus, copy));
     }
     
     public void testDriverBraking() {
     	VehicleDataEventStatus copy = ( (OnVehicleData) msg).getDriverBraking();
-    	assertEquals("Driver braking does not match input driver braking", VehicleDataHelper.DRIVER_BRAKING, copy);
+    	assertEquals("Driver braking does not match input driver braking", VehicleDataHelper.driverBraking, copy);
     }
     
     public void testWiperStatus() {
     	WiperStatus copy = ( (OnVehicleData) msg).getWiperStatus();
-    	assertEquals("Wiper status does not match input wiper status", VehicleDataHelper.WIPER_STATUS, copy);
+    	assertEquals("Wiper status does not match input wiper status", VehicleDataHelper.wiperStatus, copy);
     }
     
     public void testHeadLampStatus() {
     	HeadLampStatus copy = ( (OnVehicleData) msg).getHeadLampStatus();
-    	assertTrue("Head lamp status does not match input head lamp status", Validator.validateHeadLampStatus(VehicleDataHelper.HEAD_LAMP_STATUS, copy));
+    	assertTrue("Head lamp status does not match input head lamp status", Validator.validateHeadLampStatus(VehicleDataHelper.headLampStatus, copy));
     }
     
     public void testAccPedalPosition() {
     	Double copy = ( (OnVehicleData) msg).getAccPedalPosition();
-    	assertEquals("Acc pedal position does not match input acc pedal position", VehicleDataHelper.ACC_PEDAL_POSITION, copy);
+    	assertEquals("Acc pedal position does not match input acc pedal position", VehicleDataHelper.accPedalPosition, copy);
     }
     
     public void testSteeringWheelAngle() {
     	Double copy = ( (OnVehicleData) msg).getSteeringWheelAngle();
-    	assertEquals("Steering wheel angle does not match input steering wheel angle", VehicleDataHelper.STEERING_WHEEL_ANGLE, copy);
+    	assertEquals("Steering wheel angle does not match input steering wheel angle", VehicleDataHelper.steeringWheelAngle, copy);
     }
     
     public void testECallInfo() {
     	ECallInfo copy = ( (OnVehicleData) msg).getECallInfo();
-    	assertTrue("Emergency call info does not match input emergency call info", Validator.validateECallInfo(VehicleDataHelper.E_CALL_INFO, copy));
+    	assertTrue("Emergency call info does not match input emergency call info", Validator.validateECallInfo(VehicleDataHelper.eCallInfo, copy));
     }
     
     public void testAirbagStatus() {
     	AirbagStatus copy = ( (OnVehicleData) msg).getAirbagStatus();
-    	assertTrue("Airbag status does not match input airbag status", Validator.validateAirbagStatus(VehicleDataHelper.AIRBAG_STATUS, copy));
+    	assertTrue("Airbag status does not match input airbag status", Validator.validateAirbagStatus(VehicleDataHelper.airbagStatus, copy));
     }
     
     public void testEmergencyEvent() {
     	EmergencyEvent copy = ( (OnVehicleData) msg).getEmergencyEvent();
-    	assertTrue("Emergency event does not match input emergency event", Validator.validateEmergencyEvent(VehicleDataHelper.EMERGENCY_EVENT, copy));
+    	assertTrue("Emergency event does not match input emergency event", Validator.validateEmergencyEvent(VehicleDataHelper.emergencyEvent, copy));
     }
     
     public void testClusterModeStatus() {
     	ClusterModeStatus copy = ( (OnVehicleData) msg).getClusterModeStatus();
-    	assertTrue("Cluster mode status does not match cluster mode status", Validator.validateClusterModeStatus(VehicleDataHelper.CLUSTER_MODE_STATUS, copy));
+    	assertTrue("Cluster mode status does not match cluster mode status", Validator.validateClusterModeStatus(VehicleDataHelper.clusterModeStatus, copy));
     }
     
     public void testMyKey() {
     	MyKey copy = ( (OnVehicleData) msg).getMyKey();
-    	assertTrue("My key does not match my key", Validator.validateMyKey(VehicleDataHelper.MY_KEY, copy));
+    	assertTrue("My key does not match my key", Validator.validateMyKey(VehicleDataHelper.myKey, copy));
     }
 
     public void testJson() {
 		JSONObject reference = new JSONObject();
 		
-		//objects needed on the first level
-		JSONObject tireStatusObj = new JSONObject();
-		JSONObject GPSDataObj = new JSONObject();
-		JSONObject beltStatusObj = new JSONObject();
-		JSONObject bodyInformationObj = new JSONObject();
-		JSONObject deviceStatusObj = new JSONObject();
-		JSONObject headLampStatusObj = new JSONObject();
-		JSONObject ECallInfoObj = new JSONObject();
-		JSONObject airbagStatusObj = new JSONObject();
-		JSONObject emergencyEventObj = new JSONObject();
-		JSONObject clusterModeStatusObj = new JSONObject();
-		JSONObject myKeyObj = new JSONObject();
-		
 		try {
-			//set up the JSONObject to represent OnVehicleData
-			//TIRE_PRESSURE
-			tireStatusObj.put(TireStatus.KEY_PRESSURE_TELL_TALE, VehicleDataHelper.TIRE_PRESSURE_TELL_TALE);
-			JSONObject tireLeftFront = new JSONObject();
-			tireLeftFront.put(SingleTireStatus.KEY_STATUS, VehicleDataHelper.TIRE_PRESSURE_LEFT_FRONT);
-			tireStatusObj.put(TireStatus.KEY_LEFT_FRONT, tireLeftFront);
-			JSONObject tireRightFront = new JSONObject();
-			tireRightFront.put(SingleTireStatus.KEY_STATUS, VehicleDataHelper.TIRE_PRESSURE_RIGHT_FRONT);
-			tireStatusObj.put(TireStatus.KEY_RIGHT_FRONT, tireRightFront);
-			JSONObject tireLeftRear = new JSONObject();
-			tireLeftRear.put(SingleTireStatus.KEY_STATUS, VehicleDataHelper.TIRE_PRESSURE_LEFT_REAR);
-			tireStatusObj.put(TireStatus.KEY_LEFT_REAR, tireLeftRear);
-			JSONObject tireRightRear = new JSONObject();
-			tireRightRear.put(SingleTireStatus.KEY_STATUS, VehicleDataHelper.TIRE_PRESSURE_RIGHT_REAR);
-			tireStatusObj.put(TireStatus.KEY_RIGHT_REAR, tireRightRear);
-			JSONObject tireInnerLeftRear = new JSONObject();
-			tireInnerLeftRear.put(SingleTireStatus.KEY_STATUS, VehicleDataHelper.TIRE_PRESSURE_INNER_LEFT_REAR);
-			tireStatusObj.put(TireStatus.KEY_INNER_LEFT_REAR, tireInnerLeftRear);
-			JSONObject tireInnerRightRear = new JSONObject();
-			tireInnerRightRear.put(SingleTireStatus.KEY_STATUS, VehicleDataHelper.TIRE_PRESSURE_INNER_RIGHT_REAR);
-			tireStatusObj.put(TireStatus.KEY_INNER_RIGHT_REAR, tireInnerRightRear);
-			
-			//GPS
-			GPSDataObj.put(GPSData.KEY_LONGITUDE_DEGREES, VehicleDataHelper.GPS_LONGITUDE);
-			GPSDataObj.put(GPSData.KEY_LATITUDE_DEGREES, VehicleDataHelper.GPS_LATITUDE);
-			GPSDataObj.put(GPSData.KEY_UTC_YEAR, VehicleDataHelper.GPS_YEAR);
-			GPSDataObj.put(GPSData.KEY_UTC_MONTH, VehicleDataHelper.GPS_MONTH);
-			GPSDataObj.put(GPSData.KEY_UTC_DAY, VehicleDataHelper.GPS_DAY);
-			GPSDataObj.put(GPSData.KEY_UTC_HOURS, VehicleDataHelper.GPS_HOURS);
-			GPSDataObj.put(GPSData.KEY_UTC_MINUTES, VehicleDataHelper.GPS_MINUTES);
-			GPSDataObj.put(GPSData.KEY_UTC_SECONDS, VehicleDataHelper.GPS_SECONDS);
-			GPSDataObj.put(GPSData.KEY_COMPASS_DIRECTION, VehicleDataHelper.GPS_DIRECTION);
-			GPSDataObj.put(GPSData.KEY_PDOP, VehicleDataHelper.GPS_PDOP);
-			GPSDataObj.put(GPSData.KEY_VDOP, VehicleDataHelper.GPS_VDOP);
-			GPSDataObj.put(GPSData.KEY_HDOP, VehicleDataHelper.GPS_HDOP);
-			GPSDataObj.put(GPSData.KEY_ACTUAL, VehicleDataHelper.GPS_ACTUAL);
-			GPSDataObj.put(GPSData.KEY_SATELLITES, VehicleDataHelper.GPS_SATELLITES);
-			GPSDataObj.put(GPSData.KEY_DIMENSION, VehicleDataHelper.GPS_DIMENSION);
-			GPSDataObj.put(GPSData.KEY_ALTITUDE, VehicleDataHelper.GPS_ALTITUDE);
-			GPSDataObj.put(GPSData.KEY_HEADING, VehicleDataHelper.GPS_HEADING);
-			GPSDataObj.put(GPSData.KEY_SPEED, VehicleDataHelper.GPS_SPEED);
-			
-			//BELT_STATUS
-			beltStatusObj.put(BeltStatus.KEY_DRIVER_BELT_DEPLOYED, VehicleDataHelper.BELT_STATUS_DRIVER_DEPLOYED);
-			beltStatusObj.put(BeltStatus.KEY_PASSENGER_BELT_DEPLOYED, VehicleDataHelper.BELT_STATUS_PASSENGER_DEPLOYED);
-			beltStatusObj.put(BeltStatus.KEY_PASSENGER_BUCKLE_BELTED, VehicleDataHelper.BELT_STATUS_PASSENGER_BELTED);
-			beltStatusObj.put(BeltStatus.KEY_DRIVER_BUCKLE_BELTED, VehicleDataHelper.BELT_STATUS_DRIVER_BELTED);
-			beltStatusObj.put(BeltStatus.KEY_LEFT_ROW_2_BUCKLE_BELTED, VehicleDataHelper.BELT_STATUS_LEFT_ROW_2_BELTED);
-			beltStatusObj.put(BeltStatus.KEY_PASSENGER_CHILD_DETECTED, VehicleDataHelper.BELT_STATUS_PASSENGER_CHILD);
-			beltStatusObj.put(BeltStatus.KEY_RIGHT_ROW_2_BUCKLE_BELTED, VehicleDataHelper.BELT_STATUS_RIGHT_ROW_2_BELTED);
-			beltStatusObj.put(BeltStatus.KEY_MIDDLE_ROW_2_BUCKLE_BELTED, VehicleDataHelper.BELT_STATUS_MIDDLE_ROW_2_BELTED);
-			beltStatusObj.put(BeltStatus.KEY_MIDDLE_ROW_3_BUCKLE_BELTED, VehicleDataHelper.BELT_STATUS_MIDDLE_ROW_3_BELTED);
-			beltStatusObj.put(BeltStatus.KEY_LEFT_ROW_3_BUCKLE_BELTED, VehicleDataHelper.BELT_STATUS_LEFT_ROW_3_BELTED);
-			beltStatusObj.put(BeltStatus.KEY_RIGHT_ROW_3_BUCKLE_BELTED, VehicleDataHelper.BELT_STATUS_RIGHT_ROW_3_BELTED);
-			beltStatusObj.put(BeltStatus.KEY_REAR_INFLATABLE_BELTED, VehicleDataHelper.BELT_STATUS_LEFT_REAR_INFLATABLE_BELTED);
-			beltStatusObj.put(BeltStatus.KEY_RIGHT_REAR_INFLATABLE_BELTED, VehicleDataHelper.BELT_STATUS_RIGHT_REAR_INFLATABLE_BELTED);
-			beltStatusObj.put(BeltStatus.KEY_MIDDLE_ROW_1_BELT_DEPLOYED, VehicleDataHelper.BELT_STATUS_MIDDLE_ROW_1_DEPLOYED);
-			beltStatusObj.put(BeltStatus.KEY_MIDDLE_ROW_1_BUCKLE_BELTED, VehicleDataHelper.BELT_STATUS_MIDDLE_ROW_1_BELTED);
-			
-			//BODY_INFORMATION
-			bodyInformationObj.put(BodyInformation.KEY_PARK_BRAKE_ACTIVE, VehicleDataHelper.BODY_INFORMATION_PARK_BRAKE);
-			bodyInformationObj.put(BodyInformation.KEY_IGNITION_STABLE_STATUS, VehicleDataHelper.BODY_INFORMATION_IGNITION_STATUS);
-			bodyInformationObj.put(BodyInformation.KEY_IGNITION_STATUS, VehicleDataHelper.BODY_INFORMATION_IGNITION_STABLE_STATUS);
-			bodyInformationObj.put(BodyInformation.KEY_DRIVER_DOOR_AJAR, VehicleDataHelper.BODY_INFORMATION_DRIVER_AJAR);
-			bodyInformationObj.put(BodyInformation.KEY_PASSENGER_DOOR_AJAR, VehicleDataHelper.BODY_INFORMATION_PASSENGER_AJAR);
-			bodyInformationObj.put(BodyInformation.KEY_REAR_LEFT_DOOR_AJAR, VehicleDataHelper.BODY_INFORMATION_REAR_LEFT_AJAR);
-			bodyInformationObj.put(BodyInformation.KEY_REAR_RIGHT_DOOR_AJAR, VehicleDataHelper.BODY_INFORMATION_REAR_RIGHT_AJAR);
-			
-			//DEVICE_STATUS
-			deviceStatusObj.put(DeviceStatus.KEY_VOICE_REC_ON, VehicleDataHelper.DEVICE_STATUS_VOICE_REC);
-			deviceStatusObj.put(DeviceStatus.KEY_BT_ICON_ON, VehicleDataHelper.DEVICE_STATUS_BT_ICON);
-			deviceStatusObj.put(DeviceStatus.KEY_CALL_ACTIVE, VehicleDataHelper.DEVICE_STATUS_CALL_ACTIVE);
-			deviceStatusObj.put(DeviceStatus.KEY_PHONE_ROAMING, VehicleDataHelper.DEVICE_STATUS_PHONE_ROAMING);
-			deviceStatusObj.put(DeviceStatus.KEY_TEXT_MSG_AVAILABLE, VehicleDataHelper.DEVICE_STATUS_TEXT_MSG_AVAILABLE);
-			deviceStatusObj.put(DeviceStatus.KEY_BATT_LEVEL_STATUS, VehicleDataHelper.DEVICE_STATUS_BATT_LEVEL_STATUS);
-			deviceStatusObj.put(DeviceStatus.KEY_STEREO_AUDIO_OUTPUT_MUTED, VehicleDataHelper.DEVICE_STATUS_STEREO_MUTED);
-			deviceStatusObj.put(DeviceStatus.KEY_MONO_AUDIO_OUTPUT_MUTED, VehicleDataHelper.DEVICE_STATUS_MONO_MUTED);
-			deviceStatusObj.put(DeviceStatus.KEY_SIGNAL_LEVEL_STATUS, VehicleDataHelper.DEVICE_STATUS_SIGNAL_LEVEL_STATUS);
-			deviceStatusObj.put(DeviceStatus.KEY_PRIMARY_AUDIO_SOURCE, VehicleDataHelper.DEVICE_STATUS_PRIMARY_AUDIO);
-			deviceStatusObj.put(DeviceStatus.KEY_E_CALL_EVENT_ACTIVE, VehicleDataHelper.DEVICE_STATUS_E_CALL_ACTIVE);
-			
-			//HEAD_LAMP_STATUS
-			headLampStatusObj.put(HeadLampStatus.KEY_AMBIENT_LIGHT_SENSOR_STATUS, VehicleDataHelper.HEAD_LAMP_STATUS_AMBIENT_STATUS);
-			headLampStatusObj.put(HeadLampStatus.KEY_HIGH_BEAMS_ON, VehicleDataHelper.HEAD_LAMP_HIGH_BEAMS);
-			headLampStatusObj.put(HeadLampStatus.KEY_LOW_BEAMS_ON, VehicleDataHelper.HEAD_LAMP_LOW_BEAMS);
-			
-			//E_CALL_INFO
-			ECallInfoObj.put(ECallInfo.KEY_E_CALL_NOTIFICATION_STATUS, VehicleDataHelper.E_CALL_INFO_E_CALL_NOTIFICATION_STATUS);
-			ECallInfoObj.put(ECallInfo.KEY_AUX_E_CALL_NOTIFICATION_STATUS, VehicleDataHelper.E_CALL_INFO_AUX_E_CALL_NOTIFICATION_STATUS);
-			ECallInfoObj.put(ECallInfo.KEY_E_CALL_CONFIRMATION_STATUS, VehicleDataHelper.E_CALL_INFO_CONFIRMATION_STATUS);
-	    	
-			//AIRBAG_STATUS
-			airbagStatusObj.put(AirbagStatus.KEY_DRIVER_AIRBAG_DEPLOYED, VehicleDataHelper.AIRBAG_STATUS_DRIVER_DEPLOYED);
-			airbagStatusObj.put(AirbagStatus.KEY_DRIVER_SIDE_AIRBAG_DEPLOYED, VehicleDataHelper.AIRBAG_STATUS_DRIVER_SIDE_DEPLOYED);
-			airbagStatusObj.put(AirbagStatus.KEY_DRIVER_CURTAIN_AIRBAG_DEPLOYED, VehicleDataHelper.AIRBAG_STATUS_DRIVER_CURTAIN_DEPLOYED);
-			airbagStatusObj.put(AirbagStatus.KEY_DRIVER_KNEE_AIRBAG_DEPLOYED, VehicleDataHelper.AIRBAG_STATUS_DRIVER_KNEE_DEPLOYED);
-			airbagStatusObj.put(AirbagStatus.KEY_PASSENGER_AIRBAG_DEPLOYED, VehicleDataHelper.AIRBAG_STATUS_PASSENGER_DEPLOYED);
-			airbagStatusObj.put(AirbagStatus.KEY_PASSENGER_SIDE_AIRBAG_DEPLOYED, VehicleDataHelper.AIRBAG_STATUS_PASSENGER_SIDE_DEPLOYED);
-			airbagStatusObj.put(AirbagStatus.KEY_PASSENGER_CURTAIN_AIRBAG_DEPLOYED, VehicleDataHelper.AIRBAG_STATUS_PASSENGER_CURTAIN_DEPLOYED);
-			airbagStatusObj.put(AirbagStatus.KEY_PASSENGER_KNEE_AIRBAG_DEPLOYED, VehicleDataHelper.AIRBAG_STATUS_PASSENGER_KNEE_DEPLOYED);
-			
-			//EMERGENCY_EVENT
-			emergencyEventObj.put(EmergencyEvent.KEY_EMERGENCY_EVENT_TYPE, VehicleDataHelper.EMERGENCY_EVENT_TYPE);
-			emergencyEventObj.put(EmergencyEvent.KEY_FUEL_CUTOFF_STATUS, VehicleDataHelper.EMERGENCY_EVENT_FUEL_CUTOFF_STATUS);
-			emergencyEventObj.put(EmergencyEvent.KEY_ROLLOVER_EVENT, VehicleDataHelper.EMERGENCY_EVENT_ROLLOVER_EVENT);
-			emergencyEventObj.put(EmergencyEvent.KEY_MAXIMUM_CHANGE_VELOCITY, VehicleDataHelper.EMERGENCY_EVENT_MAX_CHANGE_VELOCITY);
-			emergencyEventObj.put(EmergencyEvent.KEY_MULTIPLE_EVENTS, VehicleDataHelper.EMERGENCY_EVENT_MULTIPLE_EVENTS);
-			
-			//CLUSTER_MODE_STATUS
-			clusterModeStatusObj.put(ClusterModeStatus.KEY_POWER_MODE_ACTIVE, VehicleDataHelper.CLUSTER_MODE_STATUS_POWER_MODE_ACTIVE);
-			clusterModeStatusObj.put(ClusterModeStatus.KEY_POWER_MODE_QUALIFICATION_STATUS, VehicleDataHelper.CLUSTER_MODE_STATUS_POWER_MODE_QUALIFICATION_STATUS);
-			clusterModeStatusObj.put(ClusterModeStatus.KEY_CAR_MODE_STATUS, VehicleDataHelper.CLUSTER_MODE_STATUS_CAR_MODE_STATUS);
-			clusterModeStatusObj.put(ClusterModeStatus.KEY_POWER_MODE_STATUS, VehicleDataHelper.CLUSTER_MODE_STATUS_POWER_MODE_STATUS);
-			
-			//MY_KEY
-			myKeyObj.put(MyKey.KEY_E_911_OVERRIDE, VehicleDataHelper.MY_KEY_E_911_OVERRIDE);
-			
-			reference.put(OnVehicleData.KEY_SPEED, VehicleDataHelper.SPEED);
-			reference.put(OnVehicleData.KEY_RPM, VehicleDataHelper.RPM);
-			reference.put(OnVehicleData.KEY_EXTERNAL_TEMPERATURE, VehicleDataHelper.EXTERNAL_TEMPERATURE);
-			reference.put(OnVehicleData.KEY_FUEL_LEVEL, VehicleDataHelper.FUEL_LEVEL);
-			reference.put(OnVehicleData.KEY_VIN, VehicleDataHelper.VIN);
-			reference.put(OnVehicleData.KEY_PRNDL, VehicleDataHelper.PRNDL_FINAL);
-			reference.put(OnVehicleData.KEY_TIRE_PRESSURE, tireStatusObj);
-			reference.put(OnVehicleData.KEY_ENGINE_TORQUE, VehicleDataHelper.ENGINE_TORQUE);
-			reference.put(OnVehicleData.KEY_ODOMETER, VehicleDataHelper.ODOMETER);
-			reference.put(OnVehicleData.KEY_GPS, GPSDataObj);
-			reference.put(OnVehicleData.KEY_FUEL_LEVEL_STATE, VehicleDataHelper.FUEL_LEVEL_STATE);
-			reference.put(OnVehicleData.KEY_INSTANT_FUEL_CONSUMPTION, VehicleDataHelper.INSTANT_FUEL_CONSUMPTION);
-			reference.put(OnVehicleData.KEY_BELT_STATUS, beltStatusObj);
-			reference.put(OnVehicleData.KEY_BODY_INFORMATION, bodyInformationObj);
-			reference.put(OnVehicleData.KEY_DEVICE_STATUS, deviceStatusObj);
-			reference.put(OnVehicleData.KEY_DRIVER_BRAKING, VehicleDataHelper.DRIVER_BRAKING);
-			reference.put(OnVehicleData.KEY_WIPER_STATUS, VehicleDataHelper.WIPER_STATUS);
-			reference.put(OnVehicleData.KEY_HEAD_LAMP_STATUS, headLampStatusObj);
-			reference.put(OnVehicleData.KEY_ACC_PEDAL_POSITION, VehicleDataHelper.ACC_PEDAL_POSITION);
-			reference.put(OnVehicleData.KEY_STEERING_WHEEL_ANGLE, VehicleDataHelper.STEERING_WHEEL_ANGLE);
-			reference.put(OnVehicleData.KEY_E_CALL_INFO, ECallInfoObj);
-			reference.put(OnVehicleData.KEY_AIRBAG_STATUS, airbagStatusObj);
-			reference.put(OnVehicleData.KEY_EMERGENCY_EVENT, emergencyEventObj);
-			reference.put(OnVehicleData.KEY_CLUSTER_MODE_STATUS, clusterModeStatusObj);
-			reference.put(OnVehicleData.KEY_MY_KEY, myKeyObj);
+			reference.put(OnVehicleData.KEY_SPEED, VehicleDataHelper.speed);
+			reference.put(OnVehicleData.KEY_RPM, VehicleDataHelper.rpm);
+			reference.put(OnVehicleData.KEY_EXTERNAL_TEMPERATURE, VehicleDataHelper.externalTemperature);
+			reference.put(OnVehicleData.KEY_FUEL_LEVEL, VehicleDataHelper.fuelLevel);
+			reference.put(OnVehicleData.KEY_VIN, VehicleDataHelper.vin);
+			reference.put(OnVehicleData.KEY_PRNDL, VehicleDataHelper.prndl);
+			reference.put(OnVehicleData.KEY_TIRE_PRESSURE, VehicleDataHelper.tirePressure.serializeJSON());
+			reference.put(OnVehicleData.KEY_ENGINE_TORQUE, VehicleDataHelper.engineTorque);
+			reference.put(OnVehicleData.KEY_ODOMETER, VehicleDataHelper.odometer);
+			reference.put(OnVehicleData.KEY_GPS, VehicleDataHelper.gps.serializeJSON());
+			reference.put(OnVehicleData.KEY_FUEL_LEVEL_STATE, VehicleDataHelper.fuelLevelState);
+			reference.put(OnVehicleData.KEY_INSTANT_FUEL_CONSUMPTION, VehicleDataHelper.instantFuelConsumption);
+			reference.put(OnVehicleData.KEY_BELT_STATUS, VehicleDataHelper.beltStatus.serializeJSON());
+			reference.put(OnVehicleData.KEY_BODY_INFORMATION, VehicleDataHelper.bodyInformation.serializeJSON());
+			reference.put(OnVehicleData.KEY_DEVICE_STATUS, VehicleDataHelper.deviceStatus.serializeJSON());
+			reference.put(OnVehicleData.KEY_DRIVER_BRAKING, VehicleDataHelper.driverBraking);
+			reference.put(OnVehicleData.KEY_WIPER_STATUS, VehicleDataHelper.wiperStatus);
+			reference.put(OnVehicleData.KEY_HEAD_LAMP_STATUS, VehicleDataHelper.headLampStatus.serializeJSON());
+			reference.put(OnVehicleData.KEY_ACC_PEDAL_POSITION, VehicleDataHelper.accPedalPosition);
+			reference.put(OnVehicleData.KEY_STEERING_WHEEL_ANGLE, VehicleDataHelper.steeringWheelAngle);
+			reference.put(OnVehicleData.KEY_E_CALL_INFO, VehicleDataHelper.eCallInfo.serializeJSON());
+			reference.put(OnVehicleData.KEY_AIRBAG_STATUS, VehicleDataHelper.airbagStatus.serializeJSON());
+			reference.put(OnVehicleData.KEY_EMERGENCY_EVENT, VehicleDataHelper.emergencyEvent.serializeJSON());
+			reference.put(OnVehicleData.KEY_CLUSTER_MODE_STATUS, VehicleDataHelper.clusterModeStatus.serializeJSON());
+			reference.put(OnVehicleData.KEY_MY_KEY, VehicleDataHelper.myKey.serializeJSON());
 			
 			JSONObject underTest = msg.serializeJSON();
 			//go inside underTest and only return the JSONObject inside the parameters key inside the notification key

@@ -1,7 +1,6 @@
 package com.smartdevicelink.test.rpc.responses;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -15,30 +14,15 @@ import com.smartdevicelink.proxy.RPCMessage;
 import com.smartdevicelink.proxy.rpc.AudioPassThruCapabilities;
 import com.smartdevicelink.proxy.rpc.ButtonCapabilities;
 import com.smartdevicelink.proxy.rpc.DisplayCapabilities;
-import com.smartdevicelink.proxy.rpc.ImageField;
-import com.smartdevicelink.proxy.rpc.ImageResolution;
 import com.smartdevicelink.proxy.rpc.PresetBankCapabilities;
 import com.smartdevicelink.proxy.rpc.RegisterAppInterfaceResponse;
-import com.smartdevicelink.proxy.rpc.ScreenParams;
 import com.smartdevicelink.proxy.rpc.SdlMsgVersion;
 import com.smartdevicelink.proxy.rpc.SoftButtonCapabilities;
-import com.smartdevicelink.proxy.rpc.TextField;
-import com.smartdevicelink.proxy.rpc.TouchEventCapabilities;
 import com.smartdevicelink.proxy.rpc.VehicleType;
-import com.smartdevicelink.proxy.rpc.enums.AudioType;
-import com.smartdevicelink.proxy.rpc.enums.BitsPerSample;
-import com.smartdevicelink.proxy.rpc.enums.ButtonName;
-import com.smartdevicelink.proxy.rpc.enums.CharacterSet;
-import com.smartdevicelink.proxy.rpc.enums.DisplayType;
-import com.smartdevicelink.proxy.rpc.enums.FileType;
 import com.smartdevicelink.proxy.rpc.enums.HmiZoneCapabilities;
-import com.smartdevicelink.proxy.rpc.enums.ImageFieldName;
 import com.smartdevicelink.proxy.rpc.enums.Language;
-import com.smartdevicelink.proxy.rpc.enums.MediaClockFormat;
 import com.smartdevicelink.proxy.rpc.enums.PrerecordedSpeech;
-import com.smartdevicelink.proxy.rpc.enums.SamplingRate;
 import com.smartdevicelink.proxy.rpc.enums.SpeechCapabilities;
-import com.smartdevicelink.proxy.rpc.enums.TextFieldName;
 import com.smartdevicelink.proxy.rpc.enums.VrCapabilities;
 import com.smartdevicelink.test.BaseRpcTests;
 import com.smartdevicelink.test.json.rpc.JsonFileReader;
@@ -47,179 +31,101 @@ import com.smartdevicelink.test.utils.Validator;
 
 public class RegisterAppInterfaceResponseTest extends BaseRpcTests {
 
-	private final List<PrerecordedSpeech>   PRERECORDED_SPEECH = 
-			Arrays.asList(new PrerecordedSpeech[]{ PrerecordedSpeech.POSITIVE_JINGLE, PrerecordedSpeech.NEGATIVE_JINGLE });
-	private final List<HmiZoneCapabilities> HMI_ZONE_CAPABILITIES = 
-			Arrays.asList(new HmiZoneCapabilities[]{ HmiZoneCapabilities.BACK, HmiZoneCapabilities.FRONT });
-	private final List<SpeechCapabilities>  SPEECH_CAPABILITIES = 
-			Arrays.asList(new SpeechCapabilities[]{ SpeechCapabilities.SILENCE, SpeechCapabilities.TEXT });
-	private final List<VrCapabilities>      VR_CAPABILITIES = 
-			Arrays.asList(new VrCapabilities[]{ VrCapabilities.Text });
+	private Language 						language;
+	private Language 						hmiLanguage;
+	private VehicleType 					vehicleType;
+	private SdlMsgVersion 					sdlMsgVersion;
+	private DisplayCapabilities 			displayCapabilities;
+	private PresetBankCapabilities 			presetBankCapabilities;
 	
-	private DisplayCapabilities             displayCapabilities;
-	private List<ButtonCapabilities>        buttonCapabilities;
-	private List<SoftButtonCapabilities>    softButtonCapabilities;
-	private List<AudioPassThruCapabilities> audioPassThruCapabilities;
+	private List<Integer> 					supportedDiagModes;
+	private List<SpeechCapabilities> 		speechCapabilities = new ArrayList<SpeechCapabilities>();
+	private List<VrCapabilities> 			vrCapabilities = new ArrayList<VrCapabilities>();
+	private List<HmiZoneCapabilities>		hmiZoneCapabilities = new ArrayList<HmiZoneCapabilities>();
+	private List<PrerecordedSpeech> 		prerecordedSpeech = new ArrayList<PrerecordedSpeech>();
 	
-	private static final PresetBankCapabilities PRESET_BANK_CAPABILITIES = new PresetBankCapabilities();
-	private static final VehicleType            VEHICLE_TYPE             = new VehicleType();	
-	private static final SdlMsgVersion          SDL_MSG_VERSION          = new SdlMsgVersion();
+	private List<AudioPassThruCapabilities> audioPassThruCapabilities = new ArrayList<AudioPassThruCapabilities>();
+    private List<ButtonCapabilities> 		buttonCapabilities= new ArrayList<ButtonCapabilities>();
+	private List<SoftButtonCapabilities> 	softButtonCapabilities= new ArrayList<SoftButtonCapabilities>();
 	
-	private static final Language LANGUAGE     = Language.EN_US;
-	private static final Language HMI_LANGUAGE = Language.EN_US;
-	
-	private static final List<Integer> SUPPORTED_DIAG_MODES = Arrays.asList(new Integer[]{ 0,1 });	
-	
-	// Variables for displayCapabilities
-	private ScreenParams screenParams;
-	private List<String> temps = Arrays.asList(new String[]{"a","b"});
-	private List<ImageField> imageList;
-	private List<TextField>  textFields;
-	private List<MediaClockFormat> mediaClockFormatList;
-	
+	private JSONObject paramsJson;
+    
 	@Override
 	protected RPCMessage createMessage() {
 		RegisterAppInterfaceResponse msg = new RegisterAppInterfaceResponse();
-
-		createCustomObjects();
+		paramsJson = JsonFileReader.getParams(getCommandType(), getMessageType());
 		
-		msg.setSdlMsgVersion(SDL_MSG_VERSION);
-		msg.setLanguage(LANGUAGE);
-		msg.setHmiDisplayLanguage(HMI_LANGUAGE);
-		msg.setDisplayCapabilities(displayCapabilities);
-		msg.setPresetBankCapabilities(PRESET_BANK_CAPABILITIES);
-		msg.setVehicleType(VEHICLE_TYPE);
-		msg.setButtonCapabilities(buttonCapabilities);
-		msg.setSoftButtonCapabilities(softButtonCapabilities);
-		msg.setAudioPassThruCapabilities(audioPassThruCapabilities);
-		msg.setHmiZoneCapabilities(HMI_ZONE_CAPABILITIES);
-		msg.setSpeechCapabilities(SPEECH_CAPABILITIES);
-		msg.setVrCapabilities(VR_CAPABILITIES);
-		msg.setPrerecordedSpeech(PRERECORDED_SPEECH);
-		msg.setSupportedDiagModes(SUPPORTED_DIAG_MODES);
+		try {			
+			language = Language.valueForString(paramsJson.getString(RegisterAppInterfaceResponse.KEY_LANGUAGE));
+			msg.setLanguage(language);
+			hmiLanguage = Language.valueForString(paramsJson.getString(RegisterAppInterfaceResponse.KEY_HMI_DISPLAY_LANGUAGE));
+			msg.setHmiDisplayLanguage(hmiLanguage);
+			
+			JSONObject vehicleTypeObj = paramsJson.getJSONObject(RegisterAppInterfaceResponse.KEY_VEHICLE_TYPE);
+			vehicleType = new VehicleType(JsonRPCMarshaller.deserializeJSONObject(vehicleTypeObj));
+			msg.setVehicleType(vehicleType);
+			
+			JSONObject sdlMsgVersionObj = paramsJson.getJSONObject(RegisterAppInterfaceResponse.KEY_SDL_MSG_VERSION);
+			sdlMsgVersion = new SdlMsgVersion(JsonRPCMarshaller.deserializeJSONObject(sdlMsgVersionObj));
+			msg.setSdlMsgVersion(sdlMsgVersion);
+			
+			JSONObject displayCapabilitiesObj = paramsJson.getJSONObject(RegisterAppInterfaceResponse.KEY_DISPLAY_CAPABILITIES);
+			displayCapabilities = new DisplayCapabilities(JsonRPCMarshaller.deserializeJSONObject(displayCapabilitiesObj));
+			msg.setDisplayCapabilities(displayCapabilities);
+			
+			JSONObject presetBankCapabilitiesObj = paramsJson.getJSONObject(RegisterAppInterfaceResponse.KEY_PRESET_BANK_CAPABILITIES);
+			presetBankCapabilities = new PresetBankCapabilities(JsonRPCMarshaller.deserializeJSONObject(presetBankCapabilitiesObj));
+			msg.setPresetBankCapabilities(presetBankCapabilities);
+			
+			JSONArray supportedDiagModesArray = paramsJson.getJSONArray(RegisterAppInterfaceResponse.KEY_SUPPORTED_DIAG_MODES);
+			supportedDiagModes = JsonUtils.<Integer>createListFromJsonArray(supportedDiagModesArray);
+			msg.setSupportedDiagModes(supportedDiagModes);
+			
+			JSONArray speechCapabilitiesArray = paramsJson.getJSONArray(RegisterAppInterfaceResponse.KEY_SPEECH_CAPABILITIES);
+			speechCapabilities = JsonUtils.<SpeechCapabilities>createListFromJsonArray(speechCapabilitiesArray);			
+			msg.setSpeechCapabilities(speechCapabilities);
+			
+			JSONArray vrCapabilitiesArray = paramsJson.getJSONArray(RegisterAppInterfaceResponse.KEY_VR_CAPABILITIES);
+			vrCapabilities = JsonUtils.<VrCapabilities>createListFromJsonArray(vrCapabilitiesArray);			
+			msg.setVrCapabilities(vrCapabilities);
+			
+			JSONArray hmiZoneCapabilitiesArray = paramsJson.getJSONArray(RegisterAppInterfaceResponse.KEY_HMI_ZONE_CAPABILITIES);
+			hmiZoneCapabilities = JsonUtils.<HmiZoneCapabilities>createListFromJsonArray(hmiZoneCapabilitiesArray);			
+			msg.setHmiZoneCapabilities(hmiZoneCapabilities);
+			
+			JSONArray prerecordedSpeechArray = paramsJson.getJSONArray(RegisterAppInterfaceResponse.KEY_PRERECORDED_SPEECH);
+			prerecordedSpeech = JsonUtils.<PrerecordedSpeech>createListFromJsonArray(prerecordedSpeechArray);			
+			msg.setPrerecordedSpeech(prerecordedSpeech);
+			
+			JSONArray audioPassThruCapabilitiesArray = paramsJson.getJSONArray(RegisterAppInterfaceResponse.KEY_AUDIO_PASS_THRU_CAPABILITIES);
+			for (int index = 0; index < audioPassThruCapabilitiesArray.length(); index++) {
+				AudioPassThruCapabilities audioPassThru = 
+						new AudioPassThruCapabilities(JsonRPCMarshaller.deserializeJSONObject( (JSONObject)audioPassThruCapabilitiesArray.get(index)) );
+				audioPassThruCapabilities.add(audioPassThru);
+			}
+			msg.setAudioPassThruCapabilities(audioPassThruCapabilities);
+			
+			JSONArray buttonCapabilitiesArray = paramsJson.getJSONArray(RegisterAppInterfaceResponse.KEY_BUTTON_CAPABILITIES);
+			for (int index = 0; index < buttonCapabilitiesArray.length(); index++) {
+				ButtonCapabilities button = 
+						new ButtonCapabilities(JsonRPCMarshaller.deserializeJSONObject( (JSONObject)buttonCapabilitiesArray.get(index)) );
+				buttonCapabilities.add(button);
+			}
+			msg.setButtonCapabilities(buttonCapabilities);
+			
+			JSONArray softButtonCapabilitiesArray = paramsJson.getJSONArray(RegisterAppInterfaceResponse.KEY_SOFT_BUTTON_CAPABILITIES);
+			for (int index = 0; index < softButtonCapabilitiesArray.length(); index++) {
+				SoftButtonCapabilities button = 
+						new SoftButtonCapabilities(JsonRPCMarshaller.deserializeJSONObject( (JSONObject)softButtonCapabilitiesArray.get(index)) );
+				softButtonCapabilities.add(button);
+			}
+			msg.setSoftButtonCapabilities(softButtonCapabilities);
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 
 		return msg;
-	}
-	
-	private void createCustomObjects () {
-		screenParams			  = new ScreenParams();
-		displayCapabilities       = new DisplayCapabilities();
-		imageList				  = new ArrayList<ImageField>(2);
-		textFields				  = new ArrayList<TextField>(2);
-		buttonCapabilities        = new ArrayList<ButtonCapabilities>(2);	
-		mediaClockFormatList      = new ArrayList<MediaClockFormat>(2);
-		softButtonCapabilities    = new ArrayList<SoftButtonCapabilities>(2);
-		audioPassThruCapabilities = new ArrayList<AudioPassThruCapabilities>(2);		
-		
-		ImageResolution resolution = new ImageResolution();
-		resolution.setResolutionHeight(10);
-		resolution.setResolutionWidth(10);
-		
-		ImageField image = new ImageField();
-		image.setName(ImageFieldName.appIcon);
-		image.setImageResolution(resolution);
-
-		List<FileType> fileListBinary = new ArrayList<FileType>();
-		fileListBinary.add(FileType.BINARY);
-		image.setImageTypeSupported(fileListBinary);
-		imageList.add(image);
-		
-		resolution = new ImageResolution();
-		resolution.setResolutionHeight(50);
-		resolution.setResolutionWidth(50);
-		
-		image = new ImageField();
-		image.setName(ImageFieldName.graphic);
-		image.setImageResolution(resolution);
-
-		List<FileType> fileListJPEG = new ArrayList<FileType>();
-		fileListJPEG.add(FileType.GRAPHIC_JPEG);
-		image.setImageTypeSupported(fileListJPEG);
-		imageList.add(image);
-		
-		mediaClockFormatList.add(MediaClockFormat.CLOCK1);
-		mediaClockFormatList.add(MediaClockFormat.CLOCK2);
-		
-		TouchEventCapabilities touch = new TouchEventCapabilities();
-		touch.setPressAvailable(true);
-		touch.setDoublePressAvailable(true);
-		touch.setMultiTouchAvailable(false);
-		
-		screenParams.setImageResolution(resolution);
-		screenParams.setTouchEventAvailable(touch);
-		
-		TextField text = new TextField();
-		text.setName(TextFieldName.ETA);
-		text.setRows(5);
-		text.setWidth(5);
-		text.setCharacterSet(CharacterSet.TYPE5SET);
-		textFields.add(text);
-		
-		text = new TextField();
-		text.setName(TextFieldName.ETA);
-		text.setRows(10);
-		text.setWidth(10);
-		text.setCharacterSet(CharacterSet.TYPE2SET);
-		textFields.add(text);
-		
-		displayCapabilities.setDisplayType(DisplayType.CID);
-		displayCapabilities.setGraphicSupported(true);
-		displayCapabilities.setImageFields(imageList);
-		displayCapabilities.setMediaClockFormats(mediaClockFormatList);
-		displayCapabilities.setNumCustomPresetsAvailable(1);
-		displayCapabilities.setScreenParams(screenParams);
-		displayCapabilities.setTemplatesAvailable(temps);
-		displayCapabilities.setTextFields(textFields);
-		
-		ButtonCapabilities button1 = new ButtonCapabilities();
-		button1.setName(ButtonName.OK);
-		button1.setShortPressAvailable(true);
-		button1.setLongPressAvailable(true);
-		button1.setUpDownAvailable(false);
-		buttonCapabilities.add(button1);
-		
-		button1 = new ButtonCapabilities();
-		button1.setName(ButtonName.CUSTOM_BUTTON);
-		button1.setShortPressAvailable(false);
-		button1.setLongPressAvailable(false);
-		button1.setUpDownAvailable(false);
-		buttonCapabilities.add(button1);
-		
-		SoftButtonCapabilities button2 = new SoftButtonCapabilities();
-		button2.setImageSupported(false);
-		button2.setLongPressAvailable(true);
-		button2.setShortPressAvailable(true);
-		button2.setUpDownAvailable(true);
-		softButtonCapabilities.add(button2);
-		
-		button2 = new SoftButtonCapabilities();
-		button2.setImageSupported(true);
-		button2.setLongPressAvailable(false);
-		button2.setShortPressAvailable(false);
-		button2.setUpDownAvailable(false);
-		softButtonCapabilities.add(button2);
-		
-		AudioPassThruCapabilities audio = new AudioPassThruCapabilities();
-		audio.setAudioType(AudioType.PCM);
-		audio.setSamplingRate(SamplingRate._8KHZ);
-		audio.setBitsPerSample(BitsPerSample._8_BIT);
-		audioPassThruCapabilities.add(audio);
-		
-		audio = new AudioPassThruCapabilities();
-		audio.setAudioType(AudioType.PCM);
-		audio.setSamplingRate(SamplingRate._16KHZ);
-		audio.setBitsPerSample(BitsPerSample._16_BIT);
-		audioPassThruCapabilities.add(audio);
-		
-		PRESET_BANK_CAPABILITIES.setOnScreenPresetsAvailable(true);
-		
-		VEHICLE_TYPE.setMake("make");
-		VEHICLE_TYPE.setModel("model");
-		VEHICLE_TYPE.setModelYear("year");
-		VEHICLE_TYPE.setTrim("trim");
-		
-		SDL_MSG_VERSION.setMajorVersion(0);
-		SDL_MSG_VERSION.setMinorVersion(1);
 	}
 
 	@Override
@@ -235,140 +141,23 @@ public class RegisterAppInterfaceResponseTest extends BaseRpcTests {
 
 	@Override
 	protected JSONObject getExpectedParameters(int sdlVersion) {
-		JSONObject result      = new JSONObject(),
-				   audioPass   = new JSONObject(),
-				   softButton  = new JSONObject(),
-				   button      = new JSONObject(),
-				   display     = new JSONObject(),
-				   image       = new JSONObject(),
-				   resolution  = new JSONObject(),
-				   screen      = new JSONObject(),
-				   touch       = new JSONObject(),
-				   field       = new JSONObject();
-		JSONArray  fields      = new JSONArray(),
-				   images      = new JSONArray(),
-				   buttons     = new JSONArray(),
-		           softButtons = new JSONArray(),
-		           audioPasses = new JSONArray();
-
+		JSONObject result = new JSONObject();
+		
 		try {		
-			audioPass.put(AudioPassThruCapabilities.KEY_AUDIO_TYPE,      AudioType.PCM);
-			audioPass.put(AudioPassThruCapabilities.KEY_SAMPLING_RATE,   SamplingRate._8KHZ);
-			audioPass.put(AudioPassThruCapabilities.KEY_BITS_PER_SAMPLE, BitsPerSample._8_BIT);
-			audioPasses.put(audioPass);
-			
-			audioPass = new JSONObject();
-			audioPass.put(AudioPassThruCapabilities.KEY_AUDIO_TYPE,      AudioType.PCM);
-			audioPass.put(AudioPassThruCapabilities.KEY_SAMPLING_RATE,   SamplingRate._16KHZ);
-			audioPass.put(AudioPassThruCapabilities.KEY_BITS_PER_SAMPLE, BitsPerSample._16_BIT);
-			audioPasses.put(audioPass);
-			
-			softButton.put(SoftButtonCapabilities.KEY_IMAGE_SUPPORTED,       false);
-			softButton.put(SoftButtonCapabilities.KEY_UP_DOWN_AVAILABLE,     true);
-			softButton.put(SoftButtonCapabilities.KEY_LONG_PRESS_AVAILABLE,  true);
-			softButton.put(SoftButtonCapabilities.KEY_SHORT_PRESS_AVAILABLE, true);
-			softButtons.put(softButton);
-			
-			softButton = new JSONObject();
-			softButton.put(SoftButtonCapabilities.KEY_IMAGE_SUPPORTED,       true);
-			softButton.put(SoftButtonCapabilities.KEY_UP_DOWN_AVAILABLE,     false);
-			softButton.put(SoftButtonCapabilities.KEY_LONG_PRESS_AVAILABLE,  false);
-			softButton.put(SoftButtonCapabilities.KEY_SHORT_PRESS_AVAILABLE, false);
-			softButtons.put(softButton);
-            
-            button.put(ButtonCapabilities.KEY_NAME,           ButtonName.OK);
-            button.put(ButtonCapabilities.KEY_UP_DOWN_AVAILABLE,     false);
-            button.put(ButtonCapabilities.KEY_LONG_PRESS_AVAILABLE,  true);
-            button.put(ButtonCapabilities.KEY_SHORT_PRESS_AVAILABLE, true);
-            buttons.put(button);
-            
-            button = new JSONObject();
-            button.put(ButtonCapabilities.KEY_NAME,           ButtonName.CUSTOM_BUTTON);
-            button.put(ButtonCapabilities.KEY_UP_DOWN_AVAILABLE,     false);
-            button.put(ButtonCapabilities.KEY_LONG_PRESS_AVAILABLE,  false);
-            button.put(ButtonCapabilities.KEY_SHORT_PRESS_AVAILABLE, false);
-            buttons.put(button);
-			
-			button = new JSONObject();
-			button.put(ButtonCapabilities.KEY_NAME,           ButtonName.CUSTOM_BUTTON);
-			button.put(ButtonCapabilities.KEY_UP_DOWN_AVAILABLE,     true);
-			button.put(ButtonCapabilities.KEY_LONG_PRESS_AVAILABLE,  false);
-			button.put(ButtonCapabilities.KEY_SHORT_PRESS_AVAILABLE, false);
-			
-			resolution.put(ImageResolution.KEY_RESOLUTION_HEIGHT, 10);
-			resolution.put(ImageResolution.KEY_RESOLUTION_WIDTH,  10);
-			//TODO: correct value to put in? ImageFieldName.appIcon.name()
-			image.put(ImageField.KEY_NAME,                 ImageFieldName.appIcon);
-			image.put(ImageField.KEY_IMAGE_RESOLUTION,     resolution);
-			JSONArray imageTypes = new JSONArray();
-			imageTypes.put(FileType.BINARY);
-			image.put(ImageField.KEY_IMAGE_TYPE_SUPPORTED, imageTypes);
-			images.put(image);
-			
-			resolution = new JSONObject();
-			resolution.put(ImageResolution.KEY_RESOLUTION_HEIGHT, 50);
-			resolution.put(ImageResolution.KEY_RESOLUTION_WIDTH,  50);
-			//TODO: correct value to put in? ImageFieldName.graphic.name()
-			image = new JSONObject();
-			image.put(ImageField.KEY_NAME,                 ImageFieldName.graphic);
-			image.put(ImageField.KEY_IMAGE_RESOLUTION,     resolution);
-			imageTypes = new JSONArray();
-			imageTypes.put(FileType.GRAPHIC_JPEG);
-			image.put(ImageField.KEY_IMAGE_TYPE_SUPPORTED, imageTypes);
-			images.put(image);	
-			
-			touch.put(TouchEventCapabilities.KEY_PRESS_AVAILABLE,        true);
-			touch.put(TouchEventCapabilities.KEY_MULTI_TOUCH_AVAILABLE,  false);
-			touch.put(TouchEventCapabilities.KEY_DOUBLE_PRESS_AVAILABLE, true);
-			
-			screen.put(ScreenParams.KEY_RESOLUTION, resolution);
-			screen.put(ScreenParams.KEY_TOUCH_EVENT_AVAILABLE, touch);
-			
-			field.put(TextField.KEY_NAME,          TextFieldName.ETA);
-			field.put(TextField.KEY_WIDTH,         5);
-			field.put(TextField.KEY_ROWS,          5);
-			field.put(TextField.KEY_CHARACTER_SET, CharacterSet.TYPE5SET);
-			fields.put(field);
-			
-			field = new JSONObject();
-			field.put(TextField.KEY_NAME,          TextFieldName.ETA);
-			field.put(TextField.KEY_WIDTH,         10);
-			field.put(TextField.KEY_ROWS,          10);
-			field.put(TextField.KEY_CHARACTER_SET, CharacterSet.TYPE2SET);
-			fields.put(field);
-			
-			display.put(DisplayCapabilities.KEY_DISPLAY_TYPE,             DisplayType.CID);
-			display.put(DisplayCapabilities.KEY_GRAPHIC_SUPPORTED,        true);
-			display.put(DisplayCapabilities.KEY_IMAGE_FIELDS,             images);
-			display.put(DisplayCapabilities.KEY_MEDIA_CLOCK_FORMATS,      JsonUtils.createJsonArrayOfJsonNames(mediaClockFormatList, SDL_VERSION_UNDER_TEST));
-			display.put(DisplayCapabilities.KEY_NUM_CUSTOM_PRESETS_AVAILABLE, 1);	
-			display.put(DisplayCapabilities.KEY_SCREEN_PARAMS,            screen);
-			display.put(DisplayCapabilities.KEY_TEMPLATES_AVAILABLE,      JsonUtils.createJsonArray(temps));
-			display.put(DisplayCapabilities.KEY_TEXT_FIELDS,              fields);
-			
-			result.put(RegisterAppInterfaceResponse.KEY_LANGUAGE,     LANGUAGE);
-			result.put(RegisterAppInterfaceResponse.KEY_HMI_DISPLAY_LANGUAGE, HMI_LANGUAGE);
-			
-			result.put(RegisterAppInterfaceResponse.KEY_SUPPORTED_DIAG_MODES, JsonUtils.createJsonArray(SUPPORTED_DIAG_MODES));			
-			
-			result.put(RegisterAppInterfaceResponse.KEY_SDL_MSG_VERSION,          SDL_MSG_VERSION.serializeJSON());
-			result.put(RegisterAppInterfaceResponse.KEY_VEHICLE_TYPE,             VEHICLE_TYPE.serializeJSON());
-			result.put(RegisterAppInterfaceResponse.KEY_PRESET_BANK_CAPABILITIES, PRESET_BANK_CAPABILITIES.serializeJSON());
-			
-			result.put(RegisterAppInterfaceResponse.KEY_DISPLAY_CAPABILITIES,         display);	
-			result.put(RegisterAppInterfaceResponse.KEY_BUTTON_CAPABILITIES,          buttons);
-			result.put(RegisterAppInterfaceResponse.KEY_SOFT_BUTTON_CAPABILITIES,     softButtons);
-			result.put(RegisterAppInterfaceResponse.KEY_AUDIO_PASS_THRU_CAPABILITIES, audioPasses);				
-			
-			result.put(RegisterAppInterfaceResponse.KEY_SPEECH_CAPABILITIES,   
-					JsonUtils.createJsonArrayOfJsonNames(SPEECH_CAPABILITIES, SDL_VERSION_UNDER_TEST));
-			result.put(RegisterAppInterfaceResponse.KEY_VR_CAPABILITIES,       
-					JsonUtils.createJsonArrayOfJsonNames(VR_CAPABILITIES, SDL_VERSION_UNDER_TEST));	
-			result.put(RegisterAppInterfaceResponse.KEY_HMI_ZONE_CAPABILITIES, 
-					JsonUtils.createJsonArrayOfJsonNames(HMI_ZONE_CAPABILITIES, SDL_VERSION_UNDER_TEST));
-			result.put(RegisterAppInterfaceResponse.KEY_PRERECORDED_SPEECH,    
-					JsonUtils.createJsonArrayOfJsonNames(PRERECORDED_SPEECH, SDL_VERSION_UNDER_TEST));
-			
+			result.put(RegisterAppInterfaceResponse.KEY_LANGUAGE, language);
+			result.put(RegisterAppInterfaceResponse.KEY_HMI_DISPLAY_LANGUAGE, hmiLanguage);
+			result.put(RegisterAppInterfaceResponse.KEY_SUPPORTED_DIAG_MODES, JsonUtils.createJsonArray(supportedDiagModes));
+			result.put(RegisterAppInterfaceResponse.KEY_SDL_MSG_VERSION, sdlMsgVersion.serializeJSON());
+			result.put(RegisterAppInterfaceResponse.KEY_VEHICLE_TYPE, vehicleType.serializeJSON());
+			result.put(RegisterAppInterfaceResponse.KEY_PRESET_BANK_CAPABILITIES, presetBankCapabilities.serializeJSON());
+			result.put(RegisterAppInterfaceResponse.KEY_DISPLAY_CAPABILITIES, paramsJson.getJSONObject(RegisterAppInterfaceResponse.KEY_DISPLAY_CAPABILITIES));	
+			result.put(RegisterAppInterfaceResponse.KEY_BUTTON_CAPABILITIES, paramsJson.getJSONArray(RegisterAppInterfaceResponse.KEY_BUTTON_CAPABILITIES));
+			result.put(RegisterAppInterfaceResponse.KEY_SOFT_BUTTON_CAPABILITIES, paramsJson.getJSONArray(RegisterAppInterfaceResponse.KEY_SOFT_BUTTON_CAPABILITIES));
+			result.put(RegisterAppInterfaceResponse.KEY_AUDIO_PASS_THRU_CAPABILITIES, paramsJson.getJSONArray(RegisterAppInterfaceResponse.KEY_AUDIO_PASS_THRU_CAPABILITIES));				
+			result.put(RegisterAppInterfaceResponse.KEY_SPEECH_CAPABILITIES, paramsJson.getJSONArray(RegisterAppInterfaceResponse.KEY_SPEECH_CAPABILITIES));
+			result.put(RegisterAppInterfaceResponse.KEY_VR_CAPABILITIES, paramsJson.getJSONArray(RegisterAppInterfaceResponse.KEY_VR_CAPABILITIES));	
+			result.put(RegisterAppInterfaceResponse.KEY_HMI_ZONE_CAPABILITIES, paramsJson.getJSONArray(RegisterAppInterfaceResponse.KEY_HMI_ZONE_CAPABILITIES));
+			result.put(RegisterAppInterfaceResponse.KEY_PRERECORDED_SPEECH, paramsJson.getJSONArray(RegisterAppInterfaceResponse.KEY_PRERECORDED_SPEECH));
 		} catch (JSONException e) {
 			/* do nothing */
 		}
@@ -379,19 +168,19 @@ public class RegisterAppInterfaceResponseTest extends BaseRpcTests {
 	public void testSdlMsgVersion () {
 		SdlMsgVersion copy = ( (RegisterAppInterfaceResponse) msg ).getSdlMsgVersion();
 		
-		assertTrue("Data didn't match input data.", Validator.validateSdlMsgVersion(SDL_MSG_VERSION, copy));
+		assertTrue("Data didn't match input data.", Validator.validateSdlMsgVersion(sdlMsgVersion, copy));
 	}
 	
 	public void testLanguage () {
 		Language copy = ( (RegisterAppInterfaceResponse) msg ).getLanguage();
 		
-		assertEquals("Data didn't match input data.", LANGUAGE, copy);
+		assertEquals("Data didn't match input data.", language, copy);
 	}
 	
 	public void testHmiLanguage () {
 		Language copy = ( (RegisterAppInterfaceResponse) msg ).getHmiDisplayLanguage();
 		
-		assertEquals("Data didn't match input data.", HMI_LANGUAGE, copy);
+		assertEquals("Data didn't match input data.", hmiLanguage, copy);
 	}
 	
 	public void testDisplayCapabilities () {
@@ -404,13 +193,13 @@ public class RegisterAppInterfaceResponseTest extends BaseRpcTests {
 	public void testPresetBankCapabilities () {
 		PresetBankCapabilities copy = ( (RegisterAppInterfaceResponse) msg ).getPresetBankCapabilities();
 		
-		assertTrue("Data didn't match input data.", Validator.validatePresetBankCapabilities(PRESET_BANK_CAPABILITIES, copy));
+		assertTrue("Data didn't match input data.", Validator.validatePresetBankCapabilities(presetBankCapabilities, copy));
 	}
 	
 	public void testVehicleType () {
 		VehicleType copy = ( (RegisterAppInterfaceResponse) msg ).getVehicleType();
 		
-		assertTrue("Data didn't match input data.", Validator.validateVehicleType(VEHICLE_TYPE, copy));
+		assertTrue("Data didn't match input data.", Validator.validateVehicleType(vehicleType, copy));
 	}
 	
 	public void testButtonCapabilities () {
@@ -438,31 +227,56 @@ public class RegisterAppInterfaceResponseTest extends BaseRpcTests {
 	public void testHmiZoneCapabilities () {
 		List<HmiZoneCapabilities> copy = ( (RegisterAppInterfaceResponse) msg ).getHmiZoneCapabilities();
 		
-		assertEquals("Data didn't match input data.", HMI_ZONE_CAPABILITIES, copy);
+        assertNotNull("HMI zone capability list was null.", copy);
+        assertEquals("HMI zone capability list size doesn't match input size.", hmiZoneCapabilities.size(), copy.size());
+        
+        for (int index = 0; index < copy.size(); index++) {
+        	assertEquals("Data didn't match input data.", hmiZoneCapabilities.get(index), copy.get(index).toString());
+        }
+        
 	}
 	
 	public void testSpeechCapabilities () {
 		List<SpeechCapabilities> copy = ( (RegisterAppInterfaceResponse) msg ).getSpeechCapabilities();
 		
-		assertEquals("Data didn't match input data.", SPEECH_CAPABILITIES, copy);
+        assertNotNull("Speech capability list was null.", copy);
+        assertEquals("Speech capability list size doesn't match input size.", speechCapabilities.size(), copy.size());
+        
+        for (int index = 0; index < copy.size(); index++) {
+        	assertEquals("Data didn't match input data.", speechCapabilities.get(index), copy.get(index).toString());
+        }
+        
 	}
 	
 	public void testVrCapabilities () {
 		List<VrCapabilities> copy = ( (RegisterAppInterfaceResponse) msg ).getVrCapabilities();
 		
-		assertEquals("Data didn't match input data.", VR_CAPABILITIES, copy);
+        assertNotNull("VR capability list was null.", copy);
+        assertEquals("VR capability list size doesn't match input size.", vrCapabilities.size(), copy.size());
+        
+        for (int index = 0; index < copy.size(); index++) {
+        	assertEquals("Data didn't match input data.", vrCapabilities.get(index), copy.get(index).toString());
+        }
+        
 	}
 	
 	public void testPrerecordedSpeech () {
 		List<PrerecordedSpeech> copy = ( (RegisterAppInterfaceResponse) msg ).getPrerecordedSpeech();
 		
-		assertEquals("Data didn't match input data.", PRERECORDED_SPEECH, copy);
+        assertNotNull("Prerecorded speech list was null.", copy);
+        assertEquals("Prerecorded speech list size doesn't match input size.", prerecordedSpeech.size(), copy.size());
+        
+        for (int index = 0; index < copy.size(); index++) {
+        	assertEquals("Data didn't match input data.", prerecordedSpeech.get(index), copy.get(index).toString());
+        }
+        
 	}
 	
 	public void testSupportedDiagModes () {
 		List<Integer> copy = ( (RegisterAppInterfaceResponse) msg ).getSupportedDiagModes();
 		
-		assertEquals("Data didn't match input data.", SUPPORTED_DIAG_MODES, copy);
+		assertEquals("Supported diagnostic modes list size doesn't match input size.", supportedDiagModes.size(), copy.size());
+		assertTrue("Supported diagnostic modes not the same", Validator.validateIntegerList(supportedDiagModes, copy));
 	}
 	
 	public void testNull() {
@@ -489,39 +303,39 @@ public class RegisterAppInterfaceResponseTest extends BaseRpcTests {
 	
 	//TODO: what to do about getProxyVersionInfo?
     public void testJsonConstructor () {
-    	JSONObject commandJson = JsonFileReader.readId(getCommandType(), getMessageType());
+    	JSONObject commandJson = JsonFileReader.get(getCommandType(), getMessageType());
     	assertNotNull("Command object is null", commandJson);
     	
 		try {
 			Hashtable<String, Object> hash = JsonRPCMarshaller.deserializeJSONObject(commandJson);
 			RegisterAppInterfaceResponse cmd = new RegisterAppInterfaceResponse(hash);
 			
-			JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson, getMessageType());
+			JSONObject body = commandJson.getJSONObject(getMessageType());
 			assertNotNull("Command type doesn't match expected message type", body);
 			
 			// test everything in the body
-			assertEquals("Command name doesn't match input name", JsonUtils.readStringFromJsonObject(body, RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
-			assertEquals("Correlation ID doesn't match input ID", JsonUtils.readIntegerFromJsonObject(body, RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
-
-			JSONObject parameters = JsonUtils.readJsonObjectFromJsonObject(body, RPCMessage.KEY_PARAMETERS);
+			assertEquals("Command name doesn't match input name", body.getString(RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
+			assertEquals("Correlation ID doesn't match input ID", (Integer) body.getInt(RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
 			
-			JSONObject vehicleTypeObj = JsonUtils.readJsonObjectFromJsonObject(parameters, RegisterAppInterfaceResponse.KEY_VEHICLE_TYPE);
+			JSONObject parameters = body.getJSONObject(RPCMessage.KEY_PARAMETERS);
+			
+			JSONObject vehicleTypeObj = parameters.getJSONObject(RegisterAppInterfaceResponse.KEY_VEHICLE_TYPE);
 			VehicleType vehicleType = new VehicleType(JsonRPCMarshaller.deserializeJSONObject(vehicleTypeObj));
 			assertTrue("Vehicle type doesn't match input vehicle type",  Validator.validateVehicleType(vehicleType, cmd.getVehicleType()));
 			
-			JSONArray speechCapabilitiesArray = JsonUtils.readJsonArrayFromJsonObject(parameters, RegisterAppInterfaceResponse.KEY_SPEECH_CAPABILITIES);
+			JSONArray speechCapabilitiesArray = parameters.getJSONArray(RegisterAppInterfaceResponse.KEY_SPEECH_CAPABILITIES);
 			for (int index = 0; index < speechCapabilitiesArray.length(); index++) {
 				SpeechCapabilities speechCapability = SpeechCapabilities.valueForString( speechCapabilitiesArray.get(index).toString() );
 				assertEquals("Speech capabilities item doesn't match input capabilities item", speechCapability, cmd.getSpeechCapabilities().get(index));
 			}
 			
-			JSONArray vrCapabilitiesArray = JsonUtils.readJsonArrayFromJsonObject(parameters, RegisterAppInterfaceResponse.KEY_VR_CAPABILITIES);
+			JSONArray vrCapabilitiesArray = parameters.getJSONArray(RegisterAppInterfaceResponse.KEY_VR_CAPABILITIES);
 			for (int index = 0; index < vrCapabilitiesArray.length(); index++) {
 				VrCapabilities vrCapability = VrCapabilities.valueForString( vrCapabilitiesArray.get(index).toString() );
 				assertEquals("VR capabilities item doesn't match input capabilities item", vrCapability, cmd.getVrCapabilities().get(index));
 			}
 			
-			JSONArray audioPassThruCapabilitiesArray = JsonUtils.readJsonArrayFromJsonObject(parameters, RegisterAppInterfaceResponse.KEY_AUDIO_PASS_THRU_CAPABILITIES);
+			JSONArray audioPassThruCapabilitiesArray = parameters.getJSONArray(RegisterAppInterfaceResponse.KEY_AUDIO_PASS_THRU_CAPABILITIES);
 			List<AudioPassThruCapabilities> audioPassThruCapabilitiesList = new ArrayList<AudioPassThruCapabilities>();
 			for (int index = 0; index < audioPassThruCapabilitiesArray.length(); index++) {
 				AudioPassThruCapabilities audioPassThruCapability = 
@@ -531,13 +345,13 @@ public class RegisterAppInterfaceResponseTest extends BaseRpcTests {
 			assertTrue("Audio pass-through capabilities list doesn't match input capabilities list",  
 					Validator.validateAudioPassThruCapabilities(audioPassThruCapabilitiesList, cmd.getAudioPassThruCapabilities() ));
 			
-			JSONArray hmiZoneCapabilitiesArray = JsonUtils.readJsonArrayFromJsonObject(parameters, RegisterAppInterfaceResponse.KEY_HMI_ZONE_CAPABILITIES);
+			JSONArray hmiZoneCapabilitiesArray = parameters.getJSONArray(RegisterAppInterfaceResponse.KEY_HMI_ZONE_CAPABILITIES);
 			for (int index = 0; index < hmiZoneCapabilitiesArray.length(); index++) {
 				HmiZoneCapabilities hmiZoneCapability = HmiZoneCapabilities.valueForString( hmiZoneCapabilitiesArray.get(index).toString() );
 				assertEquals("HMI zone capabilities item doesn't match input capabilities item", hmiZoneCapability, cmd.getHmiZoneCapabilities().get(index));
 			}
 			
-			JSONArray prerecordedSpeechArray = JsonUtils.readJsonArrayFromJsonObject(parameters, RegisterAppInterfaceResponse.KEY_PRERECORDED_SPEECH);
+			JSONArray prerecordedSpeechArray = parameters.getJSONArray(RegisterAppInterfaceResponse.KEY_PRERECORDED_SPEECH);
 			for (int index = 0; index < prerecordedSpeechArray.length(); index++) {
 				PrerecordedSpeech prerecordedSpeech = PrerecordedSpeech.valueForString( prerecordedSpeechArray.get(index).toString() );
 				assertEquals("Pre-recorded speech item doesn't match input speech item", prerecordedSpeech, cmd.getPrerecordedSpeech().get(index));
@@ -548,14 +362,14 @@ public class RegisterAppInterfaceResponseTest extends BaseRpcTests {
 			assertEquals("Supported diagnostic modes list length not same as reference modes list length", supportedDiagnosticModesList.size(), testDiagnosticModesList.size());
 			assertTrue("Supported diagnostic modes list doesn't match input modes list", Validator.validateIntegerList(supportedDiagnosticModesList, testDiagnosticModesList));
 			
-			JSONObject sdlMsgVersionObj = JsonUtils.readJsonObjectFromJsonObject(parameters, RegisterAppInterfaceResponse.KEY_SDL_MSG_VERSION);
+			JSONObject sdlMsgVersionObj = parameters.getJSONObject(RegisterAppInterfaceResponse.KEY_SDL_MSG_VERSION);
 			SdlMsgVersion sdlMsgVersion = new SdlMsgVersion(JsonRPCMarshaller.deserializeJSONObject(sdlMsgVersionObj));
 			assertTrue("SDL message version doesn't match input version",  Validator.validateSdlMsgVersion(sdlMsgVersion, cmd.getSdlMsgVersion()) );
 			
 			assertEquals("Language doesn't match input language", 
 					JsonUtils.readStringFromJsonObject(parameters, RegisterAppInterfaceResponse.KEY_LANGUAGE), cmd.getLanguage().toString());
 			
-			JSONArray buttonCapabilitiesArray = JsonUtils.readJsonArrayFromJsonObject(parameters, RegisterAppInterfaceResponse.KEY_BUTTON_CAPABILITIES);
+			JSONArray buttonCapabilitiesArray = parameters.getJSONArray(RegisterAppInterfaceResponse.KEY_BUTTON_CAPABILITIES);
 			List<ButtonCapabilities> buttonCapabilitiesList = new ArrayList<ButtonCapabilities>();
 			for (int index = 0; index < buttonCapabilitiesArray.length(); index++) {
 				ButtonCapabilities buttonCapability = new ButtonCapabilities(JsonRPCMarshaller.deserializeJSONObject( (JSONObject)buttonCapabilitiesArray.get(index) ));
@@ -564,14 +378,14 @@ public class RegisterAppInterfaceResponseTest extends BaseRpcTests {
 			assertTrue("Button capabilities list doesn't match input capabilities list",  
 					Validator.validateButtonCapabilities(buttonCapabilitiesList, cmd.getButtonCapabilities() ));
 			
-			JSONObject displayCapabilitiesObj = JsonUtils.readJsonObjectFromJsonObject(parameters, RegisterAppInterfaceResponse.KEY_DISPLAY_CAPABILITIES);
+			JSONObject displayCapabilitiesObj = parameters.getJSONObject(RegisterAppInterfaceResponse.KEY_DISPLAY_CAPABILITIES);
 			DisplayCapabilities displayCapabilities = new DisplayCapabilities(JsonRPCMarshaller.deserializeJSONObject(displayCapabilitiesObj));
 			assertTrue("Display capabilities doesn't match input capabilities",  Validator.validateDisplayCapabilities(displayCapabilities, cmd.getDisplayCapabilities()) );
 			
 			assertEquals("HMI Language doesn't match input language", 
 					JsonUtils.readStringFromJsonObject(parameters, RegisterAppInterfaceResponse.KEY_HMI_DISPLAY_LANGUAGE), cmd.getHmiDisplayLanguage().toString());
 			
-			JSONArray softButtonCapabilitiesArray = JsonUtils.readJsonArrayFromJsonObject(parameters, RegisterAppInterfaceResponse.KEY_SOFT_BUTTON_CAPABILITIES);
+			JSONArray softButtonCapabilitiesArray = parameters.getJSONArray(RegisterAppInterfaceResponse.KEY_SOFT_BUTTON_CAPABILITIES);
 			List<SoftButtonCapabilities> softButtonCapabilitiesList = new ArrayList<SoftButtonCapabilities>();
 			for (int index = 0; index < softButtonCapabilitiesArray.length(); index++) {
 				SoftButtonCapabilities softButtonCapability = 
@@ -581,7 +395,7 @@ public class RegisterAppInterfaceResponseTest extends BaseRpcTests {
 			assertTrue("Soft button capabilities list doesn't match input capabilities list",  
 					Validator.validateSoftButtonCapabilities(softButtonCapabilitiesList, cmd.getSoftButtonCapabilities() ));
 			
-			JSONObject presetBankCapabilitiesObj = JsonUtils.readJsonObjectFromJsonObject(parameters, RegisterAppInterfaceResponse.KEY_PRESET_BANK_CAPABILITIES);
+			JSONObject presetBankCapabilitiesObj = parameters.getJSONObject(RegisterAppInterfaceResponse.KEY_PRESET_BANK_CAPABILITIES);
 			PresetBankCapabilities presetBankCapabilities = new PresetBankCapabilities(JsonRPCMarshaller.deserializeJSONObject(presetBankCapabilitiesObj));
 			assertTrue("Preset bank capabilities doesn't match input capabilities",  Validator.validatePresetBankCapabilities(presetBankCapabilities, cmd.getPresetBankCapabilities()) );
 			

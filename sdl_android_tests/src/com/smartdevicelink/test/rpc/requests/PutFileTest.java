@@ -2,14 +2,12 @@ package com.smartdevicelink.test.rpc.requests;
 
 import java.util.Hashtable;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.smartdevicelink.marshal.JsonRPCMarshaller;
 import com.smartdevicelink.protocol.enums.FunctionID;
 import com.smartdevicelink.proxy.RPCMessage;
-import com.smartdevicelink.proxy.RPCStruct;
 import com.smartdevicelink.proxy.rpc.PutFile;
 import com.smartdevicelink.proxy.rpc.enums.FileType;
 import com.smartdevicelink.test.BaseRpcTests;
@@ -25,7 +23,7 @@ public class PutFileTest extends BaseRpcTests {
 	private String 		fileName;
 	private int 		offset;
 	private int		 	length;
-	private byte[]  	bulkData = new byte[]{0x00, 0x01, 0x02};
+	private static final byte[] bulkData = new byte[]{0x00, 0x01, 0x02};
 	
 	private JSONObject paramsJson;
 	
@@ -46,7 +44,6 @@ public class PutFileTest extends BaseRpcTests {
 		msg.setOffset(offset);
 		length = JsonUtils.readIntegerFromJsonObject(paramsJson, PutFile.KEY_LENGTH);
 		msg.setLength(length);
-		
 		
 		msg.setBulkData(bulkData);
 
@@ -155,26 +152,17 @@ public class PutFileTest extends BaseRpcTests {
 			JSONObject parameters = body.getJSONObject(RPCMessage.KEY_PARAMETERS);
 			
 			assertEquals("Persistent file doesn't match input persistent file", 
-					JsonUtils.readBooleanFromJsonObject(parameters, PutFile.KEY_PERSISTENT_FILE), cmd.getPersistentFile());
+					(Boolean) parameters.getBoolean(PutFile.KEY_PERSISTENT_FILE), cmd.getPersistentFile());
 			assertEquals("System file doesn't match input system file", 
-					JsonUtils.readBooleanFromJsonObject(parameters, PutFile.KEY_SYSTEM_FILE), cmd.getSystemFile());
+					(Boolean) parameters.getBoolean(PutFile.KEY_SYSTEM_FILE), cmd.getSystemFile());
 			assertEquals("File type doesn't match input type", 
-					JsonUtils.readStringFromJsonObject(parameters, PutFile.KEY_FILE_TYPE), cmd.getFileType().toString());
+					parameters.getString(PutFile.KEY_FILE_TYPE), cmd.getFileType().toString());
 			assertEquals("SDL File name doesn't match input file name", 
-					JsonUtils.readStringFromJsonObject(parameters, PutFile.KEY_SDL_FILE_NAME), cmd.getSdlFileName());
+					parameters.getString(PutFile.KEY_SDL_FILE_NAME), cmd.getSdlFileName());
 			assertEquals("Offset doesn't match input offset", 
-					JsonUtils.readIntegerFromJsonObject(parameters, PutFile.KEY_OFFSET), cmd.getOffset());
+					(Integer) parameters.getInt(PutFile.KEY_OFFSET), cmd.getOffset());
 			assertEquals("Length doesn't match input length", 
-					JsonUtils.readIntegerFromJsonObject(parameters, PutFile.KEY_LENGTH), cmd.getLength());
-			
-			JSONArray bulkDataArray = JsonUtils.readJsonArrayFromJsonObject(parameters, RPCStruct.KEY_BULK_DATA);
-			//TODO: make sure the bulk data test passes once the new code is checked out
-			for (int index = 0; index < bulkDataArray.length(); index++) {
-				Integer byteAsInt = (Integer)bulkDataArray.get(index);
-				System.out.println(cmd.getBulkData());
-				assertEquals("Bulk data item doesn't match input data item", byteAsInt, (Integer) ( (Byte)cmd.getBulkData()[index] ).intValue());
-			}
-			
+					(Integer) parameters.getInt(PutFile.KEY_LENGTH), cmd.getLength());
 		} 
 		catch (JSONException e) {
 			e.printStackTrace();

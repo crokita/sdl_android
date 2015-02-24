@@ -15,13 +15,17 @@ import com.smartdevicelink.test.utils.JsonUtils;
 
 public class SliderResponseTest extends BaseRpcTests {
 
-	private static final Integer POSITION = 0;
+	private int position;
+	
+	private JSONObject paramsJson;
 	
 	@Override
 	protected RPCMessage createMessage() {
 		SliderResponse msg = new SliderResponse();
-
-		msg.setSliderPosition(POSITION);
+		paramsJson = JsonFileReader.getParams(getCommandType(), getMessageType());
+		
+		position = JsonUtils.readIntegerFromJsonObject(paramsJson, SliderResponse.KEY_SLIDER_POSITION);
+		msg.setSliderPosition(position);
 
 		return msg;
 	}
@@ -41,7 +45,7 @@ public class SliderResponseTest extends BaseRpcTests {
 		JSONObject result = new JSONObject();
 
 		try {
-			result.put(SliderResponse.KEY_SLIDER_POSITION, POSITION);
+			result.put(SliderResponse.KEY_SLIDER_POSITION, position);
 			
 		} catch (JSONException e) {
 			/* do nothing */
@@ -52,7 +56,7 @@ public class SliderResponseTest extends BaseRpcTests {
 
 	public void testPosition() {
 		Integer copy = ( (SliderResponse) msg ).getSliderPosition();
-		assertEquals("Data didn't match input data.", POSITION, copy);
+		assertEquals("Data didn't match input data.", (Integer) position, copy);
 	}
 
 	public void testNull() {
@@ -65,23 +69,23 @@ public class SliderResponseTest extends BaseRpcTests {
 	}
 	
     public void testJsonConstructor () {
-    	JSONObject commandJson = JsonFileReader.readId(getCommandType(), getMessageType());
+    	JSONObject commandJson = JsonFileReader.get(getCommandType(), getMessageType());
     	assertNotNull("Command object is null", commandJson);
     	
 		try {
 			Hashtable<String, Object> hash = JsonRPCMarshaller.deserializeJSONObject(commandJson);
 			SliderResponse cmd = new SliderResponse(hash);
 			
-			JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson, getMessageType());
+			JSONObject body = commandJson.getJSONObject(getMessageType());
 			assertNotNull("Command type doesn't match expected message type", body);
 			
 			// test everything in the body
-			assertEquals("Command name doesn't match input name", JsonUtils.readStringFromJsonObject(body, RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
-			assertEquals("Correlation ID doesn't match input ID", JsonUtils.readIntegerFromJsonObject(body, RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
-
-			JSONObject parameters = JsonUtils.readJsonObjectFromJsonObject(body, RPCMessage.KEY_PARAMETERS);
+			assertEquals("Command name doesn't match input name", body.getString(RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
+			assertEquals("Correlation ID doesn't match input ID", (Integer) body.getInt(RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
+			
+			JSONObject parameters = body.getJSONObject(RPCMessage.KEY_PARAMETERS);
 			assertEquals("Slider position doesn't match input position", 
-					JsonUtils.readIntegerFromJsonObject(parameters, SliderResponse.KEY_SLIDER_POSITION), cmd.getSliderPosition());
+					(Integer) parameters.getInt(SliderResponse.KEY_SLIDER_POSITION), cmd.getSliderPosition());
 
 		} 
 		catch (JSONException e) {

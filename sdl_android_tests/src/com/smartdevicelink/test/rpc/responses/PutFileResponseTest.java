@@ -15,13 +15,17 @@ import com.smartdevicelink.test.utils.JsonUtils;
 
 public class PutFileResponseTest extends BaseRpcTests {
 
-	private static final Integer SPACE_AVAILABLE = -1;
+	private int spaceAvailable;
+	
+	private JSONObject paramsJson;
 	
 	@Override
 	protected RPCMessage createMessage() {
 		PutFileResponse msg = new PutFileResponse();
-
-		msg.setSpaceAvailable(SPACE_AVAILABLE);
+		paramsJson = JsonFileReader.getParams(getCommandType(), getMessageType());
+		
+		spaceAvailable = JsonUtils.readIntegerFromJsonObject(paramsJson, PutFileResponse.KEY_SPACE_AVAILABLE);
+		msg.setSpaceAvailable(spaceAvailable);
 
 		return msg;
 	}
@@ -41,7 +45,7 @@ public class PutFileResponseTest extends BaseRpcTests {
 		JSONObject result = new JSONObject();
 
 		try {
-			result.put(PutFileResponse.KEY_SPACE_AVAILABLE, SPACE_AVAILABLE);
+			result.put(PutFileResponse.KEY_SPACE_AVAILABLE, spaceAvailable);
 			
 		} catch (JSONException e) {
 			/* do nothing */
@@ -53,7 +57,7 @@ public class PutFileResponseTest extends BaseRpcTests {
 	public void testSpaceAvailable() {
 		Integer copy = ( (PutFileResponse) msg ).getSpaceAvailable();
 		
-		assertEquals("Data didn't match input data.", SPACE_AVAILABLE, copy);
+		assertEquals("Data didn't match input data.", (Integer) spaceAvailable, copy);
 	}
 
 	public void testNull() {
@@ -66,23 +70,23 @@ public class PutFileResponseTest extends BaseRpcTests {
 	}
 	
     public void testJsonConstructor () {
-    	JSONObject commandJson = JsonFileReader.readId(getCommandType(), getMessageType());
+    	JSONObject commandJson = JsonFileReader.get(getCommandType(), getMessageType());
     	assertNotNull("Command object is null", commandJson);
     	
 		try {
 			Hashtable<String, Object> hash = JsonRPCMarshaller.deserializeJSONObject(commandJson);
 			PutFileResponse cmd = new PutFileResponse(hash);
 			
-			JSONObject body = JsonUtils.readJsonObjectFromJsonObject(commandJson, getMessageType());
+			JSONObject body = commandJson.getJSONObject(getMessageType());
 			assertNotNull("Command type doesn't match expected message type", body);
 			
 			// test everything in the body
-			assertEquals("Command name doesn't match input name", JsonUtils.readStringFromJsonObject(body, RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
-			assertEquals("Correlation ID doesn't match input ID", JsonUtils.readIntegerFromJsonObject(body, RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
-
-			JSONObject parameters = JsonUtils.readJsonObjectFromJsonObject(body, RPCMessage.KEY_PARAMETERS);
+			assertEquals("Command name doesn't match input name", body.getString(RPCMessage.KEY_FUNCTION_NAME), cmd.getFunctionName());
+			assertEquals("Correlation ID doesn't match input ID", (Integer) body.getInt(RPCMessage.KEY_CORRELATION_ID), cmd.getCorrelationID());
+			
+			JSONObject parameters = body.getJSONObject(RPCMessage.KEY_PARAMETERS);
 			assertEquals("Space available doesn't match input space available", 
-					JsonUtils.readIntegerFromJsonObject(parameters, PutFileResponse.KEY_SPACE_AVAILABLE), cmd.getSpaceAvailable());
+					(Integer) parameters.getInt(PutFileResponse.KEY_SPACE_AVAILABLE), cmd.getSpaceAvailable());
 			
 		} 
 		catch (JSONException e) {

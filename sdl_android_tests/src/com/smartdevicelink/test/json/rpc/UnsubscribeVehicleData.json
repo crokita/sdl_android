@@ -58,7 +58,7 @@
         "resultCode":"VEHICLE_DATA_NOT_AVAILABLE"
       },
       "engineTorque":{
-        "dataType":"VEHICLEDATA_SPEED",
+        "dataType":"VEHICLEDATA_ENGINETORQUE",
         "resultCode":"INVALID_ID"
       },
       "odometer":{
